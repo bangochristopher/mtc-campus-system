@@ -1,0 +1,1 @@
+web: gunicorn mtc_project.wsgi --log-file -
