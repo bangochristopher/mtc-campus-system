@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MTC — Dining Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#0d2b6b;--blue3:#2e5ccc;--gold:#c9a84c;--gold2:#e8c96a;--gold3:#faf5e4;--off:#f4f6fb;--text:#0d1b3e;--mid:#3a4a6b;--muted:#7a8db0;--border:#d4ddf0;--ok:#1a8a55;--danger:#c0392b;--warn:#d97706;}
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);display:flex;min-height:100vh;}
+.sb{width:240px;flex-shrink:0;background:var(--blue);position:fixed;top:0;left:0;height:100vh;display:flex;flex-direction:column;z-index:100;}
+.sb-head{padding:22px 18px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;}
+.sb-crest{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 0 0 4px rgba(201,168,76,.2);}
+.sb-name{font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;color:#fff;}.sb-role{font-size:.62rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;}
+.sb-nav{flex:1;padding:14px 10px;}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:9px;color:rgba(255,255,255,.6);font-size:.8rem;font-weight:500;cursor:pointer;transition:all .2s;margin-bottom:2px;}
+.ni:hover{background:rgba(255,255,255,.07);color:#fff;}.ni.active{background:rgba(201,168,76,.15);color:var(--gold2);}
+.sb-foot{padding:14px 10px;border-top:1px solid rgba(255,255,255,.08);}
+.su{display:flex;align-items:center;gap:10px;padding:8px 12px;margin-bottom:6px;}
+.su-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:.85rem;}
+.su-name{font-size:.75rem;font-weight:600;color:#fff;}.su-tag{font-size:.62rem;color:rgba(255,255,255,.4);}
+.btn-out{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:transparent;color:rgba(255,255,255,.5);font-size:.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.btn-out:hover{background:rgba(239,68,68,.15);color:#fca5a5;}
+.main{margin-left:240px;flex:1;display:flex;flex-direction:column;}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.page-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--text);}
+.content{padding:24px 28px;flex:1;}
+/* SCANNER */
+.scan-panel{background:#fff;border-radius:16px;border:1px solid var(--border);padding:24px;margin-bottom:22px;}
+.sp-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.sp-title{font-family:'Playfair Display',serif;font-size:1.1rem;}
+.meal-btns{display:flex;gap:6px;}
+.mb{padding:8px 16px;border-radius:100px;border:2px solid var(--border);background:var(--off);font-size:.78rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;color:var(--mid);}
+.mb:hover{border-color:var(--blue3);}.mb.active{border-color:var(--gold);background:var(--gold3);color:var(--text);}
+.scan-row{display:flex;gap:8px;margin-bottom:14px;}
+.si{flex:1;padding:15px 18px;border-radius:11px;border:2px solid var(--border);background:var(--off);font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--text);outline:none;transition:all .2s;}
+.si:focus{border-color:var(--blue3);background:#fff;box-shadow:0 0 0 4px rgba(46,92,204,.08);}
+.btn-sc{padding:15px 22px;border-radius:11px;border:none;background:linear-gradient(135deg,var(--blue),var(--blue3));color:#fff;font-weight:700;font-size:.88rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap;}
+.btn-sc:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(13,43,107,.25);}
+.rb{border-radius:12px;padding:16px 20px;display:none;animation:ri .3s ease;}
+@keyframes ri{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.rb.ok{background:linear-gradient(135deg,#e8f7f0,#d1fae5);border:2px solid #6ee7b7;}
+.rb.dn{background:linear-gradient(135deg,#fff0f0,#fee2e2);border:2px solid #fca5a5;}
+.rb.dp{background:linear-gradient(135deg,#fff7e0,#fef3c7);border:2px solid #fcd34d;}
+.rb-top{display:flex;align-items:center;gap:12px;}
+.rb-ico{font-size:1.7rem;}.rb-msg{font-size:.95rem;font-weight:700;}.rb-det{font-size:.78rem;opacity:.7;}
+.rb-info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.ri-item{background:rgba(255,255,255,.5);border-radius:8px;padding:9px 12px;}
+.ri-l{font-size:.64rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.6;margin-bottom:2px;}.ri-v{font-size:.82rem;font-weight:600;}
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:22px;}
+.sc{background:#fff;border-radius:12px;border:1px solid var(--border);padding:16px 18px;position:relative;overflow:hidden;}
+.sc-ico{position:absolute;top:12px;right:12px;font-size:1.2rem;opacity:.14;}
+.sc-lbl{font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.sc-val{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;line-height:1;}
+.sc-sub{font-size:.68rem;color:var(--muted);margin-top:4px;}
+.cg .sc-val{color:var(--gold);}.cb .sc-val{color:var(--blue3);}.co .sc-val{color:var(--ok);}.cw .sc-val{color:var(--warn);}.cr .sc-val{color:var(--danger);}
+/* TABLE */
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sec-title{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--text);}
+.tw{background:#fff;border-radius:13px;border:1px solid var(--border);overflow:hidden;}
+.ts{padding:11px 16px;border-bottom:1px solid var(--off);display:flex;gap:8px;}
+.ts input,.ts select{padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:var(--off);font-family:'DM Sans',sans-serif;font-size:.78rem;color:var(--text);outline:none;}
+.ts input{flex:1;}.ts input:focus,.ts select:focus{border-color:var(--blue3);}
+table{width:100%;border-collapse:collapse;}
+th{padding:9px 14px;background:var(--off);border-bottom:1px solid var(--border);text-align:left;font-size:.65rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);}
+td{padding:10px 14px;border-bottom:1px solid var(--off);font-size:.8rem;color:var(--mid);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}tr:hover td{background:#f8faff;}
+.chip{display:inline-block;padding:2px 8px;border-radius:100px;font-size:.66rem;font-weight:700;}
+.cs{background:#e8f7f0;color:var(--ok);}.cd{background:#fff0f0;color:var(--danger);}.cdup{background:#fff7e0;color:#92400e;}
+.mc-b{background:#e8eef9;color:var(--blue);}.mc-l{background:#fef9e0;color:#92400e;}.mc-s{background:#1a0d3e;color:var(--gold2);}
+.er td{text-align:center;padding:30px;color:var(--muted);}
+/* PRINT REPORT */
+.btn-print{padding:9px 18px;border-radius:9px;border:1.5px solid var(--border);background:#fff;color:var(--mid);font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:6px;}
+.btn-print:hover{border-color:var(--blue3);color:var(--blue);background:#f0f4ff;}
+.rpt-filter{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:18px;}
+.rpt-filter label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+.rpt-filter input,.rpt-filter select{padding:8px 12px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--text);outline:none;}
+.rpt-filter input:focus,.rpt-filter select:focus{border-color:var(--blue3);}
+.meal-tick{display:inline-block;width:26px;height:26px;border-radius:6px;font-size:.85rem;text-align:center;line-height:26px;}
+.tick-y{background:#e8f7f0;color:var(--ok);}.tick-n{background:var(--off);color:var(--muted);}
+/* ── PRINT MEDIA ── */
+@media print{
+  body *{visibility:hidden;}
+  #printArea,#printArea *{visibility:visible;}
+  #printArea{position:fixed;inset:0;background:#fff;padding:24px 32px;}
+  .no-print{display:none!important;}
+}
+</style>
+</head>
+<body>
+<div class="sb">
+  <div class="sb-head"><div class="sb-crest">🍽️</div><div><div class="sb-name">MTC</div><div class="sb-role">Dining Hall</div></div></div>
+  <div class="sb-nav">
+    <div class="ni active" onclick="go('scanner')">📷 Scanner</div>
+    <div class="ni" onclick="go('register')">📋 Meal Register</div>
+    <div class="ni" onclick="go('eligible')">👥 Eligible Students</div>
+    <div class="ni" onclick="go('report')">🖨️ Print Report</div>
+    <div class="ni" onclick="go('term')" style="color:rgba(252,165,165,.8)">🔄 New Term Reset</div>
+  </div>
+  <div class="sb-foot">
+    <div class="su"><div class="su-av">🍽️</div><div><div class="su-name" id="adminName">Admin</div><div class="su-tag">Dining Admin</div></div></div>
+    <button class="btn-out" onclick="doLogout()">Sign Out</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="page-title" id="ptitle">Dining Hall Scanner</div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <span id="mealPeriod" style="font-size:.78rem;color:var(--muted)"></span>
+      <span id="clock" style="font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--mid)"></span>
+    </div>
+  </div>
+  <div class="content">
+
+    <div id="sec-scanner">
+      <div class="stats">
+        <div class="sc cg"><div class="sc-ico">👥</div><div class="sc-lbl">Eligible</div><div class="sc-val" id="sEl">—</div><div class="sc-sub">accommodated</div></div>
+        <div class="sc cb"><div class="sc-ico">☀️</div><div class="sc-lbl">Breakfast</div><div class="sc-val" id="sB">—</div><div class="sc-sub">today</div></div>
+        <div class="sc co"><div class="sc-ico">🌤️</div><div class="sc-lbl">Lunch</div><div class="sc-val" id="sL">—</div><div class="sc-sub">today</div></div>
+        <div class="sc cw"><div class="sc-ico">🌙</div><div class="sc-lbl">Supper</div><div class="sc-val" id="sS">—</div><div class="sc-sub">today</div></div>
+        <div class="sc cr"><div class="sc-ico">❌</div><div class="sc-lbl">Denied</div><div class="sc-val" id="sDn">—</div><div class="sc-sub">today</div></div>
+      </div>
+
+      <div class="scan-panel">
+        <div class="sp-top">
+          <div class="sp-title">🔍 Scan Student ID Barcode</div>
+          <div class="meal-btns">
+            <button class="mb" id="m-Breakfast" onclick="setMeal('Breakfast')">☀️ Breakfast</button>
+            <button class="mb active" id="m-Lunch" onclick="setMeal('Lunch')">🌤️ Lunch</button>
+            <button class="mb" id="m-Supper" onclick="setMeal('Supper')">🌙 Supper</button>
+          </div>
+        </div>
+        <div class="scan-row">
+          <input type="text" class="si" id="sInput" placeholder="Scan barcode or type ID card and press Enter…" autocomplete="off">
+          <button class="btn-sc" onclick="doScan()">SCAN →</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <div id="scannerDot" style="width:10px;height:10px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,.15);flex-shrink:0;transition:all .3s;"></div>
+          <span id="scannerLabel" style="font-size:.76rem;color:var(--ok);font-weight:600;">Scanner Ready</span>
+          <span style="font-size:.72rem;color:var(--muted);margin-left:4px;">— plug in USB scanner and scan any card</span>
+        </div>
+        <div class="rb" id="rBox"></div>
+      </div>
+
+      <div>
+        <div class="sec-hd"><div class="sec-title">Today's Live Feed</div><span id="fDate" style="font-size:.75rem;color:var(--muted)"></span></div>
+        <div class="tw"><table><thead><tr><th>Time</th><th>Student</th><th>Meal</th><th>Hostel</th><th>Result</th></tr></thead>
+        <tbody id="feedTbl"><tr class="er"><td colspan="5">No scans yet today.</td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <div id="sec-register" style="display:none">
+      <div class="sec-hd"><div class="sec-title">Meal Register</div></div>
+      <div class="tw">
+        <div class="ts">
+          <input type="date" id="rDate" onchange="loadReg()">
+          <select id="rMeal" onchange="loadReg()"><option value="">All Meals</option><option>Breakfast</option><option>Lunch</option><option>Supper</option></select>
+          <select id="rStat" onchange="loadReg()"><option value="">All Results</option><option value="served">Served</option><option value="denied">Denied</option><option value="duplicate">Duplicate</option></select>
+        </div>
+        <table><thead><tr><th>Time</th><th>Student</th><th>Number</th><th>Meal</th><th>Hostel</th><th>Result</th></tr></thead>
+        <tbody id="regTbl"><tr class="er"><td colspan="6">Select a date above.</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <div id="sec-eligible" style="display:none">
+      <div class="sec-hd"><div class="sec-title">Eligible Students</div><span id="elCnt" style="font-size:.78rem;color:var(--muted)"></span></div>
+      <div class="tw">
+        <div class="ts"><input type="text" id="elQ" placeholder="Search…" oninput="filterEl()"></div>
+        <table><thead><tr><th>Student No.</th><th>Full Name</th><th>Gender</th><th>Hostel</th><th>Barcode ID</th></tr></thead>
+        <tbody id="elTbl"><tr class="er"><td colspan="5">Loading…</td></tr></tbody></table>
+      </div>
+    </div><!-- end sec-eligible -->
+
+    <!-- ═══════════════════════════ PRINT REPORT ═══════════════════════════ -->
+    <div id="sec-report" style="display:none">
+      <div class="sec-hd">
+        <div class="sec-title">Meal Attendance Report</div>
+        <button class="btn-print" onclick="printReport()">🖨️ Print Report</button>
+      </div>
+
+      <div class="rpt-filter no-print">
+        <label>Date</label>
+        <input type="date" id="rptDate" onchange="loadReport()">
+        <label>Hostel</label>
+        <select id="rptHostel" onchange="loadReport()"><option value="">All Hostels</option></select>
+        <label>Show</label>
+        <select id="rptFilter" onchange="loadReport()">
+          <option value="all">All Students</option>
+          <option value="any">Had at least one meal</option>
+          <option value="all3">Had all 3 meals</option>
+          <option value="none">No meals today</option>
+        </select>
+      </div>
+
+      <div id="printArea">
+        <!-- Print header (only visible when printing) -->
+        <div id="rptHeader" style="display:none;margin-bottom:18px;border-bottom:2px solid #0d2b6b;padding-bottom:12px;">
+          <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:#0d2b6b;">Mutare Teachers College</div>
+          <div style="font-size:.85rem;color:#555;margin-top:2px;">Dining Hall — Meal Attendance Report</div>
+          <div style="display:flex;gap:24px;margin-top:8px;font-size:.8rem;color:#444;">
+            <span id="rptPrintDate"></span>
+            <span id="rptPrintTime"></span>
+            <span id="rptPrintHostel"></span>
+          </div>
+        </div>
+
+        <!-- Summary bar -->
+        <div id="rptSummary" style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;"></div>
+
+        <!-- Main grouped table -->
+        <div class="tw" id="rptTableWrap">
+          <table id="rptTable">
+            <thead>
+              <tr>
+                <th style="width:130px">Student No.</th>
+                <th>Full Name</th>
+                <th>Hostel</th>
+                <th style="width:80px;text-align:center">☀️ Bfast</th>
+                <th style="width:80px;text-align:center">🌤️ Lunch</th>
+                <th style="width:80px;text-align:center">🌙 Supper</th>
+                <th style="width:60px;text-align:center">Total</th>
+              </tr>
+            </thead>
+            <tbody id="rptTbl">
+              <tr class="er"><td colspan="7">Select a date to load the report.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- end sec-report -->
+
+    <!-- ═══════════════════════════ NEW TERM RESET ══════════════════════════ -->
+    <div id="sec-term" style="display:none">
+      <div class="sec-hd"><div class="sec-title">New Term Reset</div></div>
+      <div style="max-width:520px;margin:0 auto;padding:24px 0">
+        <div style="background:#fff8f0;border:1.5px solid #f0a500;border-radius:12px;padding:20px 22px;margin-bottom:20px;font-size:.85rem;color:#7a4500;line-height:1.7">
+          ⚠️ <strong>This cannot be undone.</strong><br>
+          All meal records for this term will be permanently deleted.<br>
+          Student and accommodation records are <strong>not</strong> affected.
+        </div>
+        <div style="background:var(--off);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:20px;font-size:.83rem" id="termStats">Loading counts…</div>
+        <div style="margin-bottom:16px">
+          <label style="display:block;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Type <strong>NEW TERM</strong> to confirm *</label>
+          <input type="text" id="termConfirm" placeholder="NEW TERM" autocomplete="off"
+            style="width:100%;padding:10px 13px;border-radius:8px;border:1.5px solid #e74c3c;background:#fff8f8;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--text);outline:none;box-sizing:border-box"
+            oninput="checkTermConfirm()">
+        </div>
+        <button id="termBtn" disabled onclick="doNewTerm()"
+          style="width:100%;padding:11px;border-radius:9px;border:none;background:#e74c3c;color:#fff;font-size:.88rem;font-weight:600;cursor:pointer;opacity:.4;transition:opacity .2s">
+          🔄 Reset Meal Records Now
+        </button>
+      </div>
+    </div><!-- end sec-term -->
+
+  </div><!-- end .content -->
+</div><!-- end .main -->
+
+<script>
+const T = () => localStorage.getItem('mtc_token');
+let meal = 'Lunch', eligList = [];
+
+if (!T() || localStorage.getItem('mtc_role') !== 'dining') window.location.href = '/login/';
+document.getElementById('adminName').textContent = localStorage.getItem('mtc_name') || 'Admin';
+
+function doLogout() {
+  fetch('/api/auth/logout/', {method:'POST', headers:{Authorization:'Bearer '+T(),'Content-Type':'application/json'}, body:JSON.stringify({refresh:localStorage.getItem('mtc_refresh')})}).catch(()=>{});
+  localStorage.clear(); window.location.href = '/login/';
+}
+
+async function api(path) {
+  const r = await fetch('/api' + path, {headers:{Authorization:'Bearer '+T()}});
+  if (r.status===401){localStorage.clear();window.location.href='/login/';}
+  return r.json().catch(()=>null);
+}
+async function post(path, body) {
+  const r = await fetch('/api' + path, {method:'POST', headers:{Authorization:'Bearer '+T(),'Content-Type':'application/json'}, body:JSON.stringify(body)});
+  if (r.status===401){localStorage.clear();window.location.href='/login/';}
+  return {ok:r.ok, status:r.status, data: await r.json().catch(()=>({}))};
+}
+
+function go(name) {
+  ['scanner','register','eligible','report','term'].forEach(s=>document.getElementById('sec-'+s).style.display=s===name?'':'none');
+  document.getElementById('ptitle').textContent={scanner:'Dining Hall Scanner',register:'Meal Register',eligible:'Eligible Students',report:'Meal Attendance Report',term:'New Term Reset'}[name];
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  if (name==='register'){document.getElementById('rDate').value=tod();loadReg();}
+  if (name==='eligible') loadElig();
+  if (name==='report')   initReport();
+  if (name==='term')     loadTermStats();
+}
+
+function tod(){return new Date().toISOString().split('T')[0];}
+
+function setMeal(m){
+  meal=m;
+  document.querySelectorAll('.mb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('m-'+m).classList.add('active');
+}
+
+function autoMeal(){const h=new Date().getHours();return h>=7&&h<10?'Breakfast':h>=12&&h<15?'Lunch':'Supper';}
+
+async function doScan(){
+  const barcode=document.getElementById('sInput').value.trim();if(!barcode)return;
+  document.getElementById('rBox').style.display='none';
+  const r=await post('/dining/scan/',{barcode,meal_type:meal});
+  showResult(r);
+  document.getElementById('sInput').value='';
+  document.getElementById('sInput').focus();
+  loadDash();
+}
+
+function showResult({ok,status,data:d}){
+  const rb=document.getElementById('rBox');
+  let cls,ico,msg,det,info='';
+  if(d.access==='granted'){
+    cls='ok';ico='✅';msg=d.message;det='Access granted — meal recorded.';
+    const s=d.student||{};
+    info=`<div class="ri-item"><div class="ri-l">Name</div><div class="ri-v">${s.name||'—'}</div></div>
+          <div class="ri-item"><div class="ri-l">Hostel</div><div class="ri-v">${s.hostel||'—'}</div></div>
+          <div class="ri-item"><div class="ri-l">Meal</div><div class="ri-v">${meal}</div></div>`;
+  }else if(d.access==='duplicate'){
+    cls='dp';ico='⚠️';msg=d.message;det=`Already served at ${d.served_at||'—'} today.`;
+    info=`<div class="ri-item"><div class="ri-l">Served At</div><div class="ri-v">${d.served_at||'—'}</div></div>`;
+  }else{
+    cls='dn';ico='❌';msg=d.message||'Access denied.';det='Student not eligible or not found.';
+  }
+  rb.className='rb '+cls;
+  rb.innerHTML=`<div class="rb-top"><div class="rb-ico">${ico}</div><div><div class="rb-msg">${msg}</div><div class="rb-det">${det}</div></div></div><div class="rb-info">${info}</div>`;
+  rb.style.display='block';
+  setTimeout(()=>{rb.style.display='none';},9000);
+}
+
+async function loadDash(){
+  const d=await api('/dining/dashboard/');if(!d)return;
+  document.getElementById('sEl').textContent=d.eligible_students;
+  document.getElementById('sB').textContent=d.today_breakfast;
+  document.getElementById('sL').textContent=d.today_lunch;
+  document.getElementById('sS').textContent=d.today_supper;
+  document.getElementById('sDn').textContent=d.today_denied;
+  document.getElementById('fDate').textContent=d.today;
+  const mc=m=>m==='Breakfast'?'mc-b':m==='Lunch'?'mc-l':'mc-s';
+  const sc=s=>s==='served'?'cs':s==='denied'?'cd':'cdup';
+  document.getElementById('feedTbl').innerHTML=d.recent_scans?.length
+    ?d.recent_scans.map(r=>`<tr>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.75rem">${(r.scan_time||'').slice(0,5)}</td>
+      <td>${r.student_name||`<em style="color:var(--muted)">${r.scanned_barcode}</em>`}<br><small style="color:var(--muted)">${r.student_number||''}</small></td>
+      <td><span class="chip ${mc(r.meal_type)}">${r.meal_type}</span></td>
+      <td>${r.hostel||'—'}</td>
+      <td><span class="chip ${sc(r.scan_status)}">${r.scan_status}</span></td>
+    </tr>`).join(''):'<tr class="er"><td colspan="5">No scans yet today.</td></tr>';
+}
+
+async function loadReg(){
+  const date=document.getElementById('rDate').value||tod();
+  const m=document.getElementById('rMeal').value,s=document.getElementById('rStat').value;
+  let url=`/dining/register/?date=${date}`;
+  if(m)url+=`&meal=${m}`;if(s)url+=`&status=${s}`;
+  const data=await api(url);
+  const list=Array.isArray(data)?data:data?.results||[];
+  const mc=m=>m==='Breakfast'?'mc-b':m==='Lunch'?'mc-l':'mc-s';
+  const sc=s=>s==='served'?'cs':s==='denied'?'cd':'cdup';
+  document.getElementById('regTbl').innerHTML=list.length?list.map(r=>`<tr>
+    <td style="font-family:'JetBrains Mono',monospace;font-size:.75rem">${(r.scan_time||'').slice(0,5)}</td>
+    <td>${r.student_name||'Unknown'}</td>
+    <td style="font-family:'JetBrains Mono',monospace;font-size:.75rem">${r.student_number||r.scanned_barcode}</td>
+    <td><span class="chip ${mc(r.meal_type)}">${r.meal_type}</span></td>
+    <td>${r.hostel||'—'}</td>
+    <td><span class="chip ${sc(r.scan_status)}">${r.scan_status}</span></td>
+  </tr>`).join(''):'<tr class="er"><td colspan="6">No records for this selection.</td></tr>';
+}
+
+async function loadElig(){
+  const d=await api('/dining/eligible/');if(!d)return;
+  eligList=d.students;
+  document.getElementById('elCnt').textContent=`${d.count} students eligible`;
+  renderEl(eligList);
+}
+function renderEl(list){
+  document.getElementById('elTbl').innerHTML=list.length?list.map(s=>`<tr>
+    <td style="font-family:'JetBrains Mono',monospace;font-size:.8rem">${s.student_number}</td>
+    <td>${s.full_name}</td><td>${s.gender}</td><td>${s.hostel||'—'}</td>
+    <td style="font-family:'JetBrains Mono',monospace;font-size:.75rem">${s.barcode_id}</td>
+  </tr>`).join(''):'<tr class="er"><td colspan="5">No eligible students.</td></tr>';
+}
+function filterEl(){const q=document.getElementById('elQ').value.toLowerCase();renderEl(eligList.filter(s=>(s.full_name+s.student_number+s.hostel).toLowerCase().includes(q)));}
+
+function updateClock(){
+  const now=new Date();
+  document.getElementById('clock').textContent=now.toLocaleTimeString('en-GB');
+  const h=now.getHours();
+  document.getElementById('mealPeriod').textContent=h>=7&&h<10?'☀️ Breakfast (07–09)':h>=12&&h<15?'🌤️ Lunch (12–14)':h>=18&&h<21?'🌙 Supper (18–20)':'Outside meal hours';
+}
+
+/*
+ * GLOBAL BARCODE SCANNER INTERCEPT
+ * ──────────────────────────────────────────────────────────────────
+ * USB barcode scanners (like Winson WAI-6510) work as HID keyboards:
+ * they type all characters very fast (< 50ms between each key) then
+ * send Enter.  Normal typing is much slower (> 50ms between keys).
+ *
+ * This code:
+ *   1. Intercepts ALL keystrokes at the document level
+ *   2. If keys come faster than SCAN_SPEED_MS → it's a scanner
+ *   3. Routes scanner characters into the scan input field
+ *   4. On Enter → triggers the scan automatically
+ *   5. If the scan input already has focus → normal keyboard events
+ *      still work (manual typing also submits on Enter)
+ *   6. Shows a live "Scanner Ready" / "Scanner Active" indicator
+ * ──────────────────────────────────────────────────────────────────
+ */
+const SCAN_SPEED_MS = 50;   // keystrokes faster than this = scanner
+let   scanBuffer    = '';
+let   lastKeyTime   = 0;
+let   scannerActive = false;
+let   scannerTimer  = null;
+
+function getScanInput() {
+  // Returns the currently visible scan input field
+  return document.getElementById('gInput') || document.getElementById('sInput');
+}
+
+function setScannerStatus(active) {
+  scannerActive = active;
+  var dot  = document.getElementById('scannerDot');
+  var lbl  = document.getElementById('scannerLabel');
+  if (!dot || !lbl) return;
+  if (active) {
+    dot.style.background = '#22c55e';
+    dot.style.boxShadow  = '0 0 0 4px rgba(34,197,94,.25)';
+    lbl.textContent = 'Scanner Active…';
+  } else {
+    dot.style.background = '#22c55e';
+    dot.style.boxShadow  = '0 0 0 4px rgba(34,197,94,.15)';
+    lbl.textContent = 'Scanner Ready';
+  }
+}
+
+document.addEventListener('keydown', function(e) {
+  var scanInput = getScanInput();
+  if (!scanInput) return;
+
+  // If the event target is an input/select/textarea that is NOT the scan input,
+  // don't intercept — let the user type in other fields normally
+  var tag = document.activeElement ? document.activeElement.tagName : '';
+  if ((tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') &&
+      document.activeElement !== scanInput) {
+    return;
+  }
+
+  var now  = Date.now();
+  var gap  = now - lastKeyTime;
+  lastKeyTime = now;
+
+  // Ignore modifier-only keys
+  if (e.key === 'Shift' || e.key === 'Control' || e.key === 'Alt' || e.key === 'Meta') return;
+
+  var isScanner = gap < SCAN_SPEED_MS;
+
+  if (e.key === 'Enter') {
+    // Enter from scanner OR from manual typing in the input field
+    if (scanInput.value.trim()) {
+      e.preventDefault();
+      setScannerStatus(false);
+      scanBuffer = '';
+      // Trigger the scan
+      if (typeof doScan === 'function') doScan();
+    }
+    return;
+  }
+
+  if (isScanner || scanInput === document.activeElement) {
+    // Route to scan input
+    if (document.activeElement !== scanInput) {
+      // Scanner fired while another element had focus — take focus away silently
+      e.preventDefault();
+      scanInput.focus();
+      // Append char manually since we prevented default
+      if (e.key.length === 1) {
+        scanInput.value += e.key;
+      }
+    }
+    // Show active indicator
+    setScannerStatus(true);
+    clearTimeout(scannerTimer);
+    scannerTimer = setTimeout(function() { setScannerStatus(false); }, 1500);
+  } else {
+    // Printable character typed outside the input — redirect to scan input
+    if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
+      e.preventDefault();
+      scanInput.focus();
+      scanInput.value += e.key;
+      setScannerStatus(true);
+      clearTimeout(scannerTimer);
+      scannerTimer = setTimeout(function() { setScannerStatus(false); }, 1500);
+    }
+  }
+});
+
+// Keep scan input focused when clicking non-interactive areas
+document.addEventListener('click', function(e) {
+  var scanInput = getScanInput();
+  if (!scanInput) return;
+  var tag = e.target.tagName;
+  if (tag !== 'INPUT' && tag !== 'BUTTON' && tag !== 'SELECT' && tag !== 'TEXTAREA' && tag !== 'A') {
+    scanInput.focus();
+  }
+});
+
+setMeal(autoMeal());
+loadDash();
+setInterval(loadDash,30000);
+setInterval(updateClock,1000);
+updateClock();
+
+/*
+ * DEFINITIVE BARCODE SCANNER FIX
+ * The input field gets focus on load. If anything else steals focus,
+ * we return it within 10ms. The scanner just types fast — we ensure
+ * it always has somewhere to type.
+ */
+
+var SCAN_INPUT_ID = 'sInput';
+
+function getScanEl() {
+  return document.getElementById(SCAN_INPUT_ID);
+}
+
+// ── Keep scan input focused at all times ──────────────────────────
+function reclaimFocus() {
+  var el = getScanEl();
+  if (!el) return;
+  var active = document.activeElement;
+  // Only reclaim if nothing interactive has focus
+  if (!active || (active !== el &&
+      active.tagName !== 'INPUT' &&
+      active.tagName !== 'SELECT' &&
+      active.tagName !== 'TEXTAREA' &&
+      active.tagName !== 'BUTTON' &&
+      !active.getAttribute('contenteditable'))) {
+    el.focus();
+  }
+}
+
+// Reclaim focus whenever the user clicks background / table rows / panels
+document.addEventListener('click', function(e) {
+  var t = e.target;
+  if (t.tagName !== 'INPUT' && t.tagName !== 'BUTTON' &&
+      t.tagName !== 'SELECT' && t.tagName !== 'A') {
+    setTimeout(reclaimFocus, 10);
+  }
+});
+
+// Reclaim focus if blur fires on our input (something else stole it)
+document.addEventListener('focusin', function(e) {
+  // do nothing — the user intentionally focused something else
+});
+
+// Give focus immediately and keep polling every 200ms as a safety net
+setTimeout(function() { reclaimFocus(); }, 100);
+setInterval(reclaimFocus, 200);
+
+// ── Handle Enter key (scanner sends Enter after the barcode) ──────
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Enter') return;
+  var scanEl = getScanEl();
+  if (!scanEl) return;
+  // If enter pressed anywhere (not inside another explicit input), trigger scan
+  var active = document.activeElement;
+  if (!active || active === scanEl ||
+      (active.tagName !== 'INPUT' && active.tagName !== 'TEXTAREA')) {
+    e.preventDefault();
+    if (scanEl.value.trim()) {
+      if (typeof doScan === 'function') doScan();
+    }
+  }
+});
+
+// ── Scanner status dot ────────────────────────────────────────────
+var _lastInput = '';
+var _dotTimer  = null;
+function updateDot(active) {
+  var dot = document.getElementById('scannerDot');
+  var lbl = document.getElementById('scannerLabel');
+  if (!dot || !lbl) return;
+  if (active) {
+    dot.style.background = '#f59e0b';
+    dot.style.boxShadow  = '0 0 0 5px rgba(245,158,11,.3)';
+    lbl.textContent = 'Scanning…';
+    lbl.style.color = '#f59e0b';
+  } else {
+    dot.style.background = '#22c55e';
+    dot.style.boxShadow  = '0 0 0 4px rgba(34,197,94,.15)';
+    lbl.textContent = 'Scanner Ready';
+    lbl.style.color = '#22c55e';
+  }
+}
+
+// Watch for characters appearing in the input field
+setInterval(function() {
+  var el = getScanEl();
+  if (!el) return;
+  if (el.value !== _lastInput) {
+    _lastInput = el.value;
+    if (el.value) {
+      updateDot(true);
+      clearTimeout(_dotTimer);
+      _dotTimer = setTimeout(function() { updateDot(false); _lastInput = ''; }, 1500);
+    } else {
+      updateDot(false);
+    }
+  }
+}, 50);// ── NEW TERM RESET ────────────────────────────────────────
+async function loadTermStats() {
+  document.getElementById('termConfirm').value = '';
+  document.getElementById('termBtn').disabled = true;
+  document.getElementById('termBtn').style.opacity = '.4';
+  const d = await api('/dining/dashboard/');
+  if (!d) return;
+  const total = (d.today_breakfast||0) + (d.today_lunch||0) + (d.today_supper||0);
+  document.getElementById('termStats').innerHTML =
+    '<strong>Records that will be deleted:</strong><br>'
+    + '🍳 Breakfast scans: <strong>' + (d.today_breakfast||0) + '</strong><br>'
+    + '🍽️ Lunch scans: <strong>' + (d.today_lunch||0) + '</strong><br>'
+    + '🌙 Supper scans: <strong>' + (d.today_supper||0) + '</strong><br>'
+    + '📊 Total today: <strong>' + total + '</strong>';
+}
+function checkTermConfirm() {
+  const ok = document.getElementById('termConfirm').value.trim() === 'NEW TERM';
+  document.getElementById('termBtn').disabled = !ok;
+  document.getElementById('termBtn').style.opacity = ok ? '1' : '.4';
+}
+async function doNewTerm() {
+  const btn = document.getElementById('termBtn');
+  btn.textContent = 'Resetting…'; btn.disabled = true;
+  const r = await post('/dining/new-term/', {confirm:'NEW TERM'});
+  if (r.ok) {
+    document.getElementById('termStats').innerHTML = '✅ <strong>Reset complete.</strong> ' + (r.data.records_deleted||0) + ' meal records deleted.';
+    document.getElementById('termConfirm').value = '';
+    btn.textContent = '🔄 Reset Meal Records Now';
+    btn.style.opacity = '.4';
+  } else {
+    btn.textContent = '🔄 Reset Meal Records Now';
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    alert('Error: ' + (r.data.error || 'Something went wrong.'));
+  }
+}
+
+// ── PRINT REPORT ──────────────────────────────────────────
+let reportData = [];   // full dataset for the current report
+
+function initReport() {
+  document.getElementById('rptDate').value = tod();
+  loadReport();
+}
+
+async function loadReport() {
+  const date   = document.getElementById('rptDate').value || tod();
+  const hostel = document.getElementById('rptHostel').value;
+  const filter = document.getElementById('rptFilter').value;
+
+  // Fetch all meal records for the date
+  let url = `/dining/register/?date=${date}`;
+  if (hostel) url += `&hostel=${encodeURIComponent(hostel)}`;
+  const records = await api(url);
+  const list    = Array.isArray(records) ? records : (records?.results || []);
+
+  // Also fetch eligible students so we can show students with zero meals
+  const eligData = await api('/dining/eligible/');
+  const eligible = eligData?.students || [];
+
+  // Populate hostel dropdown from eligible list (once)
+  const hostels = [...new Set(eligible.map(s => s.hostel).filter(Boolean))].sort();
+  const sel = document.getElementById('rptHostel');
+  if (sel.options.length <= 1) {
+    hostels.forEach(h => { const o=document.createElement('option'); o.value=h; o.textContent=h; sel.appendChild(o); });
+  }
+
+  // Build a map: student_number → { info, breakfast, lunch, supper }
+  const map = {};
+
+  // Seed from eligible list
+  eligible.forEach(s => {
+    map[s.student_number] = {
+      student_number: s.student_number,
+      full_name: s.full_name,
+      hostel: s.hostel || '—',
+      gender: s.gender,
+      barcode_id: s.barcode_id,
+      breakfast: null,
+      lunch: null,
+      supper: null,
+    };
+  });
+
+  // Fill in scan records
+  list.forEach(r => {
+    const key = r.student_number || r.scanned_barcode;
+    if (!map[key]) {
+      map[key] = {
+        student_number: key,
+        full_name: r.student_name || '—',
+        hostel: r.hostel || '—',
+        gender: '—',
+        barcode_id: r.scanned_barcode || key,
+        breakfast: null,
+        lunch: null,
+        supper: null,
+      };
+    }
+    const meal = r.meal_type;
+    const status = r.scan_status; // served / denied / duplicate
+    if (meal === 'Breakfast') map[key].breakfast = status;
+    else if (meal === 'Lunch')  map[key].lunch    = status;
+    else if (meal === 'Supper') map[key].supper   = status;
+  });
+
+  // Convert to array; filter by hostel if selected
+  let rows = Object.values(map);
+  if (hostel) rows = rows.filter(r => r.hostel === hostel);
+
+  // Apply view filter
+  if (filter === 'any')  rows = rows.filter(r => r.breakfast||r.lunch||r.supper);
+  if (filter === 'all3') rows = rows.filter(r => r.breakfast==='served'&&r.lunch==='served'&&r.supper==='served');
+  if (filter === 'none') rows = rows.filter(r => !r.breakfast&&!r.lunch&&!r.supper);
+
+  rows.sort((a,b) => (a.full_name||'').localeCompare(b.full_name||''));
+  reportData = rows;
+
+  // Summary
+  const served  = (meal) => rows.filter(r=>r[meal]==='served').length;
+  const denied  = (meal) => rows.filter(r=>r[meal]==='denied').length;
+  const totalAny = rows.filter(r=>r.breakfast||r.lunch||r.supper).length;
+  document.getElementById('rptSummary').innerHTML = `
+    <div style="background:#fff;border:1px solid var(--border);border-radius:9px;padding:11px 16px;font-size:.8rem">
+      <strong>Total Students:</strong> ${rows.length}
+    </div>
+    <div style="background:#e8f7f0;border:1px solid #6ee7b7;border-radius:9px;padding:11px 16px;font-size:.8rem">
+      ☀️ Breakfast: <strong>${served('breakfast')}</strong> served
+    </div>
+    <div style="background:#fef9e8;border:1px solid #fcd34d;border-radius:9px;padding:11px 16px;font-size:.8rem">
+      🌤️ Lunch: <strong>${served('lunch')}</strong> served
+    </div>
+    <div style="background:#ede9fe;border:1px solid #c4b5fd;border-radius:9px;padding:11px 16px;font-size:.8rem">
+      🌙 Supper: <strong>${served('supper')}</strong> served
+    </div>
+    <div style="background:#f0f4ff;border:1px solid var(--border);border-radius:9px;padding:11px 16px;font-size:.8rem">
+      👥 Had any meal: <strong>${totalAny}</strong>
+    </div>`;
+
+  // Render table
+  const tick = (status) => {
+    if (status === 'served')    return '<span class="meal-tick tick-y">✓</span>';
+    if (status === 'denied')    return '<span class="meal-tick" style="background:#fff0f0;color:var(--danger)">✗</span>';
+    if (status === 'duplicate') return '<span class="meal-tick" style="background:#fff7e0;color:#92400e">2×</span>';
+    return '<span class="meal-tick tick-n">—</span>';
+  };
+  const total = r => [r.breakfast, r.lunch, r.supper].filter(v=>v==='served').length;
+
+  document.getElementById('rptTbl').innerHTML = rows.length
+    ? rows.map((r,i) => `<tr style="${i%2===0?'':'background:#fafbff'}">
+        <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.student_number}</td>
+        <td><strong>${r.full_name}</strong></td>
+        <td>${r.hostel}</td>
+        <td style="text-align:center">${tick(r.breakfast)}</td>
+        <td style="text-align:center">${tick(r.lunch)}</td>
+        <td style="text-align:center">${tick(r.supper)}</td>
+        <td style="text-align:center">
+          <span style="display:inline-block;min-width:22px;padding:2px 7px;border-radius:100px;font-size:.72rem;font-weight:700;background:${total(r)===3?'#e8f7f0':total(r)===0?'var(--off)':'#fef3c7'};color:${total(r)===3?'var(--ok)':total(r)===0?'var(--muted)':'#92400e'}">
+            ${total(r)}/3
+          </span>
+        </td>
+      </tr>`).join('')
+    : '<tr class="er"><td colspan="7">No records found for this selection.</td></tr>';
+}
+
+function printReport() {
+  const date   = document.getElementById('rptDate').value || tod();
+  const hostel = document.getElementById('rptHostel').value || 'All Hostels';
+  const d      = new Date(date).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('rptPrintDate').textContent  = '📅 ' + d;
+  document.getElementById('rptPrintTime').textContent  = '🕐 Printed: ' + new Date().toLocaleTimeString('en-GB');
+  document.getElementById('rptPrintHostel').textContent = '🏠 Hostel: ' + hostel;
+  document.getElementById('rptHeader').style.display = 'block';
+  window.print();
+  document.getElementById('rptHeader').style.display = 'none';
+}
+
+</script>
+</body>
+</html>

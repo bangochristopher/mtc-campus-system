@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MTC — Gate Security</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#0d2b6b;--blue3:#2e5ccc;--gold:#c9a84c;--gold2:#e8c96a;--off:#f4f6fb;--text:#0d1b3e;--mid:#3a4a6b;--muted:#7a8db0;--border:#d4ddf0;--ok:#1a8a55;--danger:#c0392b;--warn:#d97706;}
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);display:flex;min-height:100vh;}
+.sb{width:240px;flex-shrink:0;background:var(--blue);position:fixed;top:0;left:0;height:100vh;display:flex;flex-direction:column;z-index:100;}
+.sb-head{padding:22px 18px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;}
+.sb-crest{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 0 0 4px rgba(201,168,76,.2);}
+.sb-name{font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;color:#fff;}.sb-role{font-size:.62rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;}
+.sb-nav{flex:1;padding:14px 10px;}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:9px;color:rgba(255,255,255,.6);font-size:.8rem;font-weight:500;cursor:pointer;transition:all .2s;margin-bottom:2px;}
+.ni:hover{background:rgba(255,255,255,.07);color:#fff;}.ni.active{background:rgba(201,168,76,.15);color:var(--gold2);}
+.npill{margin-left:auto;background:#ef4444;color:#fff;border-radius:100px;padding:1px 7px;font-size:.62rem;font-weight:700;}
+.sb-foot{padding:14px 10px;border-top:1px solid rgba(255,255,255,.08);}
+.su{display:flex;align-items:center;gap:10px;padding:8px 12px;margin-bottom:6px;}
+.su-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:.85rem;}
+.su-name{font-size:.75rem;font-weight:600;color:#fff;}.su-tag{font-size:.62rem;color:rgba(255,255,255,.4);}
+.btn-out{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:transparent;color:rgba(255,255,255,.5);font-size:.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.btn-out:hover{background:rgba(239,68,68,.15);color:#fca5a5;}
+.main{margin-left:240px;flex:1;display:flex;flex-direction:column;}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.page-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--text);}
+.content{padding:24px 28px;flex:1;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
+.sc{background:#fff;border-radius:12px;border:1px solid var(--border);padding:16px 18px;position:relative;overflow:hidden;}
+.sc-ico{position:absolute;top:12px;right:12px;font-size:1.2rem;opacity:.14;}
+.sc-lbl{font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.sc-val{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;line-height:1;}
+.sc-sub{font-size:.68rem;color:var(--muted);margin-top:4px;}
+.cg .sc-val{color:var(--gold);}.co .sc-val{color:var(--ok);}.cb .sc-val{color:var(--blue3);}.cr .sc-val{color:var(--danger);}
+.gate-panel{background:#fff;border-radius:16px;border:1px solid var(--border);padding:24px;margin-bottom:22px;}
+.gp-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.gp-title{font-family:'Playfair Display',serif;font-size:1.1rem;}
+.dir-row{display:flex;border:2px solid var(--border);border-radius:11px;overflow:hidden;}
+.db{padding:10px 20px;border:none;background:var(--off);font-size:.82rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;color:var(--mid);}
+.db.in.active{background:var(--ok);color:#fff;}.db.out.active{background:var(--danger);color:#fff;}
+.scan-row{display:flex;gap:8px;margin-bottom:14px;}
+.si{flex:1;padding:15px 18px;border-radius:11px;border:2px solid var(--border);background:var(--off);font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--text);outline:none;transition:all .2s;}
+.si:focus{border-color:var(--blue3);background:#fff;box-shadow:0 0 0 4px rgba(46,92,204,.08);}
+.btn-go{padding:15px 22px;border-radius:11px;border:none;font-weight:700;font-size:.88rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;color:#fff;white-space:nowrap;}
+.btn-go.in{background:linear-gradient(135deg,var(--ok),#2ecc71);}.btn-go.out{background:linear-gradient(135deg,var(--danger),#e74c3c);}
+.btn-go:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.2);}
+.rb{border-radius:12px;padding:16px 20px;display:none;animation:ri .3s ease;}
+@keyframes ri{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.rb.ok{background:linear-gradient(135deg,#e8f7f0,#d1fae5);border:2px solid #6ee7b7;}
+.rb.fl{background:linear-gradient(135deg,#fff0f0,#fee2e2);border:2px solid #fca5a5;}
+.rb-top{display:flex;align-items:center;gap:12px;}
+.rb-ico{font-size:1.7rem;}.rb-msg{font-size:.95rem;font-weight:700;}.rb-det{font-size:.78rem;opacity:.7;}
+.rb-info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.ri-item{background:rgba(255,255,255,.5);border-radius:8px;padding:9px 12px;}
+.ri-l{font-size:.64rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.6;margin-bottom:2px;}.ri-v{font-size:.82rem;font-weight:600;}
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sec-title{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--text);}
+.tw{background:#fff;border-radius:13px;border:1px solid var(--border);overflow:hidden;}
+.ts{padding:11px 16px;border-bottom:1px solid var(--off);display:flex;gap:8px;}
+.ts input,.ts select{padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:var(--off);font-family:'DM Sans',sans-serif;font-size:.78rem;color:var(--text);outline:none;}
+.ts input{flex:1;}.ts input:focus,.ts select:focus{border-color:var(--blue3);}
+table{width:100%;border-collapse:collapse;}
+th{padding:9px 14px;background:var(--off);border-bottom:1px solid var(--border);text-align:left;font-size:.65rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);}
+td{padding:10px 14px;border-bottom:1px solid var(--off);font-size:.8rem;color:var(--mid);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}tr:hover td{background:#f8faff;}
+.din{display:inline-block;padding:2px 8px;border-radius:100px;font-size:.66rem;font-weight:700;background:#e8f7f0;color:var(--ok);}
+.dout{display:inline-block;padding:2px 8px;border-radius:100px;font-size:.66rem;font-weight:700;background:#fff0f0;color:var(--danger);}
+.cflag{display:inline-block;padding:2px 8px;border-radius:100px;font-size:.66rem;font-weight:700;background:#fff0f0;color:var(--danger);}
+.er td{text-align:center;padding:30px;color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="sb">
+  <div class="sb-head"><div class="sb-crest">🔒</div><div><div class="sb-name">MTC</div><div class="sb-role">Gate Security</div></div></div>
+  <div class="sb-nav">
+    <div class="ni active" onclick="go('scanner')">🔍 Gate Scanner</div>
+    <div class="ni" onclick="go('oncampus')">🏫 On Campus Now</div>
+    <div class="ni" onclick="go('logs')">📋 Movement Log</div>
+    <div class="ni" onclick="go('incidents')">🚨 Incidents <span class="npill" id="incPill"></span></div>
+    <div class="ni" onclick="go('term')" style="margin-top:auto;color:#e74c3c">🔄 New Term Reset</div>
+  </div>
+  <div class="sb-foot">
+    <div class="su"><div class="su-av">🔒</div><div><div class="su-name" id="adminName">Admin</div><div class="su-tag">Security Admin</div></div></div>
+    <button class="btn-out" onclick="doLogout()">Sign Out</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="page-title" id="ptitle">Gate Scanner</div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <span id="clock" style="font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--mid)"></span>
+      <button style="padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--mid);font-size:.78rem;cursor:pointer;font-family:'DM Sans',sans-serif" onclick="loadDash()">🔄 Refresh</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <div id="sec-scanner">
+      <div class="stats">
+        <div class="sc cg"><div class="sc-ico">🏫</div><div class="sc-lbl">On Campus</div><div class="sc-val" id="sOC">—</div><div class="sc-sub">right now</div></div>
+        <div class="sc co"><div class="sc-ico">➡️</div><div class="sc-lbl">Entries</div><div class="sc-val" id="sEn">—</div><div class="sc-sub">today</div></div>
+        <div class="sc cb"><div class="sc-ico">⬅️</div><div class="sc-lbl">Exits</div><div class="sc-val" id="sEx">—</div><div class="sc-sub">today</div></div>
+        <div class="sc cr"><div class="sc-ico">🚨</div><div class="sc-lbl">Incidents</div><div class="sc-val" id="sInc">—</div><div class="sc-sub">total flagged</div></div>
+      </div>
+
+      <div class="gate-panel">
+        <div class="gp-top">
+          <div class="gp-title">🔐 Gate Scanner</div>
+          <div class="dir-row">
+            <button class="db in active" id="dir-IN" onclick="setDir('IN')">➡️ ENTRY (IN)</button>
+            <button class="db out" id="dir-OUT" onclick="setDir('OUT')">⬅️ EXIT (OUT)</button>
+          </div>
+        </div>
+        <div class="scan-row">
+          <input type="text" class="si" id="gInput" placeholder="Scan barcode or type ID card and press Enter…" autocomplete="off">
+          <button class="btn-go in" id="scanBtn" onclick="doScan()">SCAN ENTRY →</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <div id="scannerDot" style="width:10px;height:10px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,.15);flex-shrink:0;transition:all .3s;"></div>
+          <span id="scannerLabel" style="font-size:.76rem;color:var(--ok);font-weight:600;">Scanner Ready</span>
+          <span style="font-size:.72rem;color:var(--muted);margin-left:4px;">— plug in USB scanner and scan any card</span>
+        </div>
+        <div class="rb" id="rBox"></div>
+      </div>
+
+      <div>
+        <div class="sec-hd"><div class="sec-title">Live Gate Feed</div><span id="fDate" style="font-size:.75rem;color:var(--muted)"></span></div>
+        <div class="tw"><table><thead><tr><th>Time</th><th>Student</th><th>Hostel</th><th>Direction</th><th>Flag</th></tr></thead>
+        <tbody id="feedTbl"><tr class="er"><td colspan="5">No scans yet today.</td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <div id="sec-oncampus" style="display:none">
+      <div class="sec-hd"><div class="sec-title">On Campus Now</div><button style="padding:7px 13px;border-radius:8px;border:1px solid var(--border);background:#fff;font-size:.78rem;cursor:pointer;font-family:'DM Sans',sans-serif" onclick="loadOnCampus()">🔄 Refresh</button></div>
+      <div class="tw"><table><thead><tr><th>Student Number</th><th>Full Name</th><th>Hostel</th><th>Entry Time</th></tr></thead>
+      <tbody id="onTbl"><tr class="er"><td colspan="4">Loading…</td></tr></tbody></table></div>
+    </div>
+
+    <div id="sec-logs" style="display:none">
+      <div class="sec-hd"><div class="sec-title">Movement Log</div></div>
+      <div class="tw">
+        <div class="ts">
+          <input type="date" id="lDate" onchange="loadLogs()">
+          <select id="lDir" onchange="loadLogs()"><option value="">All</option><option value="IN">Entry (IN)</option><option value="OUT">Exit (OUT)</option></select>
+          <input type="text" id="lQ" placeholder="Search student…" oninput="loadLogs()">
+        </div>
+        <table><thead><tr><th>Time</th><th>Student</th><th>Number</th><th>Hostel</th><th>Direction</th><th>Flag</th></tr></thead>
+        <tbody id="logTbl"><tr class="er"><td colspan="6">Loading…</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <div id="sec-incidents" style="display:none">
+      <div class="sec-hd"><div class="sec-title">🚨 Security Incidents</div><span id="incCnt" style="font-size:.78rem;color:var(--danger);font-weight:600"></span></div>
+      <div class="tw"><table><thead><tr><th>Date</th><th>Time</th><th>Unknown Barcode</th><th>Direction</th><th>Reason</th></tr></thead>
+      <tbody id="incTbl"><tr class="er"><td colspan="5">Loading…</td></tr></tbody></table></div>
+    </div>
+
+    <div id="sec-term" style="display:none">
+      <div class="sec-hd"><div class="sec-title">🔄 New Term Reset</div></div>
+      <div style="max-width:520px;margin:0 auto;padding:24px 0">
+        <div style="background:#fff8f0;border:1.5px solid #f0a500;border-radius:12px;padding:20px 22px;margin-bottom:20px;font-size:.85rem;color:#7a4500;line-height:1.7">
+          ⚠️ <strong>This cannot be undone.</strong><br>
+          All gate logs and security incidents for this term will be permanently deleted.<br>
+          Student and accommodation records are <strong>not</strong> affected.
+        </div>
+        <div style="background:var(--off);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:20px;font-size:.83rem" id="termStats">Loading counts…</div>
+        <div style="margin-bottom:16px">
+          <label style="display:block;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Type <strong>NEW TERM</strong> to confirm *</label>
+          <input type="text" id="termConfirm" placeholder="NEW TERM" autocomplete="off"
+            style="width:100%;padding:10px 13px;border-radius:8px;border:1.5px solid #e74c3c;background:#fff8f8;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--text);outline:none;box-sizing:border-box"
+            oninput="checkTermConfirm()">
+        </div>
+        <button id="termBtn" disabled onclick="doNewTerm()"
+          style="width:100%;padding:11px;border-radius:9px;border:none;background:#e74c3c;color:#fff;font-size:.88rem;font-weight:600;cursor:pointer;opacity:.4;transition:opacity .2s">
+          🔄 Reset Gate Records Now
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const T = () => localStorage.getItem('mtc_token');
+let dir = 'IN';
+
+if (!T() || localStorage.getItem('mtc_role') !== 'security') window.location.href = '/login/';
+document.getElementById('adminName').textContent = localStorage.getItem('mtc_name') || 'Admin';
+
+function doLogout() {
+  fetch('/api/auth/logout/', {method:'POST', headers:{Authorization:'Bearer '+T(),'Content-Type':'application/json'}, body:JSON.stringify({refresh:localStorage.getItem('mtc_refresh')})}).catch(()=>{});
+  localStorage.clear(); window.location.href = '/login/';
+}
+
+async function api(path) {
+  const r = await fetch('/api' + path, {headers:{Authorization:'Bearer '+T()}});
+  if (r.status===401){localStorage.clear();window.location.href='/login/';}
+  return r.json().catch(()=>null);
+}
+async function post(path, body) {
+  const r = await fetch('/api'+path, {method:'POST', headers:{Authorization:'Bearer '+T(),'Content-Type':'application/json'}, body:JSON.stringify(body)});
+  if(r.status===401){localStorage.clear();window.location.href='/login/';}
+  return {ok:r.ok, data:await r.json().catch(()=>({}))};
+}
+
+function go(name) {
+  ['scanner','oncampus','logs','incidents','term'].forEach(s=>document.getElementById('sec-'+s).style.display=s===name?'':'none');
+  document.getElementById('ptitle').textContent={scanner:'Gate Scanner',oncampus:'On Campus Now',logs:'Movement Log',incidents:'Security Incidents',term:'New Term Reset'}[name];
+  if(name==='oncampus')loadOnCampus();
+  if(name==='logs'){document.getElementById('lDate').value=tod();loadLogs();}
+  if(name==='incidents')loadIncidents();
+  if(name==='term')loadTermStats();
+}
+
+function tod(){return new Date().toISOString().split('T')[0];}
+
+function setDir(d) {
+  dir=d;
+  ['IN','OUT'].forEach(x=>document.getElementById('dir-'+x).classList.remove('active'));
+  document.getElementById('dir-'+d).classList.add('active');
+  const b=document.getElementById('scanBtn');
+  b.textContent=d==='IN'?'SCAN ENTRY →':'SCAN EXIT →';
+  b.className='btn-go '+(d==='IN'?'in':'out');
+}
+
+async function doScan() {
+  const barcode=document.getElementById('gInput').value.trim();if(!barcode)return;
+  document.getElementById('rBox').style.display='none';
+  const r=await post('/security/scan/',{barcode,direction:dir});
+  showResult(r);
+  document.getElementById('gInput').value='';
+  document.getElementById('gInput').focus();
+  loadDash();
+}
+
+function showResult({ok,data:d}){
+  const rb=document.getElementById('rBox');
+  let cls,ico,msg,det,info='';
+  if(d.result==='logged'){
+    cls='ok';ico=dir==='IN'?'✅':'👋';msg=d.message;det=dir==='IN'?'Entry recorded.':'Exit recorded.';
+    const s=d.student||{};
+    info=`<div class="ri-item"><div class="ri-l">Name</div><div class="ri-v">${s.name||'—'}</div></div>
+          <div class="ri-item"><div class="ri-l">Direction</div><div class="ri-v">${dir==='IN'?'➡️ Entry':'⬅️ Exit'}</div></div>
+          <div class="ri-item"><div class="ri-l">Hostel</div><div class="ri-v">${s.hostel||'—'}</div></div>`;
+  } else {
+    cls='fl';ico='🚨';msg=d.message;det='Unknown barcode — flagged as incident.';
+    info=`<div class="ri-item"><div class="ri-l">Barcode</div><div class="ri-v" style="font-family:'JetBrains Mono',monospace">${d.log?.scanned_barcode||'—'}</div></div>`;
+  }
+  rb.className='rb '+cls;
+  rb.innerHTML=`<div class="rb-top"><div class="rb-ico">${ico}</div><div><div class="rb-msg">${msg}</div><div class="rb-det">${det}</div></div></div><div class="rb-info">${info}</div>`;
+  rb.style.display='block';setTimeout(()=>{rb.style.display='none';},9000);
+}
+
+async function loadDash(){
+  const d=await api('/security/dashboard/');if(!d)return;
+  document.getElementById('sOC').textContent=d.on_campus;
+  document.getElementById('sEn').textContent=d.today_entries;
+  document.getElementById('sEx').textContent=d.today_exits;
+  document.getElementById('sInc').textContent=d.total_incidents;
+  document.getElementById('incPill').textContent=d.today_incidents||'';
+  document.getElementById('fDate').textContent=d.today;
+  document.getElementById('feedTbl').innerHTML=d.recent_logs?.length
+    ?d.recent_logs.map(l=>`<tr>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.75rem">${(l.log_time||'').slice(0,5)}</td>
+      <td>${l.student_name||`<em style="color:var(--muted)">${l.scanned_barcode}</em>`}<br><small style="color:var(--muted)">${l.student_number||''}</small></td>
+      <td>${l.hostel||'—'}</td>
+      <td><span class="${l.direction==='IN'?'din':'dout'}">${l.direction==='IN'?'➡️ IN':'⬅️ OUT'}</span></td>
+      <td>${l.is_flagged?'<span class="cflag">🚨 FLAGGED</span>':'—'}</td>
+    </tr>`).join(''):'<tr class="er"><td colspan="5">No scans yet today.</td></tr>';
+}
+
+async function loadOnCampus(){
+  const d=await api('/security/on-campus/');
+  document.getElementById('onTbl').innerHTML=d?.students?.length
+    ?d.students.map(s=>`<tr>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.8rem">${s.student_number}</td>
+      <td>${s.full_name}</td><td>${s.hostel||'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.75rem">${s.entry_time||'—'}</td>
+    </tr>`).join(''):'<tr class="er"><td colspan="4">No students on campus.</td></tr>';
+}
+
+async function loadLogs(){
+  let url=`/security/logs/?date=${document.getElementById('lDate').value||tod()}`;
+  const d=document.getElementById('lDir').value, q=document.getElementById('lQ').value;
+  if(d)url+=`&direction=${d}`;if(q)url+=`&student=${q}`;
+  const data=await api(url);
+  const list=Array.isArray(data)?data:data?.results||[];
+  document.getElementById('logTbl').innerHTML=list.length?list.map(l=>`<tr>
+    <td style="font-family:'JetBrains Mono',monospace;font-size:.75rem">${(l.log_time||'').slice(0,5)}</td>
+    <td>${l.student_name||'Unknown'}</td>
+    <td style="font-family:'JetBrains Mono',monospace;font-size:.75rem">${l.student_number||l.scanned_barcode}</td>
+    <td>${l.hostel||'—'}</td>
+    <td><span class="${l.direction==='IN'?'din':'dout'}">${l.direction==='IN'?'➡️ IN':'⬅️ OUT'}</span></td>
+    <td>${l.is_flagged?'<span class="cflag">🚨</span>':'—'}</td>
+  </tr>`).join(''):'<tr class="er"><td colspan="6">No logs for this selection.</td></tr>';
+}
+
+async function loadIncidents(){
+  const data=await api('/security/incidents/');
+  const list=Array.isArray(data)?data:data?.results||[];
+  document.getElementById('incCnt').textContent=`${list.length} incidents`;
+  document.getElementById('incTbl').innerHTML=list.length?list.map(l=>`<tr>
+    <td>${l.log_date}</td>
+    <td style="font-family:'JetBrains Mono',monospace;font-size:.75rem">${(l.log_time||'').slice(0,5)}</td>
+    <td style="font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--danger)">${l.scanned_barcode}</td>
+    <td><span class="${l.direction==='IN'?'din':'dout'}">${l.direction}</span></td>
+    <td style="font-size:.75rem">${l.flag_reason||'Unknown'}</td>
+  </tr>`).join(''):'<tr class="er"><td colspan="5">No incidents. ✅</td></tr>';
+}
+
+function updateClock(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-GB');}
+/*
+ * GLOBAL BARCODE SCANNER INTERCEPT
+ * ──────────────────────────────────────────────────────────────────
+ * USB barcode scanners (like Winson WAI-6510) work as HID keyboards:
+ * they type all characters very fast (< 50ms between each key) then
+ * send Enter.  Normal typing is much slower (> 50ms between keys).
+ *
+ * This code:
+ *   1. Intercepts ALL keystrokes at the document level
+ *   2. If keys come faster than SCAN_SPEED_MS → it's a scanner
+ *   3. Routes scanner characters into the scan input field
+ *   4. On Enter → triggers the scan automatically
+ *   5. If the scan input already has focus → normal keyboard events
+ *      still work (manual typing also submits on Enter)
+ *   6. Shows a live "Scanner Ready" / "Scanner Active" indicator
+ * ──────────────────────────────────────────────────────────────────
+ */
+const SCAN_SPEED_MS = 50;   // keystrokes faster than this = scanner
+let   scanBuffer    = '';
+let   lastKeyTime   = 0;
+let   scannerActive = false;
+let   scannerTimer  = null;
+
+function getScanInput() {
+  // Returns the currently visible scan input field
+  return document.getElementById('gInput') || document.getElementById('sInput');
+}
+
+function setScannerStatus(active) {
+  scannerActive = active;
+  var dot  = document.getElementById('scannerDot');
+  var lbl  = document.getElementById('scannerLabel');
+  if (!dot || !lbl) return;
+  if (active) {
+    dot.style.background = '#22c55e';
+    dot.style.boxShadow  = '0 0 0 4px rgba(34,197,94,.25)';
+    lbl.textContent = 'Scanner Active…';
+  } else {
+    dot.style.background = '#22c55e';
+    dot.style.boxShadow  = '0 0 0 4px rgba(34,197,94,.15)';
+    lbl.textContent = 'Scanner Ready';
+  }
+}
+
+document.addEventListener('keydown', function(e) {
+  var scanInput = getScanInput();
+  if (!scanInput) return;
+
+  // If the event target is an input/select/textarea that is NOT the scan input,
+  // don't intercept — let the user type in other fields normally
+  var tag = document.activeElement ? document.activeElement.tagName : '';
+  if ((tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') &&
+      document.activeElement !== scanInput) {
+    return;
+  }
+
+  var now  = Date.now();
+  var gap  = now - lastKeyTime;
+  lastKeyTime = now;
+
+  // Ignore modifier-only keys
+  if (e.key === 'Shift' || e.key === 'Control' || e.key === 'Alt' || e.key === 'Meta') return;
+
+  var isScanner = gap < SCAN_SPEED_MS;
+
+  if (e.key === 'Enter') {
+    // Enter from scanner OR from manual typing in the input field
+    if (scanInput.value.trim()) {
+      e.preventDefault();
+      setScannerStatus(false);
+      scanBuffer = '';
+      // Trigger the scan
+      if (typeof doScan === 'function') doScan();
+    }
+    return;
+  }
+
+  if (isScanner || scanInput === document.activeElement) {
+    // Route to scan input
+    if (document.activeElement !== scanInput) {
+      // Scanner fired while another element had focus — take focus away silently
+      e.preventDefault();
+      scanInput.focus();
+      // Append char manually since we prevented default
+      if (e.key.length === 1) {
+        scanInput.value += e.key;
+      }
+    }
+    // Show active indicator
+    setScannerStatus(true);
+    clearTimeout(scannerTimer);
+    scannerTimer = setTimeout(function() { setScannerStatus(false); }, 1500);
+  } else {
+    // Printable character typed outside the input — redirect to scan input
+    if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
+      e.preventDefault();
+      scanInput.focus();
+      scanInput.value += e.key;
+      setScannerStatus(true);
+      clearTimeout(scannerTimer);
+      scannerTimer = setTimeout(function() { setScannerStatus(false); }, 1500);
+    }
+  }
+});
+
+// Keep scan input focused when clicking non-interactive areas
+document.addEventListener('click', function(e) {
+  var scanInput = getScanInput();
+  if (!scanInput) return;
+  var tag = e.target.tagName;
+  if (tag !== 'INPUT' && tag !== 'BUTTON' && tag !== 'SELECT' && tag !== 'TEXTAREA' && tag !== 'A') {
+    scanInput.focus();
+  }
+});
+
+loadDash();
+setInterval(loadDash,20000);setInterval(updateClock,1000);updateClock();
+
+/*
+ * DEFINITIVE BARCODE SCANNER FIX
+ * The input field gets focus on load. If anything else steals focus,
+ * we return it within 10ms. The scanner just types fast — we ensure
+ * it always has somewhere to type.
+ */
+
+var SCAN_INPUT_ID = 'gInput';
+
+function getScanEl() {
+  return document.getElementById(SCAN_INPUT_ID);
+}
+
+// ── Keep scan input focused at all times ──────────────────────────
+function reclaimFocus() {
+  var el = getScanEl();
+  if (!el) return;
+  var active = document.activeElement;
+  // Only reclaim if nothing interactive has focus
+  if (!active || (active !== el &&
+      active.tagName !== 'INPUT' &&
+      active.tagName !== 'SELECT' &&
+      active.tagName !== 'TEXTAREA' &&
+      active.tagName !== 'BUTTON' &&
+      !active.getAttribute('contenteditable'))) {
+    el.focus();
+  }
+}
+
+// Reclaim focus whenever the user clicks background / table rows / panels
+document.addEventListener('click', function(e) {
+  var t = e.target;
+  if (t.tagName !== 'INPUT' && t.tagName !== 'BUTTON' &&
+      t.tagName !== 'SELECT' && t.tagName !== 'A') {
+    setTimeout(reclaimFocus, 10);
+  }
+});
+
+// Reclaim focus if blur fires on our input (something else stole it)
+document.addEventListener('focusin', function(e) {
+  // do nothing — the user intentionally focused something else
+});
+
+// Give focus immediately and keep polling every 200ms as a safety net
+setTimeout(function() { reclaimFocus(); }, 100);
+setInterval(reclaimFocus, 200);
+
+// ── Handle Enter key (scanner sends Enter after the barcode) ──────
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Enter') return;
+  var scanEl = getScanEl();
+  if (!scanEl) return;
+  // If enter pressed anywhere (not inside another explicit input), trigger scan
+  var active = document.activeElement;
+  if (!active || active === scanEl ||
+      (active.tagName !== 'INPUT' && active.tagName !== 'TEXTAREA')) {
+    e.preventDefault();
+    if (scanEl.value.trim()) {
+      if (typeof doScan === 'function') doScan();
+    }
+  }
+});
+
+// ── Scanner status dot ────────────────────────────────────────────
+var _lastInput = '';
+var _dotTimer  = null;
+function updateDot(active) {
+  var dot = document.getElementById('scannerDot');
+  var lbl = document.getElementById('scannerLabel');
+  if (!dot || !lbl) return;
+  if (active) {
+    dot.style.background = '#f59e0b';
+    dot.style.boxShadow  = '0 0 0 5px rgba(245,158,11,.3)';
+    lbl.textContent = 'Scanning…';
+    lbl.style.color = '#f59e0b';
+  } else {
+    dot.style.background = '#22c55e';
+    dot.style.boxShadow  = '0 0 0 4px rgba(34,197,94,.15)';
+    lbl.textContent = 'Scanner Ready';
+    lbl.style.color = '#22c55e';
+  }
+}
+
+// Watch for characters appearing in the input field
+setInterval(function() {
+  var el = getScanEl();
+  if (!el) return;
+  if (el.value !== _lastInput) {
+    _lastInput = el.value;
+    if (el.value) {
+      updateDot(true);
+      clearTimeout(_dotTimer);
+      _dotTimer = setTimeout(function() { updateDot(false); _lastInput = ''; }, 1500);
+    } else {
+      updateDot(false);
+    }
+  }
+}, 50);
+
+// ── New Term Reset ────────────────────────────────────────
+async function loadTermStats() {
+  document.getElementById('termConfirm').value = '';
+  document.getElementById('termBtn').disabled = true;
+  document.getElementById('termBtn').style.opacity = '.4';
+  const d = await api('/security/dashboard/');
+  if (!d) return;
+  document.getElementById('termStats').innerHTML =
+    '<strong>Records that will be deleted:</strong><br>'
+    + '📥 Total entries logged: <strong>' + (d.today_entries||0) + '</strong><br>'
+    + '📤 Total exits logged: <strong>' + (d.today_exits||0) + '</strong><br>'
+    + '🚨 Total incidents: <strong>' + (d.total_incidents||0) + '</strong>';
+}
+
+function checkTermConfirm() {
+  const ok = document.getElementById('termConfirm').value.trim() === 'NEW TERM';
+  document.getElementById('termBtn').disabled = !ok;
+  document.getElementById('termBtn').style.opacity = ok ? '1' : '.4';
+}
+
+async function doNewTerm() {
+  const btn = document.getElementById('termBtn');
+  btn.textContent = 'Resetting…'; btn.disabled = true;
+  const r = await post('/security/new-term/', {confirm:'NEW TERM'});
+  if (r.ok) {
+    document.getElementById('termStats').innerHTML = '✅ <strong>Reset complete.</strong> ' + (r.data.records_deleted||0) + ' gate log records deleted.';
+    document.getElementById('termConfirm').value = '';
+    btn.textContent = '🔄 Reset Gate Records Now';
+    btn.style.opacity = '.4';
+    loadDash();
+  } else {
+    btn.textContent = '🔄 Reset Gate Records Now';
+    btn.disabled = false; btn.style.opacity = '1';
+    alert('Error: ' + (r.data.error || 'Something went wrong.'));
+  }
+}
+
+</script>
+</body>
+</html>

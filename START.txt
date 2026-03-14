@@ -1,0 +1,39 @@
+=======================================================
+  MTC CAMPUS MANAGEMENT SYSTEM — QUICK START
+=======================================================
+
+STEP 1 — Create the database (run once only):
+  Open pgAdmin or psql and run:
+    CREATE USER mtc_admin WITH PASSWORD 'mtc_password_2024';
+    CREATE DATABASE mutare_teachers_college OWNER mtc_admin;
+
+STEP 2 — Set up Python environment:
+  cd mtc_final
+  python -m venv venv
+  venv\Scripts\activate          (Windows)
+  source venv/bin/activate       (Mac/Linux)
+  pip install -r requirements.txt
+
+STEP 3 — Set up the database:
+  python manage.py makemigrations authentication accommodation dining security
+  python manage.py migrate
+  python manage.py seed_data
+
+STEP 4 — Run the server:
+  python manage.py runserver
+
+STEP 5 — Open in browser:
+  http://127.0.0.1:8000/          ← Login page
+  http://127.0.0.1:8000/portal/   ← Student portal
+
+=======================================================
+  DEMO LOGIN CREDENTIALS
+=======================================================
+  Accommodation: accom@mtc.ac.zw    / accom123
+  Dining:        dining@mtc.ac.zw   / dining123
+  Security:      security@mtc.ac.zw / security123
+=======================================================
+
+NOTE: Everything runs on ONE server at port 8000.
+      There is NO CORS issue because the frontend HTML
+      is served by Django itself — not opened as a file.

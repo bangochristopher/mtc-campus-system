@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MTC — Accommodation</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#0d2b6b;--blue3:#2e5ccc;
+  --gold:#c9a84c;--gold2:#e8c96a;
+  --off:#f4f6fb;--text:#0d1b3e;--mid:#3a4a6b;--muted:#7a8db0;--border:#d4ddf0;
+  --ok:#1a8a55;--danger:#c0392b;--warn:#d97706;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);display:flex;min-height:100vh;}
+.sb{width:230px;flex-shrink:0;background:var(--blue);position:fixed;top:0;left:0;height:100vh;display:flex;flex-direction:column;z-index:100;}
+.sb-head{padding:20px 16px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:11px;}
+.sb-crest{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.sb-name{font-family:'Playfair Display',serif;font-size:.88rem;font-weight:700;color:#fff;}
+.sb-role{font-size:.6rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;}
+.sb-nav{flex:1;padding:12px 8px;overflow-y:auto;}
+.ns{font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.3);padding:14px 10px 5px;}
+.ni{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;color:rgba(255,255,255,.6);font-size:.8rem;font-weight:500;cursor:pointer;transition:all .2s;margin-bottom:1px;}
+.ni:hover{background:rgba(255,255,255,.07);color:#fff;}
+.ni.active{background:rgba(201,168,76,.18);color:var(--gold2);}
+.npill{margin-left:auto;background:var(--gold);color:var(--blue);border-radius:100px;padding:1px 7px;font-size:.62rem;font-weight:700;}
+.ni-danger{color:rgba(252,165,165,.7)!important;}
+.ni-danger:hover{background:rgba(239,68,68,.18)!important;color:#fca5a5!important;}
+.sb-foot{padding:12px 8px;border-top:1px solid rgba(255,255,255,.08);}
+.su{display:flex;align-items:center;gap:9px;padding:8px 10px;margin-bottom:6px;}
+.su-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;}
+.su-name{font-size:.74rem;font-weight:600;color:#fff;}
+.su-tag{font-size:.6rem;color:rgba(255,255,255,.4);}
+.btn-out{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:transparent;color:rgba(255,255,255,.5);font-size:.74rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.btn-out:hover{background:rgba(239,68,68,.15);color:#fca5a5;}
+.main{margin-left:230px;flex:1;display:flex;flex-direction:column;}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:13px 26px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.page-title{font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--text);}
+.topbar-right{display:flex;align-items:center;gap:8px;}
+.btn-sm-top{padding:6px 13px;border-radius:7px;border:1px solid var(--border);background:#fff;color:var(--mid);font-size:.76rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.btn-sm-top:hover{border-color:var(--blue3);color:var(--blue);}
+.upd-txt{font-size:.72rem;color:var(--muted);}
+.content{padding:22px 26px;flex:1;}
+.api-status{border-radius:10px;padding:12px 16px;margin-bottom:18px;font-size:.8rem;font-weight:500;display:none;}
+.api-status.err{background:#fff0f0;border:1px solid #fca5a5;color:var(--danger);display:block;}
+.api-status.ok{background:#e8f7f0;border:1px solid #6ee7b7;color:var(--ok);display:block;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:22px;}
+.sc{background:#fff;border-radius:12px;border:1px solid var(--border);padding:17px 19px;position:relative;overflow:hidden;}
+.sc-ico{position:absolute;top:14px;right:14px;font-size:1.3rem;opacity:.13;}
+.sc-lbl{font-size:.67rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.sc-val{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;line-height:1;}
+.sc-sub{font-size:.7rem;color:var(--muted);margin-top:4px;}
+.cg .sc-val{color:var(--gold);}.cb .sc-val{color:var(--blue3);}.co .sc-val{color:var(--ok);}.cw .sc-val{color:var(--warn);}
+.sec{margin-bottom:22px;}
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;}
+.sec-title{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text);}
+.badge-count{padding:3px 10px;border-radius:100px;background:var(--blue);color:#fff;font-size:.68rem;font-weight:700;}
+.btn-p{padding:8px 16px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--blue),var(--blue3));color:#fff;font-size:.78rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:5px;transition:all .2s;}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(13,43,107,.25);}
+.btn-p:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.btn-danger{padding:8px 16px;border-radius:8px;border:none;background:linear-gradient(135deg,#b91c1c,var(--danger));color:#fff;font-size:.78rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:5px;transition:all .2s;}
+.btn-danger:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(192,57,43,.35);}
+.btn-a{padding:5px 10px;border-radius:6px;border:none;font-size:.72rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;background:#e8f7f0;color:var(--ok);}
+.btn-a:hover{background:var(--ok);color:#fff;}
+.btn-r{padding:5px 10px;border-radius:6px;border:none;font-size:.72rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;background:#fff0f0;color:var(--danger);}
+.btn-r:hover{background:var(--danger);color:#fff;}
+.btn-v{padding:5px 10px;border-radius:6px;border:none;font-size:.72rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;background:var(--off);color:var(--mid);}
+.btn-v:hover{background:var(--blue);color:#fff;}
+.hgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+.hcard{background:#fff;border-radius:12px;border:1px solid var(--border);padding:17px;position:relative;}
+.hc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;}
+.hc-name{font-weight:700;font-size:.95rem;}
+.chip{display:inline-block;padding:2px 8px;border-radius:100px;font-size:.64rem;font-weight:700;}
+.ch-f{background:#fde8f0;color:#9d174d;}.ch-m{background:#e8eef9;color:var(--blue);}.ch-x{background:#f0f9e8;color:var(--ok);}.ch-full{background:#fff0f0;color:var(--danger);}
+.hbar-wrap{background:var(--off);border-radius:100px;height:6px;margin-bottom:8px;overflow:hidden;}
+.hbar{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .5s;}
+.hbar.red{background:linear-gradient(90deg,#ef4444,#f87171);}
+.hc-stats{display:flex;justify-content:space-between;font-size:.73rem;color:var(--muted);}
+.hc-stats strong{color:var(--text);}
+.hc-loc{font-size:.7rem;color:var(--muted);margin-top:5px;}
+.hc-actions{display:flex;gap:5px;margin-top:11px;padding-top:10px;border-top:1px solid var(--off);}
+.empty-box{background:#fff;border-radius:12px;border:1px dashed var(--border);padding:30px;text-align:center;color:var(--muted);font-size:.84rem;}
+.tw{background:#fff;border-radius:12px;border:1px solid var(--border);overflow:hidden;}
+.t-filter{padding:11px 15px;border-bottom:1px solid var(--off);display:flex;gap:8px;}
+.t-filter input,.t-filter select{padding:7px 11px;border-radius:7px;border:1px solid var(--border);background:var(--off);font-family:'DM Sans',sans-serif;font-size:.78rem;color:var(--text);outline:none;}
+.t-filter input{flex:1;}
+.t-filter input:focus,.t-filter select:focus{border-color:var(--blue3);}
+table{width:100%;border-collapse:collapse;}
+th{padding:9px 13px;background:var(--off);border-bottom:1px solid var(--border);text-align:left;font-size:.65rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);}
+td{padding:10px 13px;border-bottom:1px solid var(--off);font-size:.79rem;color:var(--mid);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}tr:hover td{background:#f8faff;}
+td .actions{display:flex;gap:4px;flex-wrap:wrap;}
+.st-p{display:inline-block;padding:2px 8px;border-radius:100px;font-size:.67rem;font-weight:700;background:#fff7e0;color:#92400e;}
+.st-a{display:inline-block;padding:2px 8px;border-radius:100px;font-size:.67rem;font-weight:700;background:#e8f7f0;color:var(--ok);}
+.st-r{display:inline-block;padding:2px 8px;border-radius:100px;font-size:.67rem;font-weight:700;background:#fff0f0;color:var(--danger);}
+.empty-row td{text-align:center;padding:28px;color:var(--muted);}
+.error-row td{text-align:center;padding:20px;color:var(--danger);background:#fff8f8;}
+.semester-panel{background:#fff;border-radius:14px;border:2px solid #fca5a5;padding:22px 24px;}
+.sp-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;}
+.sp-icon{font-size:2rem;flex-shrink:0;}
+.sp-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--danger);margin-bottom:4px;}
+.sp-desc{font-size:.8rem;color:var(--mid);line-height:1.6;}
+.sp-what{background:#fff8f8;border-radius:9px;padding:14px 16px;margin-bottom:16px;font-size:.8rem;color:var(--mid);line-height:1.8;}
+.sp-keep{background:#f0f9e8;border-radius:9px;padding:12px 16px;margin-bottom:20px;font-size:.8rem;color:var(--ok);}
+.modal-bg{position:fixed;inset:0;background:rgba(13,27,62,.5);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal{background:#fff;border-radius:16px;width:480px;max-width:95vw;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;animation:popIn .22s ease;}
+@keyframes popIn{from{opacity:0;transform:scale(.95);}to{opacity:1;transform:scale(1);}}
+.modal-head{padding:18px 24px;border-bottom:1px solid var(--off);display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.1rem;}
+.modal-title.danger{color:var(--danger);}
+.modal-close{width:28px;height:28px;border-radius:50%;border:none;background:var(--off);cursor:pointer;font-size:.85rem;color:var(--muted);}
+.modal-close:hover{background:var(--border);}
+.modal-body{padding:20px 24px;overflow-y:auto;flex:1;}
+.modal-foot{padding:12px 24px;border-top:1px solid var(--off);display:flex;gap:8px;justify-content:flex-end;}
+.mfld{margin-bottom:13px;}
+.mfld label{display:block;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.mfld input,.mfld select{width:100%;padding:9px 12px;border-radius:7px;border:1.5px solid var(--border);background:var(--off);font-family:'DM Sans',sans-serif;font-size:.83rem;color:var(--text);outline:none;transition:border .2s;}
+.mfld input:focus,.mfld select:focus{border-color:var(--blue3);background:#fff;}
+.mfld input.danger-input:focus{border-color:var(--danger);background:#fff8f8;}
+.mg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px;}
+.dl{font-size:.65rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
+.dv{font-size:.83rem;color:var(--text);}
+.info-box{padding:9px 12px;background:var(--off);border-radius:7px;font-size:.8rem;}
+.inline-err{color:var(--danger);font-size:.78rem;margin-top:5px;display:none;}
+.warn-box{background:#fff7e0;border:1px solid #fcd34d;border-radius:9px;padding:12px 14px;font-size:.8rem;color:#92400e;margin-bottom:14px;line-height:1.6;}
+.toast{position:fixed;bottom:22px;right:22px;padding:12px 17px;border-radius:10px;background:var(--blue);color:#fff;font-size:.8rem;font-weight:500;box-shadow:0 6px 24px rgba(13,43,107,.3);z-index:999;transform:translateY(60px);opacity:0;transition:all .28s;max-width:340px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.ok{background:var(--ok);}.toast.er{background:var(--danger);}
+</style>
+</head>
+<body>
+
+<div class="sb">
+  <div class="sb-head">
+    <div class="sb-crest">🎓</div>
+    <div><div class="sb-name">MTC</div><div class="sb-role">Accommodation</div></div>
+  </div>
+  <div class="sb-nav">
+    <div class="ns">Overview</div>
+    <div class="ni active" id="nav-dashboard"   onclick="go('dashboard')">📊 Dashboard</div>
+    <div class="ni"        id="nav-hostels"      onclick="go('hostels')">🏠 Manage Hostels</div>
+    <div class="ns">Applications</div>
+    <div class="ni"        id="nav-applications" onclick="go('applications')">📋 All Applications</div>
+    <div class="ni"        id="nav-pending"       onclick="go('pending')">⏳ Pending <span class="npill" id="npill">0</span></div>
+    <div class="ni"        id="nav-residents"     onclick="go('residents')">✅ Residents</div>
+    <div class="ns">Administration</div>
+    <div class="ni ni-danger" id="nav-semester"  onclick="go('semester')">🔄 New Semester Reset</div>
+  </div>
+  <div class="sb-foot">
+    <div class="su">
+      <div class="su-av">👤</div>
+      <div><div class="su-name" id="adminName">Loading…</div><div class="su-tag">Accommodation Admin</div></div>
+    </div>
+    <button class="btn-out" onclick="doLogout()">Sign Out</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="page-title" id="ptitle">Dashboard</div>
+    <div class="topbar-right">
+      <button class="btn-sm-top" onclick="loadCurrent()">🔄 Refresh</button>
+      <span class="upd-txt" id="updTxt"></span>
+    </div>
+  </div>
+  <div class="content">
+    <div class="api-status" id="apiStatus"></div>
+
+    <!-- DASHBOARD -->
+    <div id="sec-dashboard">
+      <div class="stats">
+        <div class="sc cg"><div class="sc-ico">🛏️</div><div class="sc-lbl">Total Beds</div><div class="sc-val" id="sTB">—</div><div class="sc-sub">all hostels</div></div>
+        <div class="sc cb"><div class="sc-ico">👥</div><div class="sc-lbl">Occupied</div><div class="sc-val" id="sOC">—</div><div class="sc-sub">approved</div></div>
+        <div class="sc co"><div class="sc-ico">✅</div><div class="sc-lbl">Available</div><div class="sc-val" id="sAV">—</div><div class="sc-sub">remaining</div></div>
+        <div class="sc cw"><div class="sc-ico">⏳</div><div class="sc-lbl">Pending</div><div class="sc-val" id="sPN">—</div><div class="sc-sub">needs review</div></div>
+      </div>
+      <div class="sec">
+        <div class="sec-hd"><div class="sec-title">Hostel Overview</div><button class="btn-p" onclick="openAddHostel()">+ Add Hostel</button></div>
+        <div class="hgrid" id="hGrid"><div class="empty-box">Loading hostels…</div></div>
+      </div>
+      <div class="sec">
+        <div class="sec-hd"><div class="sec-title">Recent Applications</div><button class="btn-p" onclick="go('pending')">View Pending →</button></div>
+        <div class="tw"><table>
+          <thead><tr><th>Ref No.</th><th>Student</th><th>Hostel</th><th>Status</th><th>Applied</th><th></th></tr></thead>
+          <tbody id="recentTbl"><tr class="empty-row"><td colspan="6">Loading…</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- HOSTELS -->
+    <div id="sec-hostels" style="display:none">
+      <div class="sec">
+        <div class="sec-hd"><div class="sec-title">All Hostels</div><button class="btn-p" onclick="openAddHostel()">+ Add Hostel</button></div>
+        <div class="hgrid" id="hGridFull"><div class="empty-box">Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- ALL APPLICATIONS -->
+    <div id="sec-applications" style="display:none">
+      <div class="sec">
+        <div class="sec-hd"><div class="sec-title">All Applications</div></div>
+        <div class="tw">
+          <div class="t-filter">
+            <input type="text" id="searchQ" placeholder="Search by name or student number…" oninput="filterApps()">
+            <select id="filterStatus" onchange="filterApps()">
+              <option value="">All Status</option><option value="pending">Pending</option>
+              <option value="approved">Approved</option><option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <table>
+            <thead><tr><th>Ref No.</th><th>Student</th><th>Gender</th><th>Hostel</th><th>Status</th><th>Applied</th><th>Actions</th></tr></thead>
+            <tbody id="appTbl"><tr class="empty-row"><td colspan="7">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PENDING -->
+    <div id="sec-pending" style="display:none">
+      <div class="sec">
+        <div class="sec-hd"><div class="sec-title">Pending Applications</div><span class="badge-count" id="pendBadge">0</span></div>
+        <div class="tw"><table>
+          <thead><tr><th>Ref No.</th><th>Student</th><th>Gender</th><th>Condition</th><th>Hostel Pref.</th><th>Applied</th><th>Actions</th></tr></thead>
+          <tbody id="pendTbl"><tr class="empty-row"><td colspan="7">Loading…</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- RESIDENTS -->
+    <div id="sec-residents" style="display:none">
+      <div class="sec">
+        <div class="sec-hd"><div class="sec-title">Approved Residents</div></div>
+        <div class="tw"><table>
+          <thead><tr><th>Ref No.</th><th>Student</th><th>Phone</th><th>Gender</th><th>Hostel</th><th>Approved On</th></tr></thead>
+          <tbody id="resTbl"><tr class="empty-row"><td colspan="6">Loading…</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- NEW SEMESTER -->
+    <div id="sec-semester" style="display:none">
+      <div class="semester-panel">
+        <div class="sp-head">
+          <div class="sp-icon">🔄</div>
+          <div>
+            <div class="sp-title">New Semester / Term Reset</div>
+            <div class="sp-desc">Use at the start of a new semester to clear all student records and open fresh accommodation applications.</div>
+          </div>
+        </div>
+        <div class="sp-what">
+          <strong>This will permanently delete:</strong><br>
+          • All student records<br>
+          • All accommodation applications (pending, approved, rejected)<br><br>
+          <strong>All hostel bed counts will be reset to their original totals.</strong>
+        </div>
+        <div class="sp-keep">✅ <strong>Kept:</strong> Hostel names, bed totals, and all admin accounts are NOT affected.</div>
+        <button class="btn-danger" onclick="openSemesterModal()">🔄 Begin New Semester Reset…</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ADD HOSTEL MODAL -->
+<div class="modal-bg" id="modalHostel">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title" id="hostelModalTitle">Add New Hostel</div><button class="modal-close" onclick="closeModal('modalHostel')">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="editHostelId" value="">
+      <div class="mfld"><label>Hostel Name *</label><input type="text" id="hName" placeholder="e.g. Tsitsi"></div>
+      <div class="mg2">
+        <div class="mfld"><label>Total Beds *</label><input type="number" id="hBeds" placeholder="500" min="1" step="1"></div>
+        <div class="mfld"><label>Gender Type</label>
+          <select id="hGender"><option value="Female Only">Female Only</option><option value="Male Only">Male Only</option><option value="Mixed">Mixed</option></select>
+        </div>
+      </div>
+      <div class="mfld"><label>Location / Wing</label><input type="text" id="hLoc" placeholder="e.g. North Wing"></div>
+      <div class="inline-err" id="hostelErr"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-v" onclick="closeModal('modalHostel')">Cancel</button>
+      <button class="btn-p" id="hostelSubmitBtn" onclick="saveHostel()">Create Hostel</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE HOSTEL CONFIRM MODAL -->
+<div class="modal-bg" id="modalDeleteHostel">
+  <div class="modal" style="width:400px">
+    <div class="modal-head"><div class="modal-title danger">Delete Hostel</div><button class="modal-close" onclick="closeModal('modalDeleteHostel')">✕</button></div>
+    <div class="modal-body">
+      <div class="warn-box">Are you sure you want to delete <strong id="deleteHostelName"></strong>?<br>This cannot be undone. Hostels with approved residents cannot be deleted.</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-v" onclick="closeModal('modalDeleteHostel')">Cancel</button>
+      <button class="btn-danger" id="confirmDeleteHostelBtn" onclick="confirmDeleteHostel()">Delete Hostel</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP DETAIL MODAL -->
+<div class="modal-bg" id="modalApp">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">Application Details</div><button class="modal-close" onclick="closeModal('modalApp')">✕</button></div>
+    <div class="modal-body" id="modalAppBody">Loading…</div>
+    <div class="modal-foot" id="modalAppFoot"></div>
+  </div>
+</div>
+
+<!-- NEW SEMESTER MODAL -->
+<div class="modal-bg" id="modalSemester">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title danger">⚠️ Confirm New Semester Reset</div><button class="modal-close" onclick="closeModal('modalSemester')">✕</button></div>
+    <div class="modal-body">
+      <div class="warn-box"><strong>This cannot be undone.</strong><br>All student records and applications will be permanently deleted. Hostel bed counts will be reset.</div>
+      <div id="semesterStats" style="background:var(--off);border-radius:9px;padding:14px;margin-bottom:16px;font-size:.82rem;color:var(--mid)">Loading counts…</div>
+      <div class="mfld">
+        <label>Type <strong>NEW SEMESTER</strong> to confirm *</label>
+        <input type="text" id="semesterConfirm" class="danger-input" placeholder="NEW SEMESTER" autocomplete="off" oninput="checkSemConfirm()">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-v" onclick="closeModal('modalSemester')">Cancel</button>
+      <button class="btn-danger" id="semesterBtn" disabled onclick="doNewSemester()">🔄 Reset Now</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── AUTH ── */
+(function(){
+  if (!localStorage.getItem('mtc_token') || localStorage.getItem('mtc_role') !== 'accommodation') {
+    window.location.href = '/login/';
+  }
+})();
+document.getElementById('adminName').textContent = localStorage.getItem('mtc_name') || 'Admin';
+
+function doLogout() {
+  fetch('/api/auth/logout/', {method:'POST',headers:{'Authorization':'Bearer '+localStorage.getItem('mtc_token'),'Content-Type':'application/json'},body:JSON.stringify({refresh:localStorage.getItem('mtc_refresh')||''})}).catch(function(){});
+  localStorage.clear(); window.location.href='/login/';
+}
+
+/* ── STATUS BAR ── */
+function showErr(msg){ var e=document.getElementById('apiStatus'); e.textContent='⚠️ '+msg; e.className='api-status err'; }
+function clearErr(){ document.getElementById('apiStatus').className='api-status'; }
+
+/* ── API CALL ── */
+async function call(path, method, body) {
+  clearErr();
+  var opts = {
+    method: method||'GET',
+    headers: {'Authorization':'Bearer '+localStorage.getItem('mtc_token'), 'Content-Type':'application/json'}
+  };
+  if (body !== undefined && body !== null) opts.body = JSON.stringify(body);
+  var res, text;
+  try { res=await fetch('/api'+path, opts); text=await res.text(); }
+  catch(e) { showErr('Cannot reach server. Make sure Django is running: python manage.py runserver'); return null; }
+  if (res.status===401){ showErr('Session expired. Redirecting…'); setTimeout(function(){localStorage.clear();window.location.href='/login/';},1500); return null; }
+  if (res.status===403){ showErr('Permission denied. Are you logged in as Accommodation admin?'); return null; }
+  var data=null;
+  try{ data=JSON.parse(text); }catch(e){}
+  if (!res.ok){
+    var msg='HTTP '+res.status;
+    if(data){ msg=data.detail||data.error||JSON.stringify(data); }
+    showErr('API error: '+msg); return null;
+  }
+  if (data&&!Array.isArray(data)&&Array.isArray(data.results)) return data.results;
+  return data;
+}
+
+/* ── STATE ── */
+var allApplications = [];
+var currentSection  = 'dashboard';
+var allHostels      = [];
+var deleteHostelId  = null;
+
+/* ── NAV ── */
+function go(name){
+  currentSection=name;
+  ['dashboard','hostels','applications','pending','residents','semester'].forEach(function(s){
+    document.getElementById('sec-'+s).style.display = s===name?'':'none';
+    document.getElementById('nav-'+s).classList.toggle('active', s===name);
+  });
+  document.getElementById('ptitle').textContent = {dashboard:'Dashboard',hostels:'Manage Hostels',applications:'All Applications',pending:'Pending Applications',residents:'Approved Residents',semester:'New Semester Reset'}[name]||name;
+  if(name==='hostels')      fetchHostels();
+  if(name==='applications') fetchApplications('');
+  if(name==='pending')      fetchApplications('pending');
+  if(name==='residents')    fetchResidents();
+}
+function loadCurrent(){
+  if(currentSection==='dashboard')    fetchDashboard();
+  else if(currentSection==='hostels') fetchHostels();
+  else if(currentSection==='applications') fetchApplications('');
+  else if(currentSection==='pending')      fetchApplications('pending');
+  else if(currentSection==='residents')    fetchResidents();
+}
+
+/* ── DASHBOARD ── */
+async function fetchDashboard(){
+  var d=await call('/accommodation/admin/dashboard/'); if(!d) return;
+  document.getElementById('sTB').textContent = d.total_beds     !=null?d.total_beds:'0';
+  document.getElementById('sOC').textContent = d.occupied_beds  !=null?d.occupied_beds:'0';
+  document.getElementById('sAV').textContent = d.available_beds !=null?d.available_beds:'0';
+  document.getElementById('sPN').textContent = d.pending_count  !=null?d.pending_count:'0';
+  document.getElementById('npill').textContent     = d.pending_count||'0';
+  document.getElementById('pendBadge').textContent = d.pending_count!=null?d.pending_count:'0';
+  document.getElementById('updTxt').textContent = 'Updated '+new Date().toLocaleTimeString();
+  if(Array.isArray(d.hostels)){ allHostels=d.hostels; renderHostelCards('hGrid',allHostels); }
+  var apps=await call('/accommodation/admin/applications/');
+  if(apps!==null){ allApplications=Array.isArray(apps)?apps:[]; renderRecentTable(allApplications.slice(0,8)); }
+}
+
+/* ── HOSTELS ── */
+async function fetchHostels(){
+  var data=await call('/accommodation/hostels/'); if(data===null) return;
+  allHostels=Array.isArray(data)?data:[];
+  renderHostelCards('hGridFull',allHostels);
+}
+
+function renderHostelCards(id, list){
+  var g=document.getElementById(id);
+  if(!list||!list.length){ g.innerHTML='<div class="empty-box" style="grid-column:1/-1">No hostels yet. Click <strong>+ Add Hostel</strong>.</div>'; return; }
+  var html='';
+  list.forEach(function(h){
+    var occ = h.occupied_beds!=null?h.occupied_beds:(h.total_beds-h.available_beds);
+    var pct = h.occupancy_percent!=null?h.occupancy_percent:Math.round((occ/h.total_beds)*100)||0;
+    var full= h.is_full||h.available_beds===0;
+    var gc  = h.gender_type==='Female Only'?'ch-f':h.gender_type==='Male Only'?'ch-m':'ch-x';
+    html+='<div class="hcard">'
+      +'<div class="hc-top"><div class="hc-name">'+h.name+'</div>'
+      +'<span class="chip '+gc+(full?' ch-full':'')+'">'+( full?'FULL':h.gender_type)+'</span></div>'
+      +'<div class="hbar-wrap"><div class="hbar '+(pct>85?'red':'')+'" style="width:'+pct+'%"></div></div>'
+      +'<div class="hc-stats"><span>Available: <strong>'+h.available_beds+'</strong></span>'
+      +'<span>Occupied: <strong>'+occ+'</strong></span><span>'+pct+'%</span></div>'
+      +'<div class="hc-loc">📍 '+(h.location||'—')+'</div>'
+      +'<div class="hc-actions">'
+      +'<button class="btn-v" onclick="openEditHostel('+h.id+')">✏️ Edit</button>'
+      +'<button class="btn-r" onclick="openDeleteHostel('+h.id+',\''+h.name.replace(/'/g,"\\'")+'\')" >🗑️ Delete</button>'
+      +'</div>'
+      +'</div>';
+  });
+  g.innerHTML=html;
+}
+
+/* ── ADD / EDIT HOSTEL ── */
+function openAddHostel(){
+  document.getElementById('editHostelId').value='';
+  document.getElementById('hName').value='';
+  document.getElementById('hBeds').value='';
+  document.getElementById('hLoc').value='';
+  document.getElementById('hGender').value='Female Only';
+  document.getElementById('hostelErr').style.display='none';
+  document.getElementById('hostelModalTitle').textContent='Add New Hostel';
+  document.getElementById('hostelSubmitBtn').textContent='Create Hostel';
+  document.getElementById('hostelSubmitBtn').disabled=false;
+  openModal('modalHostel');
+  setTimeout(function(){ document.getElementById('hName').focus(); },100);
+}
+
+function openEditHostel(id){
+  var h=null;
+  for(var i=0;i<allHostels.length;i++){ if(allHostels[i].id===id){h=allHostels[i];break;} }
+  if(!h){ toast('Hostel not found — please refresh.','er'); return; }
+  document.getElementById('editHostelId').value=h.id;
+  document.getElementById('hName').value=h.name;
+  document.getElementById('hBeds').value=h.total_beds;
+  document.getElementById('hLoc').value=h.location||'';
+  document.getElementById('hGender').value=h.gender_type;
+  document.getElementById('hostelErr').style.display='none';
+  document.getElementById('hostelModalTitle').textContent='Edit Hostel';
+  document.getElementById('hostelSubmitBtn').textContent='Save Changes';
+  document.getElementById('hostelSubmitBtn').disabled=false;
+  openModal('modalHostel');
+}
+
+async function saveHostel(){
+  var editId  = document.getElementById('editHostelId').value;
+  var name    = document.getElementById('hName').value.trim();
+  var bedsRaw = document.getElementById('hBeds').value.trim();
+  var gender  = document.getElementById('hGender').value;
+  var loc     = document.getElementById('hLoc').value.trim();
+  var errEl   = document.getElementById('hostelErr');
+  var btn     = document.getElementById('hostelSubmitBtn');
+
+  errEl.style.display='none';
+  if(!name){ errEl.textContent='Hostel name is required.'; errEl.style.display='block'; document.getElementById('hName').focus(); return; }
+  var beds=parseInt(bedsRaw,10);
+  if(!bedsRaw||isNaN(beds)||beds<1){ errEl.textContent='Enter a valid number of beds (minimum 1).'; errEl.style.display='block'; document.getElementById('hBeds').focus(); return; }
+
+  btn.disabled=true;
+  btn.textContent=editId?'Saving…':'Creating…';
+
+  var payload={name:name, total_beds:beds, gender_type:gender, location:loc};
+  var result;
+  if(editId){
+    result=await call('/accommodation/hostels/'+editId+'/', 'PATCH', payload);
+  } else {
+    result=await call('/accommodation/hostels/', 'POST', payload);
+  }
+
+  btn.disabled=false;
+  btn.textContent=editId?'Save Changes':'Create Hostel';
+
+  if(result&&result.id){
+    toast(editId?'"'+name+'" updated!':'"'+name+'" created!','ok');
+    closeModal('modalHostel');
+    fetchDashboard();
+    if(currentSection==='hostels') fetchHostels();
+  } else if(result===null){
+    errEl.textContent='Failed — see the error bar at top of page.';
+    errEl.style.display='block';
+  }
+}
+
+/* ── DELETE HOSTEL ── */
+function openDeleteHostel(id, name){
+  deleteHostelId=id;
+  document.getElementById('deleteHostelName').textContent=name;
+  document.getElementById('confirmDeleteHostelBtn').disabled=false;
+  document.getElementById('confirmDeleteHostelBtn').textContent='Delete Hostel';
+  openModal('modalDeleteHostel');
+}
+
+async function confirmDeleteHostel(){
+  if(!deleteHostelId) return;
+  var btn=document.getElementById('confirmDeleteHostelBtn');
+  btn.disabled=true; btn.textContent='Deleting…';
+  var result=await call('/accommodation/hostels/'+deleteHostelId+'/', 'DELETE');
+  btn.disabled=false; btn.textContent='Delete Hostel';
+  // DELETE returns 200 with message or null on error
+  if(result!==null){
+    toast(result.message||'Hostel deleted.','ok');
+    closeModal('modalDeleteHostel');
+    deleteHostelId=null;
+    fetchDashboard();
+    if(currentSection==='hostels') fetchHostels();
+  }
+}
+
+/* ── APPLICATIONS ── */
+async function fetchApplications(status){
+  var url='/accommodation/admin/applications/'+(status?'?status='+status:'');
+  var data=await call(url); if(data===null) return;
+  allApplications=Array.isArray(data)?data:[];
+  if(status==='pending'){ renderPendingTable(allApplications); document.getElementById('pendBadge').textContent=allApplications.length; document.getElementById('npill').textContent=allApplications.length; }
+  else { renderAllAppsTable(allApplications); }
+}
+
+function renderPendingTable(list){
+  var t=document.getElementById('pendTbl');
+  if(!list.length){ t.innerHTML='<tr class="empty-row"><td colspan="7">No pending applications — all caught up! 🎉</td></tr>'; return; }
+  t.innerHTML=list.map(function(a){
+    var cond=a.student.condition!=='None'?'<span style="color:var(--danger);font-weight:600">'+a.student.condition+'</span>':'—';
+    return '<tr>'
+      +'<td><strong>'+a.reference_number+'</strong></td>'
+      +'<td><strong>'+a.student.full_name+'</strong><br><small style="color:var(--muted);font-family:\'JetBrains Mono\',monospace;font-size:.72rem">'+a.student.student_number+'</small></td>'
+      +'<td>'+a.student.gender+'</td><td>'+cond+'</td>'
+      +'<td>'+(a.hostel_name||'<em style="color:var(--muted)">No pref.</em>')+'</td>'
+      +'<td>'+fmtDate(a.date_applied)+'</td>'
+      +'<td><div class="actions">'
+      +'<button class="btn-v" onclick="viewApplication('+a.id+')">View</button>'
+      +'<button class="btn-a" onclick="approveApp('+a.id+')">✓ Approve</button>'
+      +'<button class="btn-r" onclick="rejectApp('+a.id+')">✗ Reject</button>'
+      +'</div></td></tr>';
+  }).join('');
+}
+
+function renderAllAppsTable(list){
+  var t=document.getElementById('appTbl');
+  if(!list.length){ t.innerHTML='<tr class="empty-row"><td colspan="7">No applications found.</td></tr>'; return; }
+  t.innerHTML=list.map(function(a){
+    var acts='<button class="btn-v" onclick="viewApplication('+a.id+')">View</button>';
+    if(a.status==='pending') acts+='<button class="btn-a" onclick="approveApp('+a.id+')">✓</button><button class="btn-r" onclick="rejectApp('+a.id+')">✗</button>';
+    return '<tr>'
+      +'<td><strong>'+a.reference_number+'</strong></td>'
+      +'<td><strong>'+a.student.full_name+'</strong><br><small style="color:var(--muted);font-family:\'JetBrains Mono\',monospace;font-size:.72rem">'+a.student.student_number+'</small></td>'
+      +'<td>'+a.student.gender+'</td><td>'+(a.hostel_name||'—')+'</td>'
+      +'<td><span class="'+stChip(a.status)+'">'+a.status+'</span></td>'
+      +'<td>'+fmtDate(a.date_applied)+'</td>'
+      +'<td><div class="actions">'+acts+'</div></td></tr>';
+  }).join('');
+}
+
+function renderRecentTable(list){
+  var t=document.getElementById('recentTbl');
+  if(!list||!list.length){ t.innerHTML='<tr class="empty-row"><td colspan="6">No applications yet.</td></tr>'; return; }
+  t.innerHTML=list.map(function(a){
+    return '<tr>'
+      +'<td><strong>'+a.reference_number+'</strong></td>'
+      +'<td><strong>'+a.student.full_name+'</strong><br><small style="color:var(--muted)">'+a.student.student_number+'</small></td>'
+      +'<td>'+(a.hostel_name||'—')+'</td>'
+      +'<td><span class="'+stChip(a.status)+'">'+a.status+'</span></td>'
+      +'<td>'+fmtDate(a.date_applied)+'</td>'
+      +'<td><button class="btn-v" onclick="viewApplication('+a.id+')">View</button></td></tr>';
+  }).join('');
+}
+
+function filterApps(){
+  var q=document.getElementById('searchQ').value.toLowerCase();
+  var st=document.getElementById('filterStatus').value;
+  renderAllAppsTable(allApplications.filter(function(a){
+    return (!q||(a.student.full_name+' '+a.student.student_number+' '+a.reference_number).toLowerCase().indexOf(q)!==-1)&&(!st||a.status===st);
+  }));
+}
+
+function viewApplication(id){
+  var a=null; for(var i=0;i<allApplications.length;i++){ if(allApplications[i].id===id){a=allApplications[i];break;} }
+  if(!a){ toast('Application not found.','er'); return; }
+  var cond=a.student.condition!=='None'?'<span style="color:var(--danger);font-weight:600">'+a.student.condition+'</span>':a.student.condition;
+  document.getElementById('modalAppBody').innerHTML='<div class="dg">'
+    +'<div><div class="dl">Reference No.</div><div class="dv"><strong>'+a.reference_number+'</strong></div></div>'
+    +'<div><div class="dl">Status</div><div class="dv"><span class="'+stChip(a.status)+'">'+a.status.toUpperCase()+'</span></div></div>'
+    +'<div><div class="dl">Full Name</div><div class="dv">'+a.student.full_name+'</div></div>'
+    +'<div><div class="dl">Student No.</div><div class="dv" style="font-family:\'JetBrains Mono\',monospace;font-size:.8rem">'+a.student.student_number+'</div></div>'
+    +'<div><div class="dl">Phone</div><div class="dv">'+a.student.phone_number+'</div></div>'
+    +'<div><div class="dl">Gender</div><div class="dv">'+a.student.gender+'</div></div>'
+    +'<div><div class="dl">Condition</div><div class="dv">'+cond+'</div></div>'
+    +'<div><div class="dl">Hostel Pref.</div><div class="dv">'+(a.hostel_name||'No preference')+'</div></div>'
+    +'<div><div class="dl">Date Applied</div><div class="dv">'+fmtDate(a.date_applied)+'</div></div>'
+    +'<div><div class="dl">Date Processed</div><div class="dv">'+fmtDate(a.date_processed)+'</div></div>'
+    +'</div>'
+    +'<div class="mfld"><label>Home Address</label><div class="info-box">'+(a.student.home_address||'—')+'</div></div>'
+    +(a.special_requirements?'<div class="mfld"><label>Special Requirements</label><div class="info-box">'+a.special_requirements+'</div></div>':'');
+  document.getElementById('modalAppFoot').innerHTML=a.status==='pending'
+    ?'<button class="btn-r" onclick="rejectApp('+a.id+');closeModal(\'modalApp\')">✗ Reject</button><button class="btn-p" onclick="approveApp('+a.id+');closeModal(\'modalApp\')">✓ Approve</button>'
+    :'<button class="btn-v" onclick="closeModal(\'modalApp\')">Close</button>';
+  openModal('modalApp');
+}
+
+async function approveApp(id){
+  var r=await call('/accommodation/admin/applications/'+id+'/approve/','POST');
+  if(r){ toast(r.message||'Approved!','ok'); doRefresh(); }
+}
+async function rejectApp(id){
+  if(!confirm('Reject this application?')) return;
+  var r=await call('/accommodation/admin/applications/'+id+'/reject/','POST');
+  if(r){ toast('Application rejected.',''); doRefresh(); }
+}
+function doRefresh(){
+  fetchDashboard();
+  if(currentSection==='pending')      fetchApplications('pending');
+  if(currentSection==='applications') fetchApplications('');
+  if(currentSection==='residents')    fetchResidents();
+}
+
+/* ── RESIDENTS ── */
+async function fetchResidents(){
+  var data=await call('/accommodation/admin/residents/');
+  var t=document.getElementById('resTbl');
+  if(data===null){ t.innerHTML='<tr class="error-row"><td colspan="6">Failed to load. Check error bar above.</td></tr>'; return; }
+  var list=Array.isArray(data)?data:[];
+  if(!list.length){ t.innerHTML='<tr class="empty-row"><td colspan="6">No approved residents yet.</td></tr>'; return; }
+  t.innerHTML=list.map(function(a){
+    return '<tr>'
+      +'<td><strong>'+a.reference_number+'</strong></td>'
+      +'<td><strong>'+a.student.full_name+'</strong><br><small style="color:var(--muted);font-family:\'JetBrains Mono\',monospace;font-size:.72rem">'+a.student.student_number+'</small></td>'
+      +'<td>'+a.student.phone_number+'</td><td>'+a.student.gender+'</td>'
+      +'<td>'+(a.hostel_name||'—')+'</td><td>'+fmtDate(a.date_processed)+'</td></tr>';
+  }).join('');
+}
+
+/* ── NEW SEMESTER ── */
+async function openSemesterModal(){
+  document.getElementById('semesterConfirm').value='';
+  document.getElementById('semesterBtn').disabled=true;
+  document.getElementById('semesterStats').textContent='Loading current counts…';
+  openModal('modalSemester');
+  var d=await call('/accommodation/admin/dashboard/');
+  if(d){
+    document.getElementById('semesterStats').innerHTML='<strong>Currently in the database:</strong><br>'
+      +'📋 '+d.total_applications+' applications ('+d.approved_applications+' approved, '+d.pending_count+' pending, '+d.rejected_applications+' rejected)<br>'
+      +'🛏️ '+d.total_beds+' total beds across '+d.hostels.length+' hostel(s)';
+  }
+}
+function checkSemConfirm(){
+  document.getElementById('semesterBtn').disabled=(document.getElementById('semesterConfirm').value!=='NEW SEMESTER');
+}
+async function doNewSemester(){
+  if(document.getElementById('semesterConfirm').value!=='NEW SEMESTER') return;
+  var btn=document.getElementById('semesterBtn'); btn.disabled=true; btn.textContent='Resetting…';
+  var r=await call('/accommodation/admin/new-semester/','POST',{confirm:'NEW SEMESTER'});
+  btn.textContent='🔄 Reset Now';
+  if(r){
+    closeModal('modalSemester');
+    toast('Reset complete! '+r.applications_deleted+' applications and '+r.students_deleted+' students removed.','ok');
+    fetchDashboard();
+  }
+}
+
+/* ── HELPERS ── */
+function stChip(s){ return s==='approved'?'st-a':s==='rejected'?'st-r':'st-p'; }
+function fmtDate(d){ if(!d) return '—'; return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function toast(msg,type){ var t=document.getElementById('toast'); t.textContent=msg; t.className='toast '+(type||''); t.classList.add('show'); clearTimeout(t._tm); t._tm=setTimeout(function(){t.classList.remove('show');},5000); }
+
+/* ── INIT ── */
+fetchDashboard();
+setInterval(fetchDashboard,90000);
+</script>
+</body>
+</html>

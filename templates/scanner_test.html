@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Scanner Diagnostic</title>
+<style>
+body{font-family:monospace;background:#0d1117;color:#e6edf3;padding:30px;margin:0;}
+h2{color:#58a6ff;margin-bottom:8px;}
+.sub{color:#8b949e;font-size:.85rem;margin-bottom:24px;}
+.box{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:20px;margin-bottom:20px;}
+.box h3{color:#58a6ff;font-size:.9rem;margin-bottom:12px;text-transform:uppercase;letter-spacing:.08em;}
+#rawLog{height:260px;overflow-y:auto;font-size:.82rem;line-height:1.8;}
+.ev{padding:2px 0;border-bottom:1px solid #21262d;}
+.ev .t{color:#3fb950;}
+.ev .k{color:#ffa657;}
+.ev .c{color:#f78166;}
+.ev .g{color:#8b949e;}
+.ev.enter{background:rgba(63,185,80,.08);}
+#status{font-size:1.1rem;font-weight:bold;padding:14px 18px;border-radius:8px;background:#1f2937;color:#fbbf24;margin-bottom:16px;}
+#status.ready{background:#052e16;color:#4ade80;}
+#status.scanning{background:#1e3a5f;color:#60a5fa;animation:pulse 0.5s infinite alternate;}
+@keyframes pulse{from{opacity:.7}to{opacity:1}}
+#capturedValue{font-size:1.4rem;color:#fbbf24;padding:12px 16px;background:#1c1409;border-radius:8px;margin-bottom:16px;min-height:44px;letter-spacing:.1em;word-break:break-all;}
+.stat-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+.stat{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:10px 14px;min-width:120px;}
+.stat .lbl{font-size:.7rem;color:#8b949e;text-transform:uppercase;margin-bottom:4px;}
+.stat .val{font-size:1.3rem;color:#e6edf3;font-weight:bold;}
+#gapList{color:#8b949e;font-size:.78rem;line-height:2;}
+.gap-fast{color:#4ade80;font-weight:bold;}
+.gap-slow{color:#f87171;}
+button{padding:8px 16px;border-radius:6px;border:none;background:#21262d;color:#e6edf3;cursor:pointer;font-family:monospace;font-size:.85rem;margin-right:8px;}
+button:hover{background:#30363d;}
+</style>
+</head>
+<body>
+
+<h2>🔍 Barcode Scanner Diagnostic</h2>
+<p class="sub">Open this page, click anywhere on it, then scan a card. This will show exactly what the scanner sends.</p>
+
+<div id="status">⏳ Waiting for scan… (click on this page first)</div>
+
+<div class="box">
+  <h3>Captured Barcode Value</h3>
+  <div id="capturedValue">—</div>
+  <button onclick="clearAll()">Clear</button>
+  <button onclick="testManual()">Test Manual Submit</button>
+</div>
+
+<div class="stat-row">
+  <div class="stat"><div class="lbl">Total Keys</div><div class="val" id="totalKeys">0</div></div>
+  <div class="stat"><div class="lbl">Avg Gap (ms)</div><div class="val" id="avgGap">—</div></div>
+  <div class="stat"><div class="lbl">Min Gap (ms)</div><div class="val" id="minGap">—</div></div>
+  <div class="stat"><div class="lbl">Max Gap (ms)</div><div class="val" id="maxGap">—</div></div>
+  <div class="stat"><div class="lbl">Detected As</div><div class="val" id="detectedAs">—</div></div>
+</div>
+
+<div class="box">
+  <h3>Key-by-Key Log</h3>
+  <div id="rawLog"><div class="ev"><span class="g">Waiting for input…</span></div></div>
+</div>
+
+<div class="box">
+  <h3>Inter-key Gaps (ms) — green = scanner speed, red = human speed</h3>
+  <div id="gapList">—</div>
+</div>
+
+<div class="box">
+  <h3>Manual Input Test</h3>
+  <input id="manualInput" type="text" style="width:300px;padding:9px;background:#0d1117;border:1px solid #30363d;color:#e6edf3;border-radius:6px;font-family:monospace;font-size:1rem;" placeholder="Type here manually and press Enter">
+  <button onclick="document.getElementById('manualInput').focus()">Focus Input</button>
+</div>
+
+<script>
+var buffer    = '';
+var lastTime  = 0;
+var gaps      = [];
+var keyCount  = 0;
+var logEl     = document.getElementById('rawLog');
+var statusEl  = document.getElementById('status');
+var captEl    = document.getElementById('capturedValue');
+var gapEl     = document.getElementById('gapList');
+var scanTimer = null;
+
+function clearAll() {
+  buffer = ''; lastTime = 0; gaps = []; keyCount = 0;
+  logEl.innerHTML = '<div class="ev"><span class="g">Cleared. Ready for next scan…</span></div>';
+  captEl.textContent = '—';
+  gapEl.textContent = '—';
+  document.getElementById('totalKeys').textContent = '0';
+  document.getElementById('avgGap').textContent = '—';
+  document.getElementById('minGap').textContent = '—';
+  document.getElementById('maxGap').textContent = '—';
+  document.getElementById('detectedAs').textContent = '—';
+  statusEl.className = '';
+  statusEl.textContent = '⏳ Waiting for scan…';
+}
+
+function testManual() {
+  var v = document.getElementById('manualInput').value.trim();
+  if (!v) return;
+  captEl.textContent = '✅ MANUAL: ' + v;
+  statusEl.className = 'ready';
+  statusEl.textContent = '✅ Manual input works fine: ' + v;
+}
+
+document.getElementById('manualInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { e.preventDefault(); testManual(); }
+});
+
+document.addEventListener('keydown', function(e) {
+  // Don't intercept manual input box
+  if (document.activeElement === document.getElementById('manualInput')) return;
+  // Ignore pure modifiers
+  if (['Shift','Control','Alt','Meta','CapsLock','Tab'].indexOf(e.key) !== -1) return;
+
+  var now = Date.now();
+  var gap = lastTime ? (now - lastTime) : null;
+  lastTime = now;
+  keyCount++;
+
+  if (gap !== null) gaps.push(gap);
+
+  // Log the keystroke
+  var row = document.createElement('div');
+  row.className = 'ev' + (e.key === 'Enter' ? ' enter' : '');
+  var gapStr = gap !== null ? ('<span class="' + (gap < 50 ? 'gap-fast' : 'gap-slow') + '">' + gap + 'ms</span>') : '<span class="g">first key</span>';
+  row.innerHTML = '<span class="t">[' + new Date().toLocaleTimeString() + ']</span> '
+    + 'key=<span class="k">' + (e.key === 'Enter' ? '⏎ ENTER' : e.key) + '</span> '
+    + 'code=<span class="c">' + e.code + '</span> '
+    + 'gap=' + gapStr;
+  logEl.appendChild(row);
+  logEl.scrollTop = logEl.scrollHeight;
+  document.getElementById('totalKeys').textContent = keyCount;
+
+  if (e.key === 'Enter') {
+    // Finalise
+    clearTimeout(scanTimer);
+    finaliseScan();
+    return;
+  }
+
+  if (e.key.length === 1) {
+    buffer += e.key;
+    captEl.textContent = buffer;
+  }
+
+  statusEl.className = 'scanning';
+  statusEl.textContent = '📡 Receiving… "' + buffer + '"';
+
+  // Auto-finalise if no more keys for 300ms (some scanners don't send Enter)
+  clearTimeout(scanTimer);
+  scanTimer = setTimeout(function() {
+    if (buffer) finaliseScan();
+  }, 300);
+});
+
+function finaliseScan() {
+  if (!buffer) return;
+  var finalVal = buffer;
+  buffer = '';
+
+  // Stats
+  var avg = gaps.length ? Math.round(gaps.reduce(function(a,b){return a+b;},0)/gaps.length) : null;
+  var min = gaps.length ? Math.min.apply(null, gaps) : null;
+  var max = gaps.length ? Math.max.apply(null, gaps) : null;
+  if (avg !== null) document.getElementById('avgGap').textContent = avg + 'ms';
+  if (min !== null) document.getElementById('minGap').textContent = min + 'ms';
+  if (max !== null) document.getElementById('maxGap').textContent = max + 'ms';
+
+  var isScanner = avg !== null && avg < 50;
+  document.getElementById('detectedAs').textContent = isScanner ? '🔬 SCANNER' : '⌨️ HUMAN';
+
+  captEl.textContent = '✅ ' + finalVal;
+  statusEl.className = 'ready';
+  statusEl.textContent = '✅ Captured: "' + finalVal + '" (' + (isScanner ? 'Scanner' : 'Manual') + ', avg gap: ' + (avg||'?') + 'ms)';
+
+  // Gap visualisation
+  gapEl.innerHTML = gaps.map(function(g, i) {
+    return '<span class="' + (g < 50 ? 'gap-fast' : 'gap-slow') + '">' + g + 'ms</span>';
+  }).join(' → ');
+
+  gaps = [];
+  lastTime = 0;
+  keyCount = 0;
+  document.getElementById('totalKeys').textContent = '0';
+}
+
+// Focus the page so keystrokes are captured immediately
+document.body.focus();
+statusEl.className = '';
+statusEl.textContent = '⏳ Waiting — click anywhere on this page then scan a card';
+</script>
+</body>
+</html>
