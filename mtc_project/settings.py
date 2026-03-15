@@ -1,6 +1,7 @@
 from pathlib import Path
 from decouple import config
 from datetime import timedelta
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY', default='mtc-secret-key-change-in-production-2024')
@@ -26,6 +27,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -36,7 +38,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'mtc_project.urls'
 
-# ── Serve HTML templates from /templates ──────────────────
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -55,16 +56,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mtc_project.wsgi.application'
 
-# ── PostgreSQL ─────────────────────────────────────────────
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME':     config('DB_NAME',     default='mutare_teachers_college'),
-        'USER':     config('DB_USER',     default='mtc_admin'),
-        'PASSWORD': config('DB_PASSWORD', default='mtc_password_2024'),
-        'HOST':     config('DB_HOST',     default='localhost'),
-        'PORT':     config('DB_PORT',     default='5432'),
-    }
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL', default='sqlite:///db.sqlite3')
+    )
 }
 
 AUTH_USER_MODEL = 'authentication.AdminUser'
@@ -73,7 +68,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
 ]
 
-# ── REST Framework ─────────────────────────────────────────
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -81,7 +75,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
-    # No pagination — all views return plain arrays, not {count, results:[]}
     'EXCEPTION_HANDLER': 'mtc_project.exceptions.custom_exception_handler',
 }
 
@@ -92,7 +85,6 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES':      ('Bearer',),
 }
 
-# ── CORS — allow everything in development ─────────────────
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
@@ -104,14 +96,13 @@ USE_TZ   = True
 STATIC_URL  = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL  = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-# ── Show full errors in API responses (DEBUG mode) ─────────
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
