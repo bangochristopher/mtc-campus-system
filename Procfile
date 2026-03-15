@@ -1,1 +1,1 @@
-web: python manage.py migrate --run-syncdb && python manage.py collectstatic --noinput && python manage.py createsuperuser --noinput --email bango02christopher@gmail.com --full_name "Christopher Bango" --role "accommodation" && gunicorn mtc_project.wsgi --log-file -
+web: python manage.py migrate --run-syncdb && python manage.py collectstatic --noinput && gunicorn mtc_project.wsgi --log-file -
