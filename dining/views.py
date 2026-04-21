@@ -72,12 +72,8 @@ class ScanView(APIView):
             seconds_since = (now - last_scan_datetime).total_seconds()
 
             if seconds_since < 3:
-                # This is a hardware double scan — return the same result
-                # as the first scan without creating a new record
-                return Response({
-                    'access':  'double_scan_ignored',
-                    'message': 'Double scan detected and ignored.',
-                }, status=200)
+                # Hardware double scan — silently do nothing.
+                return Response({'access': 'ok'}, status=200)
         # ──────────────────────────────────────────────────────────────────
 
         # ── FIND STUDENT ───────────────────────────────────────────────────
