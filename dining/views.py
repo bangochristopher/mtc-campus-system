@@ -44,12 +44,25 @@ class ScanView(APIView):
                 status=400
             )
 
+        # ── FIRST PROCESS ONLY GUARD ────────────────────────────────────────
+        # If ANY record exists for this barcode today (served, denied, or duplicate),
+        # silently ignore this second scan. Only the first scan gets processed.
+        already_scanned_today = MealRegister.objects.filter(
+            scanned_barcode__iexact=barcode,
+            scan_date=today,
+        ).first()
+
+        if already_scanned_today:
+            # Second (or third, etc.) scan — silently ignore, no record created
+            return Response({'access': 'ignored'}, status=200)
+        # ──────────────────────────────────────────────────────────────────
+
         # ── FIND STUDENT ───────────────────────────────────────────────────
         student = Student.objects.filter(
             student_number__iexact=barcode
         ).first()
 
-        # Student not in database — BEEP: error tone
+        # Student not in database
         if not student:
             MealRegister.objects.create(
                 student=None,
@@ -82,7 +95,7 @@ class ScanView(APIView):
                 'signal': 'error'
             }, status=403)
 
-        # ── CHECK DUPLICATE MEAL ──────────────────────────────────────────
+        # ── CHECK DUPLICATE MEAL (same meal type today) ────────────────────
         already = MealRegister.objects.filter(
             student=student,
             meal_type=meal_type,
@@ -90,7 +103,7 @@ class ScanView(APIView):
             scan_status='served'
         ).first()
 
-        # Already ate — BEEP: warning tone
+        # Already ate this meal type
         if already:
             MealRegister.objects.create(
                 student=student,
@@ -104,7 +117,7 @@ class ScanView(APIView):
                 'signal': 'warning'
             }, status=403)
 
-        # ── SERVE THE MEAL — BEEP: success tone ─────────────────────────────
+        # ── SERVE THE MEAL — FIRST TIME ONLY ───────────────────────────────
         record = MealRegister.objects.create(
             student=student,
             meal_type=meal_type,
