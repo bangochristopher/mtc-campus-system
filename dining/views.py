@@ -1,5 +1,5 @@
 from django.utils import timezone
-from datetime import timedelta, datetime, date
+from datetime import timedelta
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -46,14 +46,24 @@ class ScanView(APIView):
             )
 
         # ── DOUBLE SCAN GUARD ──────────────────────────────────────────────
-        # Only check successful 'served' records — ignore denied/duplicate
+        # If the exact same barcode was scanned less than 3 seconds ago,
+        # it is a hardware double-scan — silently ignore it.
+        three_seconds_ago = now - timedelta(seconds=3)
         recent = MealRegister.objects.filter(
             scanned_barcode__iexact=barcode,
             scan_date=today,
-            scan_status='served',
-        ).order_by('-id').first()
+        ).filter(
+            # created_at is within last 3 seconds
+            id__in=MealRegister.objects.filter(
+                scanned_barcode__iexact=barcode,
+                scan_date=today,
+            ).order_by('-id').values_list('id', flat=True)[:1]
+        ).first()
 
         if recent:
+            # Check if it was created within 3 seconds using scan_time
+            from datetime import datetime, date
+            import datetime as dt
             last_scan_datetime = datetime.combine(
                 date.today(),
                 recent.scan_time
@@ -62,7 +72,7 @@ class ScanView(APIView):
             seconds_since = (now - last_scan_datetime).total_seconds()
 
             if seconds_since < 3:
-                # Hardware double scan — silently ignore
+                # Hardware double scan — silently do nothing.
                 return Response({'access': 'ok'}, status=200)
         # ──────────────────────────────────────────────────────────────────
 
@@ -71,7 +81,6 @@ class ScanView(APIView):
             student_number__iexact=barcode
         ).first()
 
-        # Student not in database
         if not student:
             MealRegister.objects.create(
                 student=None,
@@ -81,19 +90,28 @@ class ScanView(APIView):
                 scan_date=today
             )
             return Response({
-                'access': 'denied',
-                'message': 'Student not found, access denied'
+                'access':  'denied',
+                'reason':  'not_found',
+                'message': f'Barcode "{barcode}" not found in the student database.'
             }, status=403)
 
         # ── CHECK ACCOMMODATION APPROVAL ───────────────────────────────────
-        # FIX: Handle both OneToOneField (raises DoesNotExist) and ForeignKey (returns None)
         try:
             app = student.application
+            if app.status != 'approved':
+                MealRegister.objects.create(
+                    student=student,
+                    meal_type=meal_type,
+                    scan_status='denied',
+                    scanned_barcode=barcode,
+                    scan_date=today
+                )
+                return Response({
+                    'access':  'denied',
+                    'reason':  'not_approved',
+                    'message': f'{student.full_name} does not have an approved accommodation application.'
+                }, status=403)
         except AccommodationApplication.DoesNotExist:
-            app = None
-        
-        # If ForeignKey or OneToOne but no application exists, app will be None
-        if app is None or app.status != 'approved':
             MealRegister.objects.create(
                 student=student,
                 meal_type=meal_type,
@@ -102,11 +120,12 @@ class ScanView(APIView):
                 scan_date=today
             )
             return Response({
-                'access': 'denied',
-                'message': 'Student not approved for meals'
+                'access':  'denied',
+                'reason':  'no_application',
+                'message': f'{student.full_name} has no accommodation application.'
             }, status=403)
 
-        # ── CHECK DUPLICATE MEAL ──────────────────────────────────────────
+        # ── CHECK DUPLICATE MEAL (same meal period today) ──────────────────
         already = MealRegister.objects.filter(
             student=student,
             meal_type=meal_type,
@@ -114,7 +133,6 @@ class ScanView(APIView):
             scan_status='served'
         ).first()
 
-        # Already ate
         if already:
             MealRegister.objects.create(
                 student=student,
@@ -124,9 +142,14 @@ class ScanView(APIView):
                 scan_date=today
             )
             return Response({
-                'access': 'denied',
-                'message': 'Student already ate'
-            }, status=403)
+                'access':      'duplicate',
+                'message':     f'{student.full_name} was already served {meal_type} today at {str(already.scan_time)[:5]}.',
+                'served_at':   str(already.scan_time)[:5],
+                'student': {
+                    'name':   student.full_name,
+                    'number': student.student_number,
+                }
+            }, status=409)
 
         # ── SERVE THE MEAL ─────────────────────────────────────────────────
         record = MealRegister.objects.create(
@@ -137,8 +160,16 @@ class ScanView(APIView):
             scan_date=today
         )
         return Response({
-            'access': 'granted',
-            'message': 'Access granted'
+            'access':  'granted',
+            'message': f'{student.full_name} — {meal_type} served.',
+            'student': {
+                'name':    student.full_name,
+                'number':  student.student_number,
+                'hostel':  app.hostel.name if app.hostel else None,
+                'gender':  student.gender,
+                'condition': student.condition,
+            },
+            'record': MealRegisterSerializer(record).data
         })
 
 
