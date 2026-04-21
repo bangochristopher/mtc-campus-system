@@ -52,28 +52,12 @@ class ScanView(APIView):
         recent = MealRegister.objects.filter(
             scanned_barcode__iexact=barcode,
             scan_date=today,
-        ).filter(
-            # created_at is within last 3 seconds
-            id__in=MealRegister.objects.filter(
-                scanned_barcode__iexact=barcode,
-                scan_date=today,
-            ).order_by('-id').values_list('id', flat=True)[:1]
-        ).first()
+            created_at__gte=three_seconds_ago,
+        ).order_by('-created_at').first()
 
         if recent:
-            # Check if it was created within 3 seconds using scan_time
-            from datetime import datetime, date
-            import datetime as dt
-            last_scan_datetime = datetime.combine(
-                date.today(),
-                recent.scan_time
-            )
-            last_scan_datetime = timezone.make_aware(last_scan_datetime)
-            seconds_since = (now - last_scan_datetime).total_seconds()
-
-            if seconds_since < 3:
-                # Hardware double scan — silently do nothing.
-                return Response({'access': 'ok'}, status=200)
+            # Hardware double scan — silently return ok with no message.
+            return Response({'access': 'ok', 'double_scan': True}, status=200)
         # ──────────────────────────────────────────────────────────────────
 
         # ── FIND STUDENT ───────────────────────────────────────────────────
