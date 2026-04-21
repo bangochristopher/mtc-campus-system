@@ -46,9 +46,11 @@ class ScanView(APIView):
             )
 
         # ── DOUBLE SCAN GUARD ──────────────────────────────────────────────
+        # FIX: Only check 'served' records — ignore denied/duplicate records
         recent = MealRegister.objects.filter(
             scanned_barcode__iexact=barcode,
             scan_date=today,
+            scan_status='served',  # <-- ADDED: Only check successful scans
         ).order_by('-id').first()
 
         if recent:
@@ -69,7 +71,7 @@ class ScanView(APIView):
             student_number__iexact=barcode
         ).first()
 
-        # CONDITION 2: Student not found
+        # Student not in database
         if not student:
             MealRegister.objects.create(
                 student=None,
@@ -84,10 +86,10 @@ class ScanView(APIView):
             }, status=403)
 
         # ── CHECK ACCOMMODATION APPROVAL ───────────────────────────────────
+        # FIX: Separate messages for "not found" vs "not approved"
         try:
             app = student.application
             if app.status != 'approved':
-                # Not approved = not eligible to eat → treat as "not found"
                 MealRegister.objects.create(
                     student=student,
                     meal_type=meal_type,
@@ -97,10 +99,9 @@ class ScanView(APIView):
                 )
                 return Response({
                     'access': 'denied',
-                    'message': 'Student not found, access denied'
+                    'message': 'Student not approved for meals'
                 }, status=403)
         except AccommodationApplication.DoesNotExist:
-            # No application = not eligible to eat → treat as "not found"
             MealRegister.objects.create(
                 student=student,
                 meal_type=meal_type,
@@ -110,7 +111,7 @@ class ScanView(APIView):
             )
             return Response({
                 'access': 'denied',
-                'message': 'Student not found, access denied'
+                'message': 'Student not approved for meals'
             }, status=403)
 
         # ── CHECK DUPLICATE MEAL ──────────────────────────────────────────
@@ -121,7 +122,7 @@ class ScanView(APIView):
             scan_status='served'
         ).first()
 
-        # CONDITION 3: Already ate
+        # Already ate
         if already:
             MealRegister.objects.create(
                 student=student,
@@ -136,7 +137,6 @@ class ScanView(APIView):
             }, status=403)
 
         # ── SERVE THE MEAL ─────────────────────────────────────────────────
-        # CONDITION 1: Student found, eligible, hasn't eaten → can eat
         record = MealRegister.objects.create(
             student=student,
             meal_type=meal_type,
