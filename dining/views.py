@@ -46,11 +46,11 @@ class ScanView(APIView):
             )
 
         # ── DOUBLE SCAN GUARD ──────────────────────────────────────────────
-        # FIX: Only check 'served' records — ignore denied/duplicate records
+        # Only check successful 'served' records — ignore denied/duplicate
         recent = MealRegister.objects.filter(
             scanned_barcode__iexact=barcode,
             scan_date=today,
-            scan_status='served',  # <-- ADDED: Only check successful scans
+            scan_status='served',
         ).order_by('-id').first()
 
         if recent:
@@ -86,22 +86,14 @@ class ScanView(APIView):
             }, status=403)
 
         # ── CHECK ACCOMMODATION APPROVAL ───────────────────────────────────
-        # FIX: Separate messages for "not found" vs "not approved"
+        # FIX: Handle both OneToOneField (raises DoesNotExist) and ForeignKey (returns None)
         try:
             app = student.application
-            if app.status != 'approved':
-                MealRegister.objects.create(
-                    student=student,
-                    meal_type=meal_type,
-                    scan_status='denied',
-                    scanned_barcode=barcode,
-                    scan_date=today
-                )
-                return Response({
-                    'access': 'denied',
-                    'message': 'Student not approved for meals'
-                }, status=403)
         except AccommodationApplication.DoesNotExist:
+            app = None
+        
+        # If ForeignKey or OneToOne but no application exists, app will be None
+        if app is None or app.status != 'approved':
             MealRegister.objects.create(
                 student=student,
                 meal_type=meal_type,
