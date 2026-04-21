@@ -49,7 +49,7 @@ class ScanView(APIView):
             student_number__iexact=barcode
         ).first()
 
-        # Student not in database
+        # Student not in database — BEEP: error tone
         if not student:
             MealRegister.objects.create(
                 student=None,
@@ -60,7 +60,7 @@ class ScanView(APIView):
             )
             return Response({
                 'access': 'denied',
-                'message': 'Student not found, access denied'
+                'signal': 'error'
             }, status=403)
 
         # ── CHECK ACCOMMODATION APPROVAL ───────────────────────────────────
@@ -79,7 +79,7 @@ class ScanView(APIView):
             )
             return Response({
                 'access': 'denied',
-                'message': 'Student not approved for meals'
+                'signal': 'error'
             }, status=403)
 
         # ── CHECK DUPLICATE MEAL ──────────────────────────────────────────
@@ -90,7 +90,7 @@ class ScanView(APIView):
             scan_status='served'
         ).first()
 
-        # Already ate
+        # Already ate — BEEP: warning tone
         if already:
             MealRegister.objects.create(
                 student=student,
@@ -101,10 +101,10 @@ class ScanView(APIView):
             )
             return Response({
                 'access': 'denied',
-                'message': 'Student already ate'
+                'signal': 'warning'
             }, status=403)
 
-        # ── SERVE THE MEAL ─────────────────────────────────────────────────
+        # ── SERVE THE MEAL — BEEP: success tone ─────────────────────────────
         record = MealRegister.objects.create(
             student=student,
             meal_type=meal_type,
@@ -114,7 +114,7 @@ class ScanView(APIView):
         )
         return Response({
             'access': 'granted',
-            'message': 'Access granted'
+            'signal': 'success'
         })
 
 
