@@ -60,7 +60,21 @@ body{display:flex;min-height:100vh;background:var(--blue);overflow:hidden;}
 .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:24px 0;}
 .hint{font-size:.74rem;color:var(--muted);text-align:center;line-height:1.9;}
 .hint code{font-family:'JetBrains Mono',monospace;color:var(--text);font-size:.78rem;}
-@media(max-width:900px){.left{display:none;}.right{width:100%;padding:40px 24px;}}
+@media(max-width:900px){
+  .left{display:none;}
+  .right{width:100%;padding:40px 24px;}
+}
+@media(max-width:600px){
+  .right{padding:30px 18px;}
+  .form-title{font-size:1.5rem;}
+  .roles{grid-template-columns:1fr;gap:6px;}
+  .rb{padding:10px 8px;}
+  .field input{padding:11px 14px;font-size:.85rem;}
+  .btn{padding:13px;font-size:.88rem;}
+  .badge{margin-bottom:40px;}
+  .badge-crest{width:60px;height:60px;}
+  .badge strong{font-size:1.2rem;}
+}
 </style>
 </head>
 <body>
