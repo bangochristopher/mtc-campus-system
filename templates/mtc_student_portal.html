@@ -77,6 +77,38 @@ header a:hover{color:var(--gold2);}
 .btn-ch{padding:11px 22px;border-radius:9px;border:2px solid var(--blue);background:transparent;color:var(--blue);font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
 .btn-ch:hover{background:var(--blue);color:#fff;}
 footer{text-align:center;padding:24px;font-size:.72rem;color:var(--muted);}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  header{padding:18px 0;}
+  .hi{flex-direction:column;gap:12px;padding:0 16px;text-align:center;}
+  .hl{flex-direction:column;gap:10px;}
+  .hc{width:45px;height:45px;font-size:20px;}
+  .ht h1{font-size:1.05rem;}
+  .wrap{padding:16px;}
+  .tabs{flex-direction:column;gap:3px;padding:4px;}
+  .tb{padding:9px 6px;font-size:.74rem;}
+  .fg,.hgrid{grid-template-columns:1fr;}
+  .srch-row{flex-direction:column;}
+  .btn-srch{width:100%;}
+  .ch{padding:14px 16px;}
+  .cb{padding:16px;}
+}
+@media(max-width:480px){
+  header{padding:14px 0;}
+  .hi{padding:0 12px;}
+  .hc{width:40px;height:40px;font-size:18px;}
+  .ht h1{font-size:.95rem;}
+  header a{font-size:.7rem;padding:6px 10px;}
+  .wrap{padding:12px;}
+  .tabs{padding:3px;}
+  .tb{padding:8px 5px;font-size:.7rem;}
+  .card{margin-bottom:14px;}
+  .ch{padding:12px 14px;}
+  .cb{padding:14px;}
+  .field input,.field select,.field textarea{padding:9px 11px;font-size:.8rem;}
+  .btn-sub{padding:11px;font-size:.85rem;}
+}
 </style>
 </head>
 <body>
