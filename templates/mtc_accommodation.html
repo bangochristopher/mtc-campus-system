@@ -272,9 +272,9 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:#f8faff;}
   <div class="sb-foot">
     <div class="su">
       <div class="su-av">👤</div>
-      <div><div class="su-name">Admin</div><div class="su-tag">Accommodation Office</div></div>
+      <div><div class="su-name" id="adminName">Admin</div><div class="su-tag">Accommodation Office</div></div>
     </div>
-    <button class="btn-out" onclick="alert('Signed out')">Sign Out</button>
+    <button class="btn-out" onclick="doLogout()">Sign Out</button>
   </div>
 </div>
 
@@ -2842,6 +2842,12 @@ function toast(msg, type) {
   console.log('🚀 Initializing accommodation dashboard...');
   document.getElementById('updTxt').textContent = 'Updated '+new Date().toLocaleTimeString();
   
+  // Display logged-in user's name
+  const userName = localStorage.getItem('mtc_name');
+  if(userName) {
+    document.getElementById('adminName').textContent = userName;
+  }
+  
   try {
     // Load all data from database
     console.log('Loading dashboard data...');
@@ -2861,6 +2867,35 @@ function toast(msg, type) {
     console.error('❌ Error during initialization:', error);
   }
 })();
+
+async function doLogout() {
+  const confirmed = confirm('Are you sure you want to sign out?');
+  if(!confirmed) return;
+  
+  try {
+    const refreshToken = localStorage.getItem('mtc_refresh');
+    if(refreshToken) {
+      await fetch('/api/auth/logout/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('mtc_token')}`
+        },
+        body: JSON.stringify({ refresh: refreshToken })
+      });
+    }
+  } catch(error) {
+    console.error('Logout error:', error);
+  } finally {
+    // Clear all stored data
+    localStorage.removeItem('mtc_token');
+    localStorage.removeItem('mtc_refresh');
+    localStorage.removeItem('mtc_role');
+    localStorage.removeItem('mtc_name');
+    // Redirect to login
+    window.location.href = '/login/';
+  }
+}
 </script>
 </body>
 </html>
