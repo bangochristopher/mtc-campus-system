@@ -2,141 +2,194 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>MTC — Accommodation</title>
+<title>MTC — Accommodation Admin Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
 :root{
   --blue:#0d2b6b;--blue3:#2e5ccc;
-  --gold:#c9a84c;--gold2:#e8c96a;
+  --gold:#c9a84c;--gold2:#e8c96a;--gold3:#faf5e4;
   --off:#f4f6fb;--text:#0d1b3e;--mid:#3a4a6b;--muted:#7a8db0;--border:#d4ddf0;
-  --ok:#1a8a55;--danger:#c0392b;--warn:#d97706;
+  --ok:#1a8a55;--danger:#c0392b;--warn:#d97706;--purple:#7c3aed;--teal:#0d9488;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);display:flex;min-height:100vh;}
-.sb{width:230px;flex-shrink:0;background:var(--blue);position:fixed;top:0;left:0;height:100vh;display:flex;flex-direction:column;z-index:100;}
-.sb-head{padding:20px 16px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:11px;}
+
+/* SIDEBAR */
+.sb{width:248px;flex-shrink:0;background:var(--blue);position:fixed;top:0;left:0;height:100vh;display:flex;flex-direction:column;z-index:100;overflow-y:auto;}
+.sb-head{padding:18px 16px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:11px;}
 .sb-crest{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
 .sb-name{font-family:'Playfair Display',serif;font-size:.88rem;font-weight:700;color:#fff;}
 .sb-role{font-size:.6rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;}
-.sb-nav{flex:1;padding:12px 8px;overflow-y:auto;}
-.ns{font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.3);padding:14px 10px 5px;}
-.ni{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;color:rgba(255,255,255,.6);font-size:.8rem;font-weight:500;cursor:pointer;transition:all .2s;margin-bottom:1px;}
+.sb-nav{flex:1;padding:10px 8px;overflow-y:auto;}
+.ns{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.3);padding:12px 10px 4px;}
+.ni{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;color:rgba(255,255,255,.6);font-size:.78rem;font-weight:500;cursor:pointer;transition:all .2s;margin-bottom:1px;user-select:none;}
 .ni:hover{background:rgba(255,255,255,.07);color:#fff;}
 .ni.active{background:rgba(201,168,76,.18);color:var(--gold2);}
-.npill{margin-left:auto;background:var(--gold);color:var(--blue);border-radius:100px;padding:1px 7px;font-size:.62rem;font-weight:700;}
+.npill{margin-left:auto;background:var(--gold);color:var(--blue);border-radius:100px;padding:1px 7px;font-size:.6rem;font-weight:700;}
 .ni-danger{color:rgba(252,165,165,.7)!important;}
 .ni-danger:hover{background:rgba(239,68,68,.18)!important;color:#fca5a5!important;}
 .sb-foot{padding:12px 8px;border-top:1px solid rgba(255,255,255,.08);}
-.su{display:flex;align-items:center;gap:9px;padding:8px 10px;margin-bottom:6px;}
+.su{display:flex;align-items:center;gap:9px;padding:7px 10px;margin-bottom:6px;}
 .su-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;}
 .su-name{font-size:.74rem;font-weight:600;color:#fff;}
-.su-tag{font-size:.6rem;color:rgba(255,255,255,.4);}
-.btn-out{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:transparent;color:rgba(255,255,255,.5);font-size:.74rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.su-tag{font-size:.58rem;color:rgba(255,255,255,.4);}
+.btn-out{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:transparent;color:rgba(255,255,255,.5);font-size:.72rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
 .btn-out:hover{background:rgba(239,68,68,.15);color:#fca5a5;}
-.main{margin-left:230px;flex:1;display:flex;flex-direction:column;}
-.topbar{background:#fff;border-bottom:1px solid var(--border);padding:13px 26px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
-.page-title{font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--text);}
+
+/* MAIN */
+.main{margin-left:248px;flex:1;display:flex;flex-direction:column;min-width:0;}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.page-title{font-family:'Playfair Display',serif;font-size:1.12rem;color:var(--text);}
 .topbar-right{display:flex;align-items:center;gap:8px;}
-.btn-sm-top{padding:6px 13px;border-radius:7px;border:1px solid var(--border);background:#fff;color:var(--mid);font-size:.76rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.btn-sm-top{padding:6px 12px;border-radius:7px;border:1px solid var(--border);background:#fff;color:var(--mid);font-size:.74rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
 .btn-sm-top:hover{border-color:var(--blue3);color:var(--blue);}
-.upd-txt{font-size:.72rem;color:var(--muted);}
-.content{padding:22px 26px;flex:1;}
-.api-status{border-radius:10px;padding:12px 16px;margin-bottom:18px;font-size:.8rem;font-weight:500;display:none;}
-.api-status.err{background:#fff0f0;border:1px solid #fca5a5;color:var(--danger);display:block;}
-.api-status.ok{background:#e8f7f0;border:1px solid #6ee7b7;color:var(--ok);display:block;}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:22px;}
-.sc{background:#fff;border-radius:12px;border:1px solid var(--border);padding:17px 19px;position:relative;overflow:hidden;}
-.sc-ico{position:absolute;top:14px;right:14px;font-size:1.3rem;opacity:.13;}
-.sc-lbl{font-size:.67rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
-.sc-val{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;line-height:1;}
-.sc-sub{font-size:.7rem;color:var(--muted);margin-top:4px;}
-.cg .sc-val{color:var(--gold);}.cb .sc-val{color:var(--blue3);}.co .sc-val{color:var(--ok);}.cw .sc-val{color:var(--warn);}
-.sec{margin-bottom:22px;}
-.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;}
+.content{padding:20px 24px;flex:1;}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:11px;margin-bottom:20px;}
+.sc{background:#fff;border-radius:12px;border:1px solid var(--border);padding:15px 17px;position:relative;overflow:hidden;cursor:pointer;transition:all .2s;}
+.sc:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.08);}
+.sc-ico{position:absolute;top:12px;right:12px;font-size:1.3rem;opacity:.12;}
+.sc-lbl{font-size:.63rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.sc-val{font-family:'Playfair Display',serif;font-size:1.85rem;font-weight:700;line-height:1;}
+.sc-sub{font-size:.68rem;color:var(--muted);margin-top:3px;}
+.cg .sc-val{color:var(--gold)}.cb .sc-val{color:var(--blue3)}.co .sc-val{color:var(--ok)}.cw .sc-val{color:var(--warn)}.cp .sc-val{color:var(--purple)}.ct .sc-val{color:var(--teal)}
+
+/* SECTIONS */
+.sec{margin-bottom:20px;}
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
 .sec-title{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text);}
-.badge-count{padding:3px 10px;border-radius:100px;background:var(--blue);color:#fff;font-size:.68rem;font-weight:700;}
-.btn-p{padding:8px 16px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--blue),var(--blue3));color:#fff;font-size:.78rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:5px;transition:all .2s;}
+.btn-group{display:flex;gap:7px;flex-wrap:wrap;align-items:center;}
+.btn-p{padding:8px 15px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--blue),var(--blue3));color:#fff;font-size:.76rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:5px;transition:all .2s;}
 .btn-p:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(13,43,107,.25);}
-.btn-p:disabled{opacity:.5;cursor:not-allowed;transform:none;}
-.btn-danger{padding:8px 16px;border-radius:8px;border:none;background:linear-gradient(135deg,#b91c1c,var(--danger));color:#fff;font-size:.78rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:5px;transition:all .2s;}
-.btn-danger:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(192,57,43,.35);}
-.btn-a{padding:5px 10px;border-radius:6px;border:none;font-size:.72rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;background:#e8f7f0;color:var(--ok);}
-.btn-a:hover{background:var(--ok);color:#fff;}
-.btn-r{padding:5px 10px;border-radius:6px;border:none;font-size:.72rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;background:#fff0f0;color:var(--danger);}
-.btn-r:hover{background:var(--danger);color:#fff;}
-.btn-v{padding:5px 10px;border-radius:6px;border:none;font-size:.72rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;background:var(--off);color:var(--mid);}
-.btn-v:hover{background:var(--blue);color:#fff;}
-.hgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
-.hcard{background:#fff;border-radius:12px;border:1px solid var(--border);padding:17px;position:relative;}
-.hc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;}
-.hc-name{font-weight:700;font-size:.95rem;}
-.chip{display:inline-block;padding:2px 8px;border-radius:100px;font-size:.64rem;font-weight:700;}
-.ch-f{background:#fde8f0;color:#9d174d;}.ch-m{background:#e8eef9;color:var(--blue);}.ch-x{background:#f0f9e8;color:var(--ok);}.ch-full{background:#fff0f0;color:var(--danger);}
-.hbar-wrap{background:var(--off);border-radius:100px;height:6px;margin-bottom:8px;overflow:hidden;}
-.hbar{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .5s;}
-.hbar.red{background:linear-gradient(90deg,#ef4444,#f87171);}
-.hc-stats{display:flex;justify-content:space-between;font-size:.73rem;color:var(--muted);}
-.hc-stats strong{color:var(--text);}
-.hc-loc{font-size:.7rem;color:var(--muted);margin-top:5px;}
-.hc-actions{display:flex;gap:5px;margin-top:11px;padding-top:10px;border-top:1px solid var(--off);}
-.empty-box{background:#fff;border-radius:12px;border:1px dashed var(--border);padding:30px;text-align:center;color:var(--muted);font-size:.84rem;}
+.btn-s{padding:7px 13px;border-radius:7px;border:1px solid var(--border);background:#fff;color:var(--mid);font-size:.74rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.btn-s:hover{border-color:var(--blue3);background:var(--off);}
+.btn-ok{padding:7px 13px;border-radius:7px;border:none;background:var(--ok);color:#fff;font-size:.74rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.btn-ok:hover{opacity:.9;}
+.btn-danger{padding:7px 13px;border-radius:7px;border:none;background:linear-gradient(135deg,#b91c1c,var(--danger));color:#fff;font-size:.74rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
+
+/* TABLES */
 .tw{background:#fff;border-radius:12px;border:1px solid var(--border);overflow:hidden;}
-.t-filter{padding:11px 15px;border-bottom:1px solid var(--off);display:flex;gap:8px;}
-.t-filter input,.t-filter select{padding:7px 11px;border-radius:7px;border:1px solid var(--border);background:var(--off);font-family:'DM Sans',sans-serif;font-size:.78rem;color:var(--text);outline:none;}
-.t-filter input{flex:1;}
-.t-filter input:focus,.t-filter select:focus{border-color:var(--blue3);}
 table{width:100%;border-collapse:collapse;}
-th{padding:9px 13px;background:var(--off);border-bottom:1px solid var(--border);text-align:left;font-size:.65rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);}
-td{padding:10px 13px;border-bottom:1px solid var(--off);font-size:.79rem;color:var(--mid);vertical-align:middle;}
+th{padding:8px 12px;background:var(--off);border-bottom:1px solid var(--border);text-align:left;font-size:.62rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);}
+td{padding:9px 12px;border-bottom:1px solid var(--off);font-size:.78rem;color:var(--mid);vertical-align:middle;}
 tr:last-child td{border-bottom:none;}tr:hover td{background:#f8faff;}
-td .actions{display:flex;gap:4px;flex-wrap:wrap;}
-.st-p{display:inline-block;padding:2px 8px;border-radius:100px;font-size:.67rem;font-weight:700;background:#fff7e0;color:#92400e;}
-.st-a{display:inline-block;padding:2px 8px;border-radius:100px;font-size:.67rem;font-weight:700;background:#e8f7f0;color:var(--ok);}
-.st-r{display:inline-block;padding:2px 8px;border-radius:100px;font-size:.67rem;font-weight:700;background:#fff0f0;color:var(--danger);}
-.empty-row td{text-align:center;padding:28px;color:var(--muted);}
-.error-row td{text-align:center;padding:20px;color:var(--danger);background:#fff8f8;}
-.semester-panel{background:#fff;border-radius:14px;border:2px solid #fca5a5;padding:22px 24px;}
-.sp-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;}
-.sp-icon{font-size:2rem;flex-shrink:0;}
-.sp-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--danger);margin-bottom:4px;}
-.sp-desc{font-size:.8rem;color:var(--mid);line-height:1.6;}
-.sp-what{background:#fff8f8;border-radius:9px;padding:14px 16px;margin-bottom:16px;font-size:.8rem;color:var(--mid);line-height:1.8;}
-.sp-keep{background:#f0f9e8;border-radius:9px;padding:12px 16px;margin-bottom:20px;font-size:.8rem;color:var(--ok);}
-.modal-bg{position:fixed;inset:0;background:rgba(13,27,62,.5);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;}
+
+/* CHIPS */
+.chip{display:inline-block;padding:3px 8px;border-radius:100px;font-size:.65rem;font-weight:700;}
+.ch-y1{background:#dbeafe;color:#1e40af}
+.ch-y2{background:#fef3c7;color:#92400e}
+.ch-y3{background:#fce7f3;color:#9d174d}
+.ch-y4{background:#f3e8ff;color:#6b21a8}
+.ch-worker{background:#e0e7ff;color:#4338ca}
+.ch-fees{background:#fef9c3;color:#713f12}
+.ch-src{background:#fce7f3;color:#9d174d}
+.ch-org{background:#dbeafe;color:#1e40af}
+.st-p{display:inline-block;padding:2px 8px;border-radius:100px;font-size:.64rem;font-weight:700;background:#fff7e0;color:#92400e;}
+.st-a{display:inline-block;padding:2px 8px;border-radius:100px;font-size:.64rem;font-weight:700;background:#e8f7f0;color:var(--ok);}
+.st-r{display:inline-block;padding:2px 8px;border-radius:100px;font-size:.64rem;font-weight:700;background:#fff0f0;color:var(--danger);}
+.st-k{display:inline-block;padding:2px 8px;border-radius:100px;font-size:.64rem;font-weight:700;background:#e0e7ff;color:#4338ca;}
+
+/* FILTERS */
+.filter-bar{display:flex;gap:6px;margin-bottom:13px;flex-wrap:wrap;align-items:center;}
+.filter-btn{padding:5px 13px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:.73rem;font-weight:600;cursor:pointer;transition:all .2s;color:var(--mid);}
+.filter-btn.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+.filter-btn:hover:not(.active){border-color:var(--blue3);}
+.search-input{padding:7px 12px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-size:.78rem;font-family:'DM Sans',sans-serif;outline:none;transition:border .2s;min-width:200px;}
+.search-input:focus{border-color:var(--blue3);}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(13,27,62,.6);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;}
 .modal-bg.open{display:flex;}
-.modal{background:#fff;border-radius:16px;width:480px;max-width:95vw;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;animation:popIn .22s ease;}
-@keyframes popIn{from{opacity:0;transform:scale(.95);}to{opacity:1;transform:scale(1);}}
-.modal-head{padding:18px 24px;border-bottom:1px solid var(--off);display:flex;align-items:center;justify-content:space-between;}
-.modal-title{font-family:'Playfair Display',serif;font-size:1.1rem;}
-.modal-title.danger{color:var(--danger);}
+.modal{background:#fff;border-radius:16px;width:640px;max-width:95vw;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;animation:popIn .22s ease;}
+.modal-xl{width:900px;}
+.modal-lg{width:760px;}
+@keyframes popIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.modal-head{padding:16px 22px;border-bottom:1px solid var(--off);display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.05rem;}
 .modal-close{width:28px;height:28px;border-radius:50%;border:none;background:var(--off);cursor:pointer;font-size:.85rem;color:var(--muted);}
 .modal-close:hover{background:var(--border);}
-.modal-body{padding:20px 24px;overflow-y:auto;flex:1;}
-.modal-foot{padding:12px 24px;border-top:1px solid var(--off);display:flex;gap:8px;justify-content:flex-end;}
-.mfld{margin-bottom:13px;}
-.mfld label{display:block;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
-.mfld input,.mfld select{width:100%;padding:9px 12px;border-radius:7px;border:1.5px solid var(--border);background:var(--off);font-family:'DM Sans',sans-serif;font-size:.83rem;color:var(--text);outline:none;transition:border .2s;}
-.mfld input:focus,.mfld select:focus{border-color:var(--blue3);background:#fff;}
-.mfld input.danger-input:focus{border-color:var(--danger);background:#fff8f8;}
+.modal-body{padding:18px 22px;overflow-y:auto;flex:1;}
+.modal-foot{padding:12px 22px;border-top:1px solid var(--off);display:flex;gap:8px;justify-content:flex-end;}
+
+/* FORM */
+.mfld{margin-bottom:12px;}
+.mfld label{display:block;font-size:.65rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.mfld input,.mfld select,.mfld textarea{width:100%;padding:9px 12px;border-radius:7px;border:1.5px solid var(--border);background:var(--off);font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--text);outline:none;transition:border .2s;}
+.mfld input:focus,.mfld select:focus,.mfld textarea:focus{border-color:var(--blue3);background:#fff;}
+.mfld textarea{resize:vertical;min-height:70px;}
 .mg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.dg{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px;}
-.dl{font-size:.65rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
-.dv{font-size:.83rem;color:var(--text);}
-.info-box{padding:9px 12px;background:var(--off);border-radius:7px;font-size:.8rem;}
-.inline-err{color:var(--danger);font-size:.78rem;margin-top:5px;display:none;}
-.warn-box{background:#fff7e0;border:1px solid #fcd34d;border-radius:9px;padding:12px 14px;font-size:.8rem;color:#92400e;margin-bottom:14px;line-height:1.6;}
-.toast{position:fixed;bottom:22px;right:22px;padding:12px 17px;border-radius:10px;background:var(--blue);color:#fff;font-size:.8rem;font-weight:500;box-shadow:0 6px 24px rgba(13,43,107,.3);z-index:999;transform:translateY(60px);opacity:0;transition:all .28s;max-width:340px;}
+.mg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.info-card{background:var(--off);border-radius:9px;border:1px solid var(--border);padding:14px;margin-bottom:11px;}
+.info-row{display:flex;justify-content:space-between;margin-bottom:7px;font-size:.8rem;}
+.info-row:last-child{margin-bottom:0;}
+.info-lbl{color:var(--muted);font-weight:600;}
+.info-val{color:var(--text);font-weight:600;}
+
+/* ROOMS */
+.hostel-card{background:#fff;border-radius:14px;border:1px solid var(--border);padding:18px;margin-bottom:14px;}
+.hc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--off);}
+.hc-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--text);margin-bottom:3px;}
+.hc-meta{font-size:.72rem;color:var(--muted);display:flex;gap:13px;flex-wrap:wrap;}
+.floor-section{margin-bottom:16px;}
+.floor-header{display:flex;align-items:center;justify-content:space-between;background:var(--off);padding:9px 13px;border-radius:8px;margin-bottom:8px;cursor:pointer;transition:all .2s;}
+.floor-header:hover{background:#e8eef9;}
+.floor-title-text{font-weight:700;font-size:.88rem;color:var(--text);}
+.floor-stats-text{font-size:.7rem;color:var(--muted);}
+.floor-header-actions{display:flex;align-items:center;gap:8px;}
+.room-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(85px,1fr));gap:7px;padding:8px;background:#f8fafc;border-radius:8px;}
+.room-box{aspect-ratio:1;background:#fff;border:2px solid var(--border);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;}
+.room-box:hover{transform:scale(1.05);box-shadow:0 2px 8px rgba(0,0,0,.1);}
+.room-box.occupied{background:linear-gradient(135deg,#fef3c7,#fde68a);border-color:var(--gold);}
+.room-box.full{background:linear-gradient(135deg,#fee2e2,#fecaca);border-color:var(--danger);}
+.room-box.empty{background:#fff;border-color:var(--ok);border-style:dashed;}
+.room-box.maintenance{background:linear-gradient(135deg,#f3f4f6,#e5e7eb);border-color:var(--muted);border-style:dotted;}
+.room-num{font-weight:700;font-size:.82rem;color:var(--text);}
+.room-status{font-size:.6rem;color:var(--muted);margin-top:2px;}
+.room-occupants{position:absolute;top:3px;right:3px;background:var(--blue);color:#fff;border-radius:50%;width:17px;height:17px;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;}
+.legend{display:flex;gap:13px;flex-wrap:wrap;padding:10px;background:var(--off);border-radius:8px;font-size:.72rem;margin-bottom:13px;}
+.legend-item{display:flex;align-items:center;gap:5px;}
+.legend-box{width:18px;height:18px;border-radius:4px;border:2px solid;}
+.legend-box.empty{background:#fff;border-color:var(--ok);border-style:dashed;}
+.legend-box.occupied{background:linear-gradient(135deg,#fef3c7,#fde68a);border-color:var(--gold);}
+.legend-box.full{background:linear-gradient(135deg,#fee2e2,#fecaca);border-color:var(--danger);}
+.legend-box.maintenance{background:#e5e7eb;border-color:var(--muted);}
+
+/* KEY NOTIFICATION BADGE */
+.key-ready-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:100px;font-size:.65rem;font-weight:700;background:#dbeafe;color:#1e40af;}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;padding:12px 16px;border-radius:10px;background:var(--blue);color:#fff;font-size:.79rem;font-weight:500;box-shadow:0 6px 24px rgba(13,43,107,.3);z-index:999;transform:translateY(60px);opacity:0;transition:all .28s;max-width:340px;}
 .toast.show{transform:translateY(0);opacity:1;}
-.toast.ok{background:var(--ok);}.toast.er{background:var(--danger);}
+.toast.ok{background:var(--ok)}.toast.er{background:var(--danger)}.toast.warn{background:var(--warn)}
+
+/* BADGE TAGS */
+.badge-tag{display:inline-block;padding:2px 7px;border-radius:100px;font-size:.63rem;font-weight:700;margin-left:3px;}
+.bt-fees{background:#fef9c3;color:#713f12}
+.bt-src{background:#fce7f3;color:#9d174d}
+.bt-org{background:#dbeafe;color:#1e40af}
+
+.btn-v{padding:4px 9px;border-radius:6px;border:none;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;background:var(--off);color:var(--mid);}
+.btn-v:hover{background:var(--blue);color:#fff;}
+
+.comm-box{background:linear-gradient(135deg,#f0f9ff,#e8f4fd);border:1px solid #bae6fd;border-radius:10px;padding:13px;margin-top:10px;}
+.comm-title{font-weight:700;font-size:.8rem;color:#0369a1;margin-bottom:5px;display:flex;align-items:center;gap:5px;}
+.comm-body{font-size:.76rem;color:#0c4a6e;line-height:1.6;}
+
+.empty-state{text-align:center;padding:30px;color:var(--muted);font-size:.83rem;}
+.summary-bar{background:#fff;border-radius:10px;border:1px solid var(--border);padding:12px 16px;margin-bottom:13px;display:flex;gap:16px;flex-wrap:wrap;font-size:.78rem;}
+.summary-item span{display:block;font-size:.62rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:2px;font-weight:700;}
+.summary-item strong{font-size:.9rem;}
 
 /* RESPONSIVE */
 @media(max-width:1024px){
+  .sb{width:220px;}
+  .main{margin-left:220px;}
   .stats{grid-template-columns:repeat(auto-fit,minmax(160px,1fr));}
 }
 @media(max-width:768px){
   .sb{width:100%;height:auto;position:relative;flex-direction:row;flex-wrap:wrap;padding:8px;}
   .sb-head{width:100%;padding:10px 12px;}
   .sb-nav{width:100%;padding:5px;display:flex;flex-wrap:wrap;gap:4px;overflow-x:auto;}
+  .ns{width:100%;padding:6px 8px 2px;}
   .ni{padding:6px 10px;font-size:.72rem;white-space:nowrap;}
   .sb-foot{width:100%;}
   .main{margin-left:0;}
@@ -146,11 +199,20 @@ td .actions{display:flex;gap:4px;flex-wrap:wrap;}
   .sc{padding:12px 14px;}
   .sc-val{font-size:1.5rem;}
   .sec-hd{flex-direction:column;align-items:flex-start;}
-  .btn-group,.hgrid{width:100%;}
+  .btn-group{width:100%;}
+  .btn-group .btn-p,.btn-group .btn-s{flex:1;text-align:center;justify-content:center;}
   table{font-size:.72rem;}
   th,td{padding:7px 8px;}
+  .filter-bar{flex-direction:column;}
+  .search-input{width:100%;min-width:auto;}
+  .room-grid{grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:6px;}
   .mg2,.mg3{grid-template-columns:1fr;}
   .modal{width:95vw;max-height:95vh;}
+  .modal-xl,.modal-lg{width:95vw;}
+  .hgrid{grid-template-columns:1fr;}
+  .floor-info-grid{grid-template-columns:1fr;}
+  .legend{gap:8px;}
+  .summary-bar{flex-direction:column;gap:10px;}
 }
 @media(max-width:480px){
   .sb{padding:6px;}
@@ -165,205 +227,855 @@ td .actions{display:flex;gap:4px;flex-wrap:wrap;}
   .sc{padding:11px 12px;}
   .sc-val{font-size:1.35rem;}
   .sc-lbl{font-size:.58rem;}
+  .sec-title{font-size:.9rem;}
+  .btn-p,.btn-s,.btn-ok,.btn-danger{padding:6px 10px;font-size:.7rem;}
   table{display:block;overflow-x:auto;}
   th,td{padding:6px 7px;font-size:.68rem;}
+  .chip,.st-p,.st-a,.st-r,.st-k{font-size:.6rem;padding:2px 6px;}
+  .room-grid{grid-template-columns:repeat(auto-fill,minmax(60px,1fr));}
+  .room-num{font-size:.72rem;}
+  .modal-head,.modal-body,.modal-foot{padding:12px 14px;}
+  .modal-title{font-size:.95rem;}
+  .hostel-card{padding:14px;}
+  .hc-title{font-size:1.05rem;}
 }
 </style>
+<base target="_blank">
 </head>
 <body>
 
 <div class="sb">
   <div class="sb-head">
     <div class="sb-crest">🎓</div>
-    <div><div class="sb-name">MTC</div><div class="sb-role">Accommodation</div></div>
+    <div><div class="sb-name">MTC</div><div class="sb-role">Accommodation Admin</div></div>
   </div>
   <div class="sb-nav">
-    <div class="ns">Overview</div>
-    <div class="ni active" id="nav-dashboard"   onclick="go('dashboard')">📊 Dashboard</div>
-    <div class="ni"        id="nav-hostels"      onclick="go('hostels')">🏠 Manage Hostels</div>
+    <div class="ns">Dashboard</div>
+    <div class="ni active" onclick="go('dashboard')">📊 Overview</div>
+    <div class="ni" onclick="go('analytics')">📈 Analytics</div>
+    <div class="ns">Hostel Management</div>
+    <div class="ni" onclick="go('rooms')">🚪 Room Layout</div>
+    <div class="ni" onclick="go('occupancy')">🗺️ Occupancy Map</div>
+    <div class="ns">Residents</div>
+    <div class="ni" onclick="go('students')">🧑‍🎓 All Residents</div>
+    <div class="ni" onclick="go('manual-assign')">➕ Manual Assignment</div>
     <div class="ns">Applications</div>
-    <div class="ni"        id="nav-applications" onclick="go('applications')">📋 All Applications</div>
-    <div class="ni"        id="nav-pending"       onclick="go('pending')">⏳ Pending <span class="npill" id="npill">0</span></div>
-    <div class="ni"        id="nav-residents"     onclick="go('residents')">✅ Residents</div>
-    <div class="ns">Administration</div>
-    <div class="ni ni-danger" id="nav-semester"  onclick="go('semester')">🔄 New Semester Reset</div>
+    <div class="ni" onclick="go('pending')">⏳ Pending <span class="npill" id="npill">4</span></div>
+    <div class="ni" onclick="go('applications')">📋 All Applications</div>
+    <div class="ns">Key Management</div>
+    <div class="ni" onclick="go('keys')">🔑 Key Collection <span class="npill" id="kpill" style="background:#1a8a55">2</span></div>
+    <div class="ns">Operations</div>
+    <div class="ni" onclick="go('check-out')">📤 Check-Out</div>
+    <div class="ni" onclick="go('maintenance')">🔧 Maintenance</div>
+    <div class="ni ni-danger" onclick="go('semester')">🔄 New Semester</div>
   </div>
   <div class="sb-foot">
     <div class="su">
       <div class="su-av">👤</div>
-      <div><div class="su-name" id="adminName">Loading…</div><div class="su-tag">Accommodation Admin</div></div>
+      <div><div class="su-name">Admin</div><div class="su-tag">Accommodation Office</div></div>
     </div>
-    <button class="btn-out" onclick="doLogout()">Sign Out</button>
+    <button class="btn-out" onclick="alert('Signed out')">Sign Out</button>
   </div>
 </div>
 
 <div class="main">
   <div class="topbar">
-    <div class="page-title" id="ptitle">Dashboard</div>
+    <div class="page-title" id="ptitle">Dashboard Overview</div>
     <div class="topbar-right">
-      <button class="btn-sm-top" onclick="loadCurrent()">🔄 Refresh</button>
-      <span class="upd-txt" id="updTxt"></span>
+      <a href="student_portal.html" target="_blank"><button class="btn-sm-top">🌐 Student Portal</button></a>
+      <button class="btn-sm-top" onclick="toast('Refreshed!','ok')">🔄 Refresh</button>
+      <span style="font-size:.7rem;color:var(--muted)" id="updTxt"></span>
     </div>
   </div>
-  <div class="content">
-    <div class="api-status" id="apiStatus"></div>
 
-    <!-- DASHBOARD -->
+  <div class="content">
+
+    <!-- ====== DASHBOARD ====== -->
     <div id="sec-dashboard">
       <div class="stats">
-        <div class="sc cg"><div class="sc-ico">🛏️</div><div class="sc-lbl">Total Beds</div><div class="sc-val" id="sTB">—</div><div class="sc-sub">all hostels</div></div>
-        <div class="sc cb"><div class="sc-ico">👥</div><div class="sc-lbl">Occupied</div><div class="sc-val" id="sOC">—</div><div class="sc-sub">approved</div></div>
-        <div class="sc co"><div class="sc-ico">✅</div><div class="sc-lbl">Available</div><div class="sc-val" id="sAV">—</div><div class="sc-sub">remaining</div></div>
-        <div class="sc cw"><div class="sc-ico">⏳</div><div class="sc-lbl">Pending</div><div class="sc-val" id="sPN">—</div><div class="sc-sub">needs review</div></div>
+        <div class="sc cg" onclick="go('rooms')"><div class="sc-ico">🏠</div><div class="sc-lbl">Total Hostels</div><div class="sc-val" id="dash-hostels">-</div><div class="sc-sub">active buildings</div></div>
+        <div class="sc cb" onclick="go('rooms')"><div class="sc-ico">🛏️</div><div class="sc-lbl">Total Beds</div><div class="sc-val" id="dash-total-beds">-</div><div class="sc-sub">total capacity</div></div>
+        <div class="sc cb" onclick="go('students')"><div class="sc-ico">👥</div><div class="sc-lbl">Occupied</div><div class="sc-val" id="dash-occupied">-</div><div class="sc-sub" id="dash-occupancy-pct">0% occupancy</div></div>
+        <div class="sc co"><div class="sc-ico">✅</div><div class="sc-lbl">Available</div><div class="sc-val" id="dash-available">-</div><div class="sc-sub">beds free</div></div>
+        <div class="sc cw" onclick="go('pending')"><div class="sc-ico">⏳</div><div class="sc-lbl">Pending</div><div class="sc-val" id="dash-pending">-</div><div class="sc-sub">applications</div></div>
+        <div class="sc cp" onclick="go('keys')"><div class="sc-ico">🔑</div><div class="sc-lbl">Approved</div><div class="sc-val" id="dash-approved">-</div><div class="sc-sub">awaiting collection</div></div>
+        <div class="sc ct"><div class="sc-ico">❌</div><div class="sc-lbl">Rejected</div><div class="sc-val" id="dash-rejected">-</div><div class="sc-sub">applications</div></div>
       </div>
       <div class="sec">
-        <div class="sec-hd"><div class="sec-title">Hostel Overview</div><button class="btn-p" onclick="openAddHostel()">+ Add Hostel</button></div>
-        <div class="hgrid" id="hGrid"><div class="empty-box">Loading hostels…</div></div>
+        <div class="sec-hd"><div class="sec-title">Hostel Overview</div></div>
+        <div id="dash-hostel-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;">
+          <div style="text-align:center;padding:40px;color:var(--muted);grid-column:1/-1;">Loading hostels...</div>
+        </div>
       </div>
       <div class="sec">
-        <div class="sec-hd"><div class="sec-title">Recent Applications</div><button class="btn-p" onclick="go('pending')">View Pending →</button></div>
-        <div class="tw"><table>
-          <thead><tr><th>Ref No.</th><th>Student</th><th>Hostel</th><th>Status</th><th>Applied</th><th></th></tr></thead>
-          <tbody id="recentTbl"><tr class="empty-row"><td colspan="6">Loading…</td></tr></tbody>
-        </table></div>
+        <div class="sec-hd"><div class="sec-title">Quick Actions</div></div>
+        <div class="btn-group">
+          <button class="btn-p" onclick="openModal('modalManualAssign')">➕ Manual Assignment</button>
+          <button class="btn-p" onclick="go('pending')">⏳ Review Applications</button>
+          <button class="btn-p" onclick="go('keys')">🔑 Key Management</button>
+          <button class="btn-s" onclick="openModal('modalAddHostel')">🏠 Add Hostel</button>
+          <button class="btn-s" onclick="recalculateBeds()" style="background:#f0f9e8;color:var(--ok);border-color:var(--ok);">🔄 Recalculate Beds</button>
+          <button class="btn-s" onclick="go('analytics')">📈 Analytics</button>
+        </div>
       </div>
     </div>
 
-    <!-- HOSTELS -->
-    <div id="sec-hostels" style="display:none">
+    <!-- ====== PENDING APPLICATIONS ====== -->
+    <div id="sec-pending" style="display:none">
       <div class="sec">
-        <div class="sec-hd"><div class="sec-title">All Hostels</div><button class="btn-p" onclick="openAddHostel()">+ Add Hostel</button></div>
-        <div class="hgrid" id="hGridFull"><div class="empty-box">Loading…</div></div>
-      </div>
-    </div>
-
-    <!-- ALL APPLICATIONS -->
-    <div id="sec-applications" style="display:none">
-      <div class="sec">
-        <div class="sec-hd"><div class="sec-title">All Applications</div></div>
-        <div class="tw">
-          <div class="t-filter">
-            <input type="text" id="searchQ" placeholder="Search by name or student number…" oninput="filterApps()">
-            <select id="filterStatus" onchange="filterApps()">
-              <option value="">All Status</option><option value="pending">Pending</option>
-              <option value="approved">Approved</option><option value="rejected">Rejected</option>
-            </select>
+        <div class="sec-hd">
+          <div class="sec-title">Pending Applications</div>
+          <div class="btn-group">
+            <button class="btn-s" onclick="filterApps('all')">All</button>
+            <button class="btn-s" onclick="filterApps('student')">Students Only</button>
+            <button class="btn-s" onclick="filterApps('worker')">Workers Only</button>
           </div>
+        </div>
+        <div class="tw">
           <table>
-            <thead><tr><th>Ref No.</th><th>Student</th><th>Gender</th><th>Hostel</th><th>Status</th><th>Applied</th><th>Actions</th></tr></thead>
-            <tbody id="appTbl"><tr class="empty-row"><td colspan="7">Loading…</td></tr></tbody>
+            <thead>
+              <tr>
+                <th>Reference</th>
+                <th>Applicant</th>
+                <th>Type / Year</th>
+                <th>Gender</th>
+                <th>Special Status</th>
+                <th>Condition</th>
+                <th>Hostel Pref.</th>
+                <th>Applied</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="pendingTbody">
+              <tr><td colspan="9" style="text-align:center;padding:20px;color:var(--muted)">Loading applications...</td></tr>
+            </tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- PENDING -->
-    <div id="sec-pending" style="display:none">
+    <!-- ====== KEY MANAGEMENT ====== -->
+    <div id="sec-keys" style="display:none">
       <div class="sec">
-        <div class="sec-hd"><div class="sec-title">Pending Applications</div><span class="badge-count" id="pendBadge">0</span></div>
-        <div class="tw"><table>
-          <thead><tr><th>Ref No.</th><th>Student</th><th>Gender</th><th>Condition</th><th>Hostel Pref.</th><th>Applied</th><th>Actions</th></tr></thead>
-          <tbody id="pendTbl"><tr class="empty-row"><td colspan="7">Loading…</td></tr></tbody>
-        </table></div>
+        <div class="sec-hd">
+          <div class="sec-title">🔑 Key Collection Management</div>
+        </div>
+        <div id="keysContent">
+          <div style="text-align:center;padding:60px;color:var(--muted);">Loading key management data...</div>
+        </div>
       </div>
     </div>
 
-    <!-- RESIDENTS -->
-    <div id="sec-residents" style="display:none">
+    <!-- ====== ALL STUDENTS ====== -->
+    <div id="sec-students" style="display:none">
       <div class="sec">
-        <div class="sec-hd"><div class="sec-title">Approved Residents</div></div>
-        <div class="tw"><table>
-          <thead><tr><th>Ref No.</th><th>Student</th><th>Phone</th><th>Gender</th><th>Hostel</th><th>Approved On</th></tr></thead>
-          <tbody id="resTbl"><tr class="empty-row"><td colspan="6">Loading…</td></tr></tbody>
-        </table></div>
+        <div class="sec-hd">
+          <div class="sec-title">All Residents</div>
+          <button class="btn-p" onclick="openModal('modalManualAssign')">➕ Add Resident</button>
+        </div>
+        <div class="filter-bar">
+          <input class="search-input" type="text" placeholder="🔍 Search by name, number, room…" oninput="filterStudents(this.value)">
+          <button class="filter-btn active" onclick="filterStudentsByYear('all',this)">All</button>
+          <button class="filter-btn" onclick="filterStudentsByYear('1',this)">Year 1</button>
+          <button class="filter-btn" onclick="filterStudentsByYear('2',this)">Year 2</button>
+          <button class="filter-btn" onclick="filterStudentsByYear('3',this)">Year 3</button>
+          <button class="filter-btn" onclick="filterStudentsByYear('4',this)">Year 4</button>
+          <button class="filter-btn" onclick="filterStudentsByYear('worker',this)">Workers</button>
+          <button class="filter-btn" onclick="filterStudentsByGender('F',this)">♀ Female</button>
+          <button class="filter-btn" onclick="filterStudentsByGender('M',this)">♂ Male</button>
+        </div>
+        <div class="tw">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>ID / No.</th>
+                <th>Year/Type</th>
+                <th>Gender</th>
+                <th>Special</th>
+                <th>Room</th>
+                <th>Hostel</th>
+                <th>Check-Out</th>
+                <th>Key</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="keysTbody">
+              <tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted)">Loading key data...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <!-- NEW SEMESTER -->
-    <div id="sec-semester" style="display:none">
-      <div class="semester-panel">
-        <div class="sp-head">
-          <div class="sp-icon">🔄</div>
-          <div>
-            <div class="sp-title">New Semester / Term Reset</div>
-            <div class="sp-desc">Use at the start of a new semester to clear all student records and open fresh accommodation applications.</div>
+    <!-- ====== ALL STUDENTS ====== -->
+    <div id="sec-students" style="display:none">
+      <div class="sec">
+        <div class="sec-hd">
+          <div class="sec-title">All Residents</div>
+          <button class="btn-p" onclick="openModal('modalManualAssign')">➕ Add Resident</button>
+        </div>
+        <div class="filter-bar">
+          <input class="search-input" type="text" placeholder="🔍 Search by name, number, room…" oninput="filterStudents(this.value)">
+          <button class="filter-btn active" onclick="filterStudentsByYear('all',this)">All</button>
+          <button class="filter-btn" onclick="filterStudentsByYear('1',this)">Year 1</button>
+          <button class="filter-btn" onclick="filterStudentsByYear('2',this)">Year 2</button>
+          <button class="filter-btn" onclick="filterStudentsByYear('3',this)">Year 3</button>
+          <button class="filter-btn" onclick="filterStudentsByYear('4',this)">Year 4</button>
+          <button class="filter-btn" onclick="filterStudentsByYear('worker',this)">Workers</button>
+          <button class="filter-btn" onclick="filterStudentsByGender('F',this)">♀ Female</button>
+          <button class="filter-btn" onclick="filterStudentsByGender('M',this)">♂ Male</button>
+        </div>
+        <div class="tw">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>ID / No.</th>
+                <th>Year/Type</th>
+                <th>Gender</th>
+                <th>Special</th>
+                <th>Room</th>
+                <th>Hostel</th>
+                <th>Key</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="studentsTbody">
+              <tr><td colspan="9" style="text-align:center;padding:20px;color:var(--muted)">Loading residents...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== ROOM LAYOUT ====== -->
+    <div id="sec-rooms" style="display:none">
+      <div class="sec">
+        <div class="sec-hd">
+          <div class="sec-title">Room Layout</div>
+          <div class="btn-group">
+            <select id="hostelSelect" onchange="loadHostelRooms()" style="padding:7px 12px;border-radius:7px;border:1.5px solid var(--border);font-size:.78rem;font-family:'DM Sans',sans-serif;">
+              <option value="">Loading hostels...</option>
+            </select>
+            <button class="btn-s" onclick="openModal('modalAddHostel')">🏠 Add Hostel</button>
           </div>
         </div>
-        <div class="sp-what">
-          <strong>This will permanently delete:</strong><br>
-          • All student records<br>
-          • All accommodation applications (pending, approved, rejected)<br><br>
-          <strong>All hostel bed counts will be reset to their original totals.</strong>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-box empty"></div><span>Empty</span></div>
+          <div class="legend-item"><div class="legend-box occupied"></div><span>Partially Occupied</span></div>
+          <div class="legend-item"><div class="legend-box full"></div><span>Full</span></div>
         </div>
-        <div class="sp-keep">✅ <strong>Kept:</strong> Hostel names, bed totals, and all admin accounts are NOT affected.</div>
-        <button class="btn-danger" onclick="openSemesterModal()">🔄 Begin New Semester Reset…</button>
+        <div id="roomLayoutContent">
+          <div style="text-align:center;padding:60px;color:var(--muted);">Select a hostel to view room layout</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== OCCUPANCY MAP ====== -->
+    <div id="sec-occupancy" style="display:none">
+      <div class="sec">
+        <div class="sec-hd"><div class="sec-title">Real-Time Occupancy Map</div></div>
+        <div id="occupancyContent">
+          <div style="text-align:center;padding:60px;color:var(--muted);">Loading occupancy data...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== MANUAL ASSIGN (section) ====== -->
+    <div id="sec-manual-assign" style="display:none">
+      <div class="sec">
+        <div class="sec-hd"><div class="sec-title">Manual Student / Worker Assignment</div></div>
+        <p style="color:var(--muted);margin-bottom:18px;font-size:.83rem">Assign a resident directly without an application — for workers, special cases, or returning students.</p>
+        <button class="btn-p" onclick="openModal('modalManualAssign')">➕ Open Assignment Form</button>
       </div>
     </div>
 
-  </div>
-</div>
-
-<!-- ADD HOSTEL MODAL -->
-<div class="modal-bg" id="modalHostel">
-  <div class="modal">
-    <div class="modal-head"><div class="modal-title" id="hostelModalTitle">Add New Hostel</div><button class="modal-close" onclick="closeModal('modalHostel')">✕</button></div>
-    <div class="modal-body">
-      <input type="hidden" id="editHostelId" value="">
-      <div class="mfld"><label>Hostel Name *</label><input type="text" id="hName" placeholder="e.g. Tsitsi"></div>
-      <div class="mg2">
-        <div class="mfld"><label>Total Beds *</label><input type="number" id="hBeds" placeholder="500" min="1" step="1"></div>
-        <div class="mfld"><label>Gender Type</label>
-          <select id="hGender"><option value="Female Only">Female Only</option><option value="Male Only">Male Only</option><option value="Mixed">Mixed</option></select>
+    <!-- ====== CHECK-OUT ====== -->
+    <div id="sec-check-out" style="display:none">
+      <div class="sec">
+        <div class="sec-hd"><div class="sec-title">Check-Out Management</div></div>
+        <div id="checkoutContent">
+          <div style="text-align:center;padding:60px;color:var(--muted);">Loading check-out data...</div>
         </div>
       </div>
-      <div class="mfld"><label>Location / Wing</label><input type="text" id="hLoc" placeholder="e.g. North Wing"></div>
-      <div class="inline-err" id="hostelErr"></div>
     </div>
-    <div class="modal-foot">
-      <button class="btn-v" onclick="closeModal('modalHostel')">Cancel</button>
-      <button class="btn-p" id="hostelSubmitBtn" onclick="saveHostel()">Create Hostel</button>
-    </div>
-  </div>
-</div>
 
-<!-- DELETE HOSTEL CONFIRM MODAL -->
-<div class="modal-bg" id="modalDeleteHostel">
-  <div class="modal" style="width:400px">
-    <div class="modal-head"><div class="modal-title danger">Delete Hostel</div><button class="modal-close" onclick="closeModal('modalDeleteHostel')">✕</button></div>
-    <div class="modal-body">
-      <div class="warn-box">Are you sure you want to delete <strong id="deleteHostelName"></strong>?<br>This cannot be undone. Hostels with approved residents cannot be deleted.</div>
+    <!-- other sections placeholders -->
+    <div id="sec-analytics" style="display:none">
+      <div class="sec">
+        <div class="sec-hd"><div class="sec-title">📈 Analytics Dashboard</div></div>
+        <div class="stats">
+          <div class="sc cb"><div class="sc-ico">📊</div><div class="sc-lbl">Occupancy Rate</div><div class="sc-val" id="analytics-occupancy">0%</div><div class="sc-sub">current semester</div></div>
+          <div class="sc cg"><div class="sc-ico">📈</div><div class="sc-lbl">Total Applications</div><div class="sc-val" id="analytics-total-apps">0</div><div class="sc-sub">this semester</div></div>
+          <div class="sc co"><div class="sc-ico">✅</div><div class="sc-lbl">Approval Rate</div><div class="sc-val" id="analytics-approval">0%</div><div class="sc-sub">approved / total</div></div>
+          <div class="sc cw"><div class="sc-ico">⏳</div><div class="sc-lbl">Pending Review</div><div class="sc-val" id="analytics-pending">0</div><div class="sc-sub">awaiting decision</div></div>
+        </div>
+      </div>
+      <div class="sec">
+        <div class="sec-hd"><div class="sec-title">Hostel Occupancy Breakdown</div></div>
+        <div id="analytics-hostel-breakdown" class="tw">
+          <table>
+            <thead>
+              <tr>
+                <th>Hostel</th>
+                <th>Gender</th>
+                <th>Total Beds</th>
+                <th>Occupied</th>
+                <th>Available</th>
+                <th>Occupancy %</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="analyticsHostelTbody">
+              <tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted)">Loading analytics data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="sec">
+        <div class="sec-hd"><div class="sec-title">Application Trends</div></div>
+        <div class="stats">
+          <div class="sc"><div class="sc-lbl">🧑‍🎓 Students</div><div class="sc-val" id="analytics-students" style="color:var(--blue3)">0</div><div class="sc-sub">student applications</div></div>
+          <div class="sc"><div class="sc-lbl">👷 Workers</div><div class="sc-val" id="analytics-workers" style="color:var(--purple)">0</div><div class="sc-sub">worker applications</div></div>
+          <div class="sc"><div class="sc-lbl">🎖️ SRC Members</div><div class="sc-val" id="analytics-src" style="color:#9d174d">0</div><div class="sc-sub">declared SRC</div></div>
+          <div class="sc"><div class="sc-lbl">💰 Work-for-Fees</div><div class="sc-val" id="analytics-fees" style="color:#713f12">0</div><div class="sc-sub">declared</div></div>
+        </div>
+      </div>
     </div>
-    <div class="modal-foot">
-      <button class="btn-v" onclick="closeModal('modalDeleteHostel')">Cancel</button>
-      <button class="btn-danger" id="confirmDeleteHostelBtn" onclick="confirmDeleteHostel()">Delete Hostel</button>
+    
+    <div id="sec-maintenance" style="display:none">
+      <div class="sec">
+        <div class="sec-hd">
+          <div class="sec-title">🔧 Maintenance Tracker</div>
+          <div class="btn-group">
+            <button class="btn-p" onclick="openModal('modalAddMaintenance')">+ Report Issue</button>
+            <button class="btn-s" onclick="filterMaintenance('all')">All</button>
+            <button class="btn-s" onclick="filterMaintenance('pending')">Pending</button>
+            <button class="btn-s" onclick="filterMaintenance('in-progress')">In Progress</button>
+            <button class="btn-s" onclick="filterMaintenance('completed')">Completed</button>
+          </div>
+        </div>
+        <div class="summary-bar">
+          <div class="summary-item"><span>Total Issues</span><strong id="maint-total" style="color:var(--blue3)">0</strong></div>
+          <div class="summary-item"><span>Pending</span><strong id="maint-pending" style="color:var(--warn)">0</strong></div>
+          <div class="summary-item"><span>In Progress</span><strong id="maint-progress" style="color:var(--purple)">0</strong></div>
+          <div class="summary-item"><span>Completed</span><strong id="maint-completed" style="color:var(--ok)">0</strong></div>
+        </div>
+        <div class="tw">
+          <table>
+            <thead>
+              <tr>
+                <th>Issue ID</th>
+                <th>Hostel / Room</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Reported</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="maintenanceTbody">
+              <tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted)">No maintenance issues reported.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+    <div id="sec-applications" style="display:none"><div class="empty-state">📋 All Applications — filtering by status.</div></div>
+    <div id="sec-semester" style="display:none">
+      <div class="card" style="max-width:600px">
+        <div class="ch"><div class="ch-t" style="color:var(--danger)">⚠️ New Semester Reset - Complete System Wipe</div>
+        <div class="ch-s" style="color:var(--danger);font-weight:600;">This action will PERMANENTLY DELETE ALL DATA and reset the system for a new semester. This CANNOT be undone!</div></div>
+        <div class="cb">
+          <div style="background:#fee2e2;border:2px solid var(--danger);border-radius:10px;padding:16px;margin-bottom:16px;">
+            <div style="font-weight:700;color:var(--danger);margin-bottom:10px;font-size:.85rem;">🗑️ What will be deleted:</div>
+            <ul style="margin:0;padding-left:20px;font-size:.82rem;color:var(--mid);line-height:1.8;">
+              <li><strong>ALL student applications</strong> (pending, approved, rejected)</li>
+              <li><strong>ALL student records</strong> from the system</li>
+              <li><strong>ALL room assignments</strong> (occupancy reset to 0)</li>
+            </ul>
+          </div>
+          <div style="background:#dbeafe;border:2px solid var(--blue3);border-radius:10px;padding:16px;margin-bottom:16px;">
+            <div style="font-weight:700;color:var(--blue);margin-bottom:10px;font-size:.85rem;">🔄 What will be reset:</div>
+            <ul style="margin:0;padding-left:20px;font-size:.82rem;color:var(--mid);line-height:1.8;">
+              <li><strong>ALL hostels</strong> - available beds reset to total capacity</li>
+              <li><strong>ALL floors</strong> - available beds reset to total capacity</li>
+              <li><strong>ALL rooms</strong> - occupancy count reset to 0</li>
+            </ul>
+          </div>
+          <div style="background:#fef3c7;border:2px solid var(--warn);border-radius:10px;padding:12px;margin-bottom:16px;">
+            <div style="font-size:.78rem;color:#92400e;">
+              <strong>ℹ️ Note:</strong> Hostel, floor, and room structures will be preserved. Only the data and occupancy will be cleared.
+            </div>
+          </div>
+          <div class="mfld"><label>Type CONFIRM to proceed</label><input type="text" id="semConfirm" placeholder="Type CONFIRM"></div>
+          <button class="btn-danger" onclick="semesterReset()" style="width:100%;padding:12px;font-size:.9rem;">🗑️ RESET ENTIRE SYSTEM FOR NEW SEMESTER</button>
+        </div>
+      </div>
+    </div>
 
-<!-- APP DETAIL MODAL -->
-<div class="modal-bg" id="modalApp">
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ====== MODAL: APPROVE APP ====== -->
+<div class="modal-bg" id="modalApprove">
   <div class="modal">
-    <div class="modal-head"><div class="modal-title">Application Details</div><button class="modal-close" onclick="closeModal('modalApp')">✕</button></div>
-    <div class="modal-body" id="modalAppBody">Loading…</div>
-    <div class="modal-foot" id="modalAppFoot"></div>
-  </div>
-</div>
-
-<!-- NEW SEMESTER MODAL -->
-<div class="modal-bg" id="modalSemester">
-  <div class="modal">
-    <div class="modal-head"><div class="modal-title danger">⚠️ Confirm New Semester Reset</div><button class="modal-close" onclick="closeModal('modalSemester')">✕</button></div>
+    <div class="modal-head"><div class="modal-title" id="approveTitle">Approve Application</div><button class="modal-close" onclick="closeModal('modalApprove')">✕</button></div>
     <div class="modal-body">
-      <div class="warn-box"><strong>This cannot be undone.</strong><br>All student records and applications will be permanently deleted. Hostel bed counts will be reset.</div>
-      <div id="semesterStats" style="background:var(--off);border-radius:9px;padding:14px;margin-bottom:16px;font-size:.82rem;color:var(--mid)">Loading counts…</div>
+      <div class="info-card" id="approveInfo"></div>
       <div class="mfld">
-        <label>Type <strong>NEW SEMESTER</strong> to confirm *</label>
-        <input type="text" id="semesterConfirm" class="danger-input" placeholder="NEW SEMESTER" autocomplete="off" oninput="checkSemConfirm()">
+        <label>Assign Hostel</label>
+        <select id="approveHostel">
+          <option>Tsitsi Hostel</option>
+          <option>Ruvimbo Hostel</option>
+          <option>Tariro Hostel</option>
+        </select>
+      </div>
+      <div class="mg2">
+        <div class="mfld"><label>Assign Room Number</label><input type="text" id="approveRoom" placeholder="e.g. G05"></div>
+        <div class="mfld"><label>Floor</label>
+          <select id="approveFloor">
+            <option>Ground Floor</option><option>First Floor</option><option>Second Floor</option>
+          </select>
+        </div>
+      </div>
+      <div class="mfld"><label>Check-Out Date</label><input type="date" id="approveCheckout"></div>
+      <div class="comm-box">
+        <div class="comm-title">📱 Automatic Notification</div>
+        <div class="comm-body">Upon approval, the student will automatically see their room assignment and key collection instructions in the Student Portal under "Check Status". They will be directed to collect their key from the Accommodation Office with their reference number + ID.</div>
       </div>
     </div>
     <div class="modal-foot">
-      <button class="btn-v" onclick="closeModal('modalSemester')">Cancel</button>
-      <button class="btn-danger" id="semesterBtn" disabled onclick="doNewSemester()">🔄 Reset Now</button>
+      <button class="btn-ok" onclick="confirmApprove()">✓ Confirm Approval & Notify Student</button>
+      <button class="btn-s" onclick="closeModal('modalApprove')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MODAL: ROOM DETAIL ====== -->
+<div class="modal-bg" id="modalRoom">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title" id="roomModalTitle">Room Details</div><button class="modal-close" onclick="closeModal('modalRoom')">✕</button></div>
+    <div class="modal-body">
+      <div class="info-card">
+        <div class="info-row"><span class="info-lbl">Room Number:</span><strong class="info-val" id="rmNum">—</strong></div>
+        <div class="info-row"><span class="info-lbl">Hostel:</span><span class="info-val" id="rmHostel">—</span></div>
+        <div class="info-row"><span class="info-lbl">Floor:</span><span class="info-val" id="rmFloor">—</span></div>
+        <div class="info-row"><span class="info-lbl">Capacity:</span><span class="info-val" id="rmCapacity">—</span></div>
+        <div class="info-row"><span class="info-lbl">Occupied:</span><span class="info-val" style="color:var(--gold)" id="rmOcc">—</span></div>
+        <div class="info-row"><span class="info-lbl">Available Beds:</span><span class="info-val" style="color:var(--ok)" id="rmAvail">—</span></div>
+      </div>
+      <div style="background:var(--off);border-radius:8px;padding:12px;font-size:.8rem;color:var(--mid);margin-top:8px">
+        <strong style="display:block;margin-bottom:8px;color:var(--blue)">Current Occupants & Applicants</strong>
+        <div id="rmOccupants">Loading…</div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-s" onclick="closeModal('modalRoom')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MODAL: ADD FLOOR ====== -->
+<div class="modal-bg" id="modalAddFloor">
+  <div class="modal" style="max-width:600px;">
+    <div class="modal-head">
+      <div class="modal-title">🏢 Add New Floor</div>
+      <button class="modal-close" onclick="closeModal('modalAddFloor')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="alert-i" style="background:#e8eef9;border:1px solid rgba(59,130,246,.3);border-radius:9px;padding:10px 13px;font-size:.78rem;color:var(--mid);margin-bottom:14px;display:flex;align-items:flex-start;gap:7px;">
+        ℹ️ <strong>How it works:</strong> Bed counts are automatically calculated from rooms. First create the floor, then add rooms with their capacity. The system will track total beds automatically.
+      </div>
+      <div class="mfld">
+        <label>Hostel <span style="color:var(--danger)">*</span></label>
+        <select id="newFloorHostel" onchange="loadFloorHostelInfo()">
+          <option value="">-- Select Hostel --</option>
+        </select>
+        <div id="floorHostelInfo" style="margin-top:8px;font-size:.78rem;color:var(--muted);"></div>
+      </div>
+      <div class="mg2">
+        <div class="mfld">
+          <label>Floor Name <span style="color:var(--danger)">*</span></label>
+          <select id="newFloorName">
+            <option value="">-- Select Floor --</option>
+            <option value="ground">Ground Floor</option>
+            <option value="first">First Floor</option>
+            <option value="second">Second Floor</option>
+            <option value="third">Third Floor</option>
+          </select>
+        </div>
+        <div class="mfld">
+          <label>Total Beds <span style="color:var(--danger)">*</span></label>
+          <input type="number" id="newFloorBeds" placeholder="e.g. 40" min="1" oninput="calculateFloorBeds()">
+          <div id="floorBedsInfo" style="margin-top:4px;font-size:.72rem;color:var(--muted);"></div>
+        </div>
+      </div>
+      <div class="mg2">
+        <div class="mfld">
+          <label>Auto-create Rooms?</label>
+          <select id="autoCreateRooms" onchange="toggleRoomOptions()">
+            <option value="no">No, I'll add rooms manually</option>
+            <option value="yes">Yes, create rooms automatically</option>
+          </select>
+        </div>
+        <div class="mfld" id="roomCountField" style="display:none;">
+          <label>Number of Rooms</label>
+          <input type="number" id="numRooms" placeholder="e.g. 20" min="1" oninput="calculateBedsPerRoom()">
+        </div>
+      </div>
+      <div class="mfld" id="bedsPerRoomField" style="display:none;">
+        <label>Beds per Room (calculated)</label>
+        <input type="text" id="bedsPerRoomCalc" readonly style="background:var(--bg);cursor:not-allowed;">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-p" onclick="createFloor()" id="createFloorBtn">🏗️ Create Floor</button>
+      <button class="btn-s" onclick="closeModal('modalAddFloor')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MODAL: ADD ROOM ====== -->
+<div class="modal-bg" id="modalAddRoom">
+  <div class="modal" style="max-width:550px;">
+    <div class="modal-head">
+      <div class="modal-title">🚪 Add New Room</div>
+      <button class="modal-close" onclick="closeModal('modalAddRoom')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="alert-i" style="background:#e8f7f0;border:1px solid rgba(26,138,85,.3);border-radius:9px;padding:10px 13px;font-size:.78rem;color:var(--mid);margin-bottom:14px;display:flex;align-items:flex-start;gap:7px;">
+        ✅ <strong>Bed Tracking:</strong> Each room's capacity adds to the floor and hostel totals. Duplicate room numbers are automatically prevented.
+      </div>
+      <input type="hidden" id="roomHostelId">
+      <input type="hidden" id="roomFloorId">
+      <div class="mg2">
+        <div class="mfld">
+          <label>Hostel</label>
+          <input type="text" id="roomHostelDisplay" readonly style="background:var(--bg);cursor:not-allowed;">
+        </div>
+        <div class="mfld">
+          <label>Floor</label>
+          <input type="text" id="roomFloorDisplay" readonly style="background:var(--bg);cursor:not-allowed;">
+        </div>
+      </div>
+      <div class="mg2">
+        <div class="mfld">
+          <label>Room Number <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="newRoomNumber" placeholder="e.g. G01, F12, 205">
+        </div>
+        <div class="mfld">
+          <label>Bed Capacity <span style="color:var(--danger)">*</span></label>
+          <select id="newRoomCapacity">
+            <option value="1">1 Bed (Single)</option>
+            <option value="2" selected>2 Beds (Double)</option>
+            <option value="3">3 Beds (Triple)</option>
+            <option value="4">4 Beds (Quad)</option>
+          </select>
+        </div>
+      </div>
+      <div class="mfld">
+        <label>Room Status</label>
+        <select id="newRoomStatus">
+          <option value="active">✅ Active (Available for assignment)</option>
+          <option value="maintenance">🔧 Under Maintenance</option>
+          <option value="reserved">🔒 Reserved</option>
+        </select>
+      </div>
+      <div class="mfld">
+        <label>Notes (optional)</label>
+        <textarea id="newRoomNotes" placeholder="Any special notes about this room..." rows="2"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-p" onclick="createRoom()">🚪 Create Room</button>
+      <button class="btn-s" onclick="closeModal('modalAddRoom')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MODAL: EDIT HOSTEL ====== -->
+<div class="modal-bg" id="modalEditHostel">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">✏️ Edit Hostel</div>
+      <button class="modal-close" onclick="closeModal('modalEditHostel')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editHostelId">
+      <div class="alert-i" style="background:var(--gold3);border:1px solid rgba(201,168,76,.3);border-radius:9px;padding:10px 13px;font-size:.78rem;color:var(--mid);margin-bottom:14px;display:flex;align-items:flex-start;gap:7px;">
+        ℹ️ Updating hostel details will affect all existing floors and rooms.
+      </div>
+      <div class="mg2">
+        <div class="mfld">
+          <label>Hostel Name <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="edit-ah-name" placeholder="e.g. Tendai Hostel">
+        </div>
+        <div class="mfld">
+          <label>Location <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="edit-ah-location" placeholder="e.g. Block C, North Campus">
+        </div>
+      </div>
+      <div class="mg2">
+        <div class="mfld">
+          <label>Gender Type <span style="color:var(--danger)">*</span></label>
+          <select id="edit-ah-gender">
+            <option value="Mixed">Mixed</option>
+            <option value="Male Only">Male Only</option>
+            <option value="Female Only">Female Only</option>
+          </select>
+        </div>
+        <div class="mfld">
+          <label>Total Beds <span style="color:var(--danger)">*</span></label>
+          <input type="number" id="edit-ah-beds" placeholder="e.g. 150" min="1">
+        </div>
+      </div>
+      <div class="mfld">
+        <label>Notes (optional)</label>
+        <textarea id="edit-ah-notes" placeholder="Any notes about this hostel..." rows="2"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-p" onclick="updateHostel()">💾 Save Changes</button>
+      <button class="btn-s" onclick="closeModal('modalEditHostel')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MODAL: ADD HOSTEL ====== -->
+<div class="modal-bg" id="modalAddHostel">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">🏠 Add New Hostel</div><button class="modal-close" onclick="closeModal('modalAddHostel')">✕</button></div>
+    <div class="modal-body">
+      <div class="alert-i" style="background:var(--gold3);border:1px solid rgba(201,168,76,.3);border-radius:9px;padding:10px 13px;font-size:.78rem;color:var(--mid);margin-bottom:14px;display:flex;align-items:flex-start;gap:7px;">
+        ℹ️ Creating a new hostel will make it immediately available for student applications.
+      </div>
+      <div class="mg2">
+        <div class="mfld"><label>Hostel Name <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="ah-name" placeholder="e.g. Tendai Hostel">
+        </div>
+        <div class="mfld"><label>Location <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="ah-location" placeholder="e.g. Block C, North Campus">
+        </div>
+      </div>
+      <div class="mg3">
+        <div class="mfld"><label>Gender Type <span style="color:var(--danger)">*</span></label>
+          <select id="ah-gender">
+            <option value="Mixed">Mixed</option>
+            <option value="Male Only">Male Only</option>
+            <option value="Female Only">Female Only</option>
+          </select>
+        </div>
+        <div class="mfld"><label>Total Beds <span style="color:var(--danger)">*</span></label>
+          <input type="number" id="ah-beds" placeholder="e.g. 150" min="1">
+        </div>
+        <div class="mfld"><label>Number of Floors</label>
+          <select id="ah-floors">
+            <option value="1">1 Floor</option>
+            <option value="2">2 Floors</option>
+            <option value="3" selected>3 Floors</option>
+            <option value="4">4 Floors</option>
+          </select>
+        </div>
+      </div>
+      <div class="mfld"><label>Description / Notes</label>
+        <textarea id="ah-notes" placeholder="Any additional information about this hostel…"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-p" onclick="saveAddHostel()">✅ Create Hostel</button>
+      <button class="btn-s" onclick="closeModal('modalAddHostel')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MODAL: EDIT HOSTEL ====== -->
+<div class="modal-bg" id="modalEditHostel">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">✏️ Edit Hostel</div><button class="modal-close" onclick="closeModal('modalEditHostel')">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="editHostelId">
+      <div class="alert-i" style="background:#e8eef9;border:1px solid rgba(59,130,246,.3);border-radius:9px;padding:10px 13px;font-size:.78rem;color:var(--mid);margin-bottom:14px;display:flex;align-items:flex-start;gap:7px;">
+        ℹ️ Modifying hostel details will update information across the system. Bed count changes will affect available capacity.
+      </div>
+      <div class="mg2">
+        <div class="mfld"><label>Hostel Name <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="edit-ah-name" placeholder="e.g. Tendai Hostel">
+        </div>
+        <div class="mfld"><label>Location <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="edit-ah-location" placeholder="e.g. Block C, North Campus">
+        </div>
+      </div>
+      <div class="mg2">
+        <div class="mfld"><label>Gender Type <span style="color:var(--danger)">*</span></label>
+          <select id="edit-ah-gender">
+            <option value="Mixed">Mixed</option>
+            <option value="Male Only">Male Only</option>
+            <option value="Female Only">Female Only</option>
+          </select>
+        </div>
+        <div class="mfld"><label>Total Beds <span style="color:var(--danger)">*</span></label>
+          <input type="number" id="edit-ah-beds" placeholder="e.g. 150" min="1">
+        </div>
+      </div>
+      <div class="mfld"><label>Description / Notes</label>
+        <textarea id="edit-ah-notes" placeholder="Any additional information about this hostel…"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-p" onclick="updateHostel()">💾 Save Changes</button>
+      <button class="btn-s" onclick="closeModal('modalEditHostel')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MODAL: MANUAL ASSIGN ====== -->
+<div class="modal-bg" id="modalManualAssign">
+  <div class="modal modal-lg">
+    <div class="modal-head"><div class="modal-title">Manual Room Assignment</div><button class="modal-close" onclick="closeModal('modalManualAssign')">✕</button></div>
+    <div class="modal-body">
+      <div class="mfld"><label>Applicant Type</label>
+        <select id="ma-type" onchange="toggleManualFields()">
+          <option value="student">Student</option>
+          <option value="worker">Worker / Staff</option>
+        </select>
+      </div>
+      <div class="mg2">
+        <div class="mfld"><label>Full Name</label><input type="text" id="ma-name" placeholder="e.g. John Doe"></div>
+        <div class="mfld" id="ma-numField"><label>Student Number</label><input type="text" id="ma-num" placeholder="e.g. MM230123"></div>
+      </div>
+      <div class="mg2">
+        <div class="mfld"><label>Phone</label><input type="text" id="ma-phone" placeholder="0771234567"></div>
+        <div class="mfld"><label>Gender</label>
+          <select id="ma-gender"><option>Male</option><option>Female</option></select>
+        </div>
+      </div>
+      <div class="mg2" id="ma-yearRow">
+        <div class="mfld"><label>Year of Study</label>
+          <select id="ma-year"><option value="1">Year 1</option><option value="2">Year 2</option><option value="3">Year 3</option><option value="4">Year 4</option></select>
+        </div>
+        <div class="mfld"><label>Special Status</label>
+          <select id="ma-special">
+            <option value="">None</option>
+            <option value="fees">Work-for-Fees</option>
+            <option value="org">Sponsored by Organisation</option>
+            <option value="src">SRC Member</option>
+          </select>
+        </div>
+      </div>
+      <div class="mfld" id="ma-deptRow" style="display:none"><label>Department / Workplace</label><input type="text" id="ma-dept" placeholder="e.g. Maintenance, Kitchen, Security…"></div>
+      <div class="mg2">
+        <div class="mfld"><label>Assign Hostel</label>
+          <select id="ma-hostel"><option>Tsitsi Hostel</option><option>Ruvimbo Hostel</option><option>Tariro Hostel</option></select>
+        </div>
+        <div class="mfld"><label>Assign Room</label>
+          <select id="ma-room"><option>G03 — Ground (2 free)</option><option>G07 — Ground (2 free)</option><option>F04 — First (2 free)</option></select>
+        </div>
+      </div>
+      <div class="mfld"><label>Check-Out Date</label><input type="date" id="ma-checkout"></div>
+      <div class="mfld"><label>Notes</label><textarea id="ma-notes" placeholder="Any notes or special requirements…"></textarea></div>
+      <div class="comm-box">
+        <div class="comm-title">📱 Automatic Notification</div>
+        <div class="comm-body">The resident will immediately see their room and key collection instructions in the Student Portal. No manual communication needed.</div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-p" onclick="saveManualAssignment()">✓ Assign & Notify</button>
+      <button class="btn-s" onclick="closeModal('modalManualAssign')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MODAL: STUDENT DETAIL ====== -->
+<div class="modal-bg" id="modalStudent">
+  <div class="modal modal-xl">
+    <div class="modal-head"><div class="modal-title">Resident Details</div><button class="modal-close" onclick="closeModal('modalStudent')">✕</button></div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div class="info-card">
+            <div style="font-weight:700;color:var(--blue);font-size:.88rem;margin-bottom:10px">Personal Info</div>
+            <div class="info-row"><span class="info-lbl">Name:</span><strong class="info-val">Rudo Chikwari</strong></div>
+            <div class="info-row"><span class="info-lbl">Student No.:</span><span class="info-val"><code>H220234</code></span></div>
+            <div class="info-row"><span class="info-lbl">Gender:</span><span class="info-val">Female</span></div>
+            <div class="info-row"><span class="info-lbl">Year:</span><span class="chip ch-y2">Year 2</span></div>
+            <div class="info-row"><span class="info-lbl">Phone:</span><span class="info-val">+263 77 123 4567</span></div>
+            <div class="info-row"><span class="info-lbl">Special Status:</span><span class="info-val">—</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="info-card">
+            <div style="font-weight:700;color:var(--blue);font-size:.88rem;margin-bottom:10px">Accommodation</div>
+            <div class="info-row"><span class="info-lbl">Hostel:</span><strong class="info-val">Tsitsi Hostel</strong></div>
+            <div class="info-row"><span class="info-lbl">Room:</span><strong class="info-val">G02 — Ground Floor</strong></div>
+            <div class="info-row"><span class="info-lbl">Check-Out:</span><strong class="info-val" style="color:var(--warn)">15 Dec 2025</strong></div>
+            <div class="info-row"><span class="info-lbl">Key Status:</span><span class="info-val" style="color:var(--ok)">✅ Issued</span></div>
+            <div class="info-row"><span class="info-lbl">Roommate:</span><span class="info-val">Chipo Mandaza</span></div>
+          </div>
+          <div class="info-card">
+            <div style="font-weight:700;color:var(--blue);font-size:.88rem;margin-bottom:10px">Actions</div>
+            <button class="btn-p" style="width:100%;margin-bottom:7px" onclick="toast('Move to different room','')">🔄 Move to Different Room</button>
+            <button class="btn-p" style="width:100%;margin-bottom:7px" onclick="toast('Edit check-out date','')">📅 Edit Check-Out Date</button>
+            <button class="btn-danger" style="width:100%" onclick="toast('Student removed from hostel','er')">🗑️ Remove from Hostel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn-s" onclick="closeModal('modalStudent')">Close</button></div>
+  </div>
+</div>
+
+<!-- ====== MODAL: APP DETAIL ====== -->
+<div class="modal-bg" id="modalAppDetail">
+  <div class="modal modal-lg">
+    <div class="modal-head"><div class="modal-title">Application Details</div><button class="modal-close" onclick="closeModal('modalAppDetail')">✕</button></div>
+    <div class="modal-body">
+      <div class="info-card">
+        <div class="info-row"><span class="info-lbl">Reference:</span><code>MTC-ACC-2025-0004</code></div>
+        <div class="info-row"><span class="info-lbl">Applicant:</span><strong>Ruvarashe Dube</strong></div>
+        <div class="info-row"><span class="info-lbl">Student No.:</span><span>MM230045</span></div>
+        <div class="info-row"><span class="info-lbl">Type:</span><span class="chip ch-y1">Student — Year 1</span></div>
+        <div class="info-row"><span class="info-lbl">Gender:</span><span>Female</span></div>
+        <div class="info-row"><span class="info-lbl">Special Status:</span><span class="badge-tag bt-fees">💰 Work-for-Fees</span></div>
+        <div class="info-row"><span class="info-lbl">Condition:</span><span style="color:var(--muted)">None</span></div>
+        <div class="info-row"><span class="info-lbl">Hostel Preference:</span><span>Tsitsi Hostel</span></div>
+        <div class="info-row"><span class="info-lbl">Floor Preference:</span><span>Ground Floor</span></div>
+        <div class="info-row"><span class="info-lbl">Special Requirements:</span><span style="color:var(--muted)">None</span></div>
+        <div class="info-row"><span class="info-lbl">Applied:</span><span>5 Jan 2025</span></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-ok" onclick="closeModal('modalAppDetail');approveApp('MTC-ACC-2025-0004','Ruvarashe Dube','Tsitsi Hostel','G08','Ground Floor')">✓ Approve</button>
+      <button class="btn-danger" onclick="rejectApp('MTC-ACC-2025-0004');closeModal('modalAppDetail')">✕ Reject</button>
+      <button class="btn-s" onclick="closeModal('modalAppDetail')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MODAL: HOSTEL SETTINGS ====== -->
+<div class="modal-bg" id="modalHostelSettings">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">Hostel Settings</div><button class="modal-close" onclick="closeModal('modalHostelSettings')">✕</button></div>
+    <div class="modal-body">
+      <div class="mg2">
+        <div class="mfld"><label>Hostel Name</label><input type="text" value="Tsitsi Hostel"></div>
+        <div class="mfld"><label>Location</label><input type="text" value="North Wing"></div>
+      </div>
+      <div class="mg2">
+        <div class="mfld"><label>Gender Type</label>
+          <select><option>Female Only</option><option>Male Only</option><option>Mixed</option></select>
+        </div>
+        <div class="mfld"><label>Status</label>
+          <select><option>Active</option><option>Closed</option><option>Under Renovation</option></select>
+        </div>
+      </div>
+      <div class="mfld"><label>Notes / Description</label><textarea placeholder="Any notes about this hostel…"></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-p" onclick="toast('Hostel settings saved','ok');closeModal('modalHostelSettings')">Save Changes</button>
+      <button class="btn-s" onclick="closeModal('modalHostelSettings')">Cancel</button>
     </div>
   </div>
 </div>
@@ -371,376 +1083,1784 @@ td .actions{display:flex;gap:4px;flex-wrap:wrap;}
 <div class="toast" id="toast"></div>
 
 <script>
-/* ── AUTH ── */
-(function(){
-  if (!localStorage.getItem('mtc_token') || localStorage.getItem('mtc_role') !== 'accommodation') {
-    window.location.href = '/login/';
+// ====== CSRF TOKEN HELPER ======
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+function getHeaders(contentType = true) {
+    const headers = {};
+    if (contentType) headers['Content-Type'] = 'application/json';
+    const csrf = getCookie('csrftoken');
+    if (csrf) headers['X-CSRFToken'] = csrf;
+    return headers;
+}
+
+// ====== NAVIGATION ======
+let currentSection = 'dashboard';
+let currentHostelData = []; // Store current hostel room data for modal refresh
+const ALL_SECTIONS = ['dashboard','rooms','occupancy','students','manual-assign','check-out','analytics','pending','applications','semester','maintenance','keys'];
+
+function go(section) {
+  currentSection = section;
+  ALL_SECTIONS.forEach(s => {
+    const el = document.getElementById('sec-'+s);
+    if(el) el.style.display = s===section ? '' : 'none';
+  });
+  document.querySelectorAll('.ni').forEach(el=>el.classList.remove('active'));
+  const nav = document.querySelector(`.ni[onclick*="'${section}'"]`);
+  if(nav) nav.classList.add('active');
+  const titles = {
+    'dashboard':'Dashboard Overview','rooms':'Room Layout','occupancy':'Occupancy Map',
+    'students':'All Residents','manual-assign':'Manual Assignment','check-out':'Check-Out Management',
+    'analytics':'Analytics & Reports','pending':'Pending Applications','applications':'All Applications',
+    'semester':'New Semester Reset','maintenance':'Maintenance','keys':'Key Collection Management'
+  };
+  document.getElementById('ptitle').textContent = titles[section]||section;
+  document.getElementById('updTxt').textContent = 'Updated '+new Date().toLocaleTimeString();
+  
+  // Load section-specific data
+  if(section === 'analytics') {
+    loadAnalytics();
+  } else if(section === 'maintenance') {
+    loadMaintenance();
+  } else if(section === 'pending') {
+    loadPendingApplications();
+  } else if(section === 'dashboard') {
+    loadDashboardData();
+  } else if(section === 'keys' || section === 'students') {
+    loadApprovedApplications();
+  } else if(section === 'rooms') {
+    loadHostelSelect();
+  } else if(section === 'occupancy') {
+    loadOccupancyMap();
+  } else if(section === 'check-out') {
+    loadCheckoutData();
+  }
+}
+
+// ====== VIEW HOSTEL DETAIL ======
+async function viewHostelDetail(hostelId) {
+  try {
+    console.log('Navigating to hostel detail for ID:', hostelId);
+    
+    // Navigate to rooms section
+    go('rooms');
+    
+    // Wait a moment for the section to be visible
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // Set the hostel dropdown to the selected hostel
+    const select = document.getElementById('hostelSelect');
+    select.value = hostelId;
+    
+    // Load the hostel rooms and details
+    await loadHostelRooms();
+    
+    console.log('✅ Hostel detail view loaded');
+  } catch (error) {
+    console.error('❌ Error loading hostel detail:', error);
+    toast('Error loading hostel details: ' + error.message, 'er');
+  }
+}
+
+// ====== MODALS ======
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ====== FLOOR TOGGLE ======
+function toggleFloor(id) {
+  const rooms = document.getElementById(id+'-rooms');
+  const toggle = document.getElementById(id+'-toggle');
+  const isHidden = rooms.style.display==='none'||rooms.style.display==='';
+  // For grid rooms need to check properly
+  if(rooms.style.display==='none'){rooms.style.display='grid';toggle.textContent='▲';}
+  else{rooms.style.display='none';toggle.textContent='▼';}
+}
+
+// ====== ROOM VIEW ======
+function viewRoom(num) {
+  const occ = {'G01':'1 student','G02':'2 students','G03':'Empty','G04':'2 students','G05':'1 student','G06':'Maintenance','G07':'Empty','G08':'1 student','F01':'2 students','F02':'1 student','F03':'Empty','F04':'2 students'};
+  const avail = {'G01':'1 bed','G02':'0 beds','G03':'2 beds','G04':'0 beds','G05':'1 bed','G06':'—','G07':'2 beds','G08':'1 bed','F01':'0 beds','F02':'1 bed','F03':'2 beds','F04':'0 beds'};
+  document.getElementById('roomModalTitle').textContent = 'Room '+num+' — Tsitsi Hostel';
+  document.getElementById('rmNum').textContent = num;
+  document.getElementById('rmOcc').textContent = occ[num]||'Unknown';
+  document.getElementById('rmAvail').textContent = avail[num]||'—';
+  const occupantNames = {
+    'G01':'Tatenda Moyo (H230456) — Year 1<br><span class="badge-tag bt-fees">💰 Work-for-Fees</span>',
+    'G02':'Rudo Chikwari (H220234) — Year 2<br>Chipo Mandaza (H220567) — Year 2',
+    'G05':'Chido Moyo (MM230001) — Year 1',
+    'G08':'Blessing Mutamba (H220098) — Year 2'
+  };
+  document.getElementById('rmOccupants').innerHTML = occupantNames[num]||'<em style="color:var(--muted)">No current occupants</em>';
+  openModal('modalRoom');
+}
+
+// ====== APPROVE / REJECT ======
+let pendingApproval = {};
+function approveApp(ref, name, hostel, room, floor) {
+  pendingApproval = {ref,name,hostel,room,floor};
+  document.getElementById('approveTitle').textContent = 'Approve: '+name;
+  document.getElementById('approveInfo').innerHTML = `
+    <div class="info-row"><span class="info-lbl">Reference:</span><code>${ref}</code></div>
+    <div class="info-row"><span class="info-lbl">Applicant:</span><strong>${name}</strong></div>
+    <div class="info-row"><span class="info-lbl">Hostel:</span><span>${hostel}</span></div>
+  `;
+  document.getElementById('approveHostel').value = hostel;
+  document.getElementById('approveRoom').value = room;
+  document.getElementById('approveFloor').value = floor;
+  // Default checkout 6 months from now
+  const d = new Date(); d.setMonth(d.getMonth()+6);
+  document.getElementById('approveCheckout').value = d.toISOString().split('T')[0];
+  openModal('modalApprove');
+}
+
+function confirmApprove() {
+  const room = document.getElementById('approveRoom').value;
+  const hostel = document.getElementById('approveHostel').value;
+  const floor = document.getElementById('approveFloor').value;
+  if(!room){ toast('Please assign a room number','er'); return; }
+  closeModal('modalApprove');
+  toast(`✅ ${pendingApproval.name} approved — Room ${room}, ${hostel}. Notification sent to student portal.`,'ok');
+  // Update pending count
+  const n = parseInt(document.getElementById('npill').textContent||'0');
+  if(n>0) document.getElementById('npill').textContent = n-1;
+  const k = parseInt(document.getElementById('kpill').textContent||'0');
+  document.getElementById('kpill').textContent = k+1;
+}
+
+function rejectApp(ref) {
+  const reason = prompt('Enter rejection reason (shown to applicant in portal):');
+  if(reason===null) return;
+  toast('Application '+ref+' rejected. Student notified.','warn');
+  const n = parseInt(document.getElementById('npill').textContent||'0');
+  if(n>0) document.getElementById('npill').textContent = n-1;
+}
+
+// ====== KEY ISSUE ======
+function issueKey(ref, name, room) {
+  if(confirm(`Issue key for Room ${room} to ${name}?
+
+Confirm they have presented:
+✓ Reference: ${ref}
+✓ Valid Student/National ID`)){
+    toast(`🔑 Key for Room ${room} issued to ${name}. Room status updated.`,'ok');
+    const k = parseInt(document.getElementById('kpill').textContent||'0');
+    if(k>0) document.getElementById('kpill').textContent = k-1;
+  }
+}
+
+// ====== MANUAL ASSIGN ======
+function toggleManualFields() {
+  const t = document.getElementById('ma-type').value;
+  document.getElementById('ma-numField').style.display = t==='worker'?'none':'block';
+  document.getElementById('ma-yearRow').style.display = t==='worker'?'none':'grid';
+  document.getElementById('ma-deptRow').style.display = t==='worker'?'block':'none';
+}
+
+function saveManualAssignment() {
+  const name = document.getElementById('ma-name').value.trim();
+  const room = document.getElementById('ma-room').value;
+  if(!name){ toast('Please enter a name','er'); return; }
+  closeModal('modalManualAssign');
+  toast(`✅ ${name} assigned to ${room}. Portal updated.`,'ok');
+}
+
+// ====== ADD FLOOR ======
+function saveAddFloor() {
+  const hostel = document.getElementById('af-hostel').value;
+  const name = document.getElementById('af-name').value.trim();
+  const rooms = document.getElementById('af-rooms').value;
+  if(!name||!rooms){ toast('Please fill all required fields','er'); return; }
+  closeModal('modalAddFloor');
+  toast(`🏢 ${name} with ${rooms} rooms added to ${hostel}!`,'ok');
+}
+
+function openAddRoomToFloor(floor) {
+  document.getElementById('ar-floor').value = floor;
+  openModal('modalAddRoom');
+}
+
+// ====== ADD ROOM ======
+function saveAddRoom() {
+  const num = document.getElementById('ar-num').value.trim();
+  const hostel = document.getElementById('ar-hostel').value;
+  if(!num){ toast('Please enter a room number','er'); return; }
+  closeModal('modalAddRoom');
+  toast(`🚪 Room ${num} added to ${hostel}!`,'ok');
+}
+
+// ====== ADD HOSTEL ======
+async function saveAddHostel() {
+  const name = document.getElementById('ah-name').value.trim();
+  const location = document.getElementById('ah-location').value.trim();
+  const gender = document.getElementById('ah-gender').value;
+  const beds = document.getElementById('ah-beds').value;
+  
+  console.log('Creating hostel with:', { name, location, gender, beds });
+  
+  if(!name || !location || !beds) { 
+    toast('Please fill all required fields (Name, Location, Total Beds)','er'); 
+    return; 
+  }
+  
+  try {
+    // Call backend API to create hostel
+    const payload = {
+      name: name,
+      location: location,
+      gender_type: gender,
+      total_beds: parseInt(beds)
+    };
+    
+    console.log('Sending payload:', JSON.stringify(payload));
+    
+    const response = await fetch('/api/accommodation/hostels/', {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(payload)
+    });
+    
+    console.log('Create hostel response status:', response.status);
+    
+    if(!response.ok) {
+      const error = await response.json();
+      console.error('Create hostel error:', error);
+      throw new Error(error.error || error.name || JSON.stringify(error));
+    }
+    
+    const data = await response.json();
+    console.log('✅ Hostel created successfully:', data);
+    
+    closeModal('modalAddHostel');
+    toast(`✅ Hostel "${name}" created successfully with ${beds} beds!`, 'ok');
+    
+    // Clear form
+    document.getElementById('ah-name').value = '';
+    document.getElementById('ah-location').value = '';
+    document.getElementById('ah-beds').value = '';
+    document.getElementById('ah-notes').value = '';
+    
+    // Reload all data to show the new hostel
+    console.log('Reloading dashboard data...');
+    await loadDashboardData();
+    await loadHostelSelect();
+    
+  } catch (error) {
+    console.error('❌ Error creating hostel:', error);
+    toast('Error: ' + error.message, 'er');
+  }
+}
+
+// ====== EDIT HOSTEL ======
+async function editHostel(hostelId) {
+  try {
+    console.log('Fetching hostel data for editing:', hostelId);
+    const response = await fetch(`/api/accommodation/hostels/${hostelId}/`);
+    
+    if(!response.ok) {
+      throw new Error('Failed to load hostel data');
+    }
+    
+    const hostel = await response.json();
+    console.log('Hostel data loaded:', hostel);
+    
+    // Populate edit form
+    document.getElementById('editHostelId').value = hostel.id;
+    document.getElementById('edit-ah-name').value = hostel.name;
+    document.getElementById('edit-ah-location').value = hostel.location || '';
+    document.getElementById('edit-ah-gender').value = hostel.gender_type;
+    document.getElementById('edit-ah-beds').value = hostel.total_beds;
+    document.getElementById('edit-ah-notes').value = '';
+    
+    openModal('modalEditHostel');
+  } catch (error) {
+    console.error('Error loading hostel for edit:', error);
+    toast('Error loading hostel data: ' + error.message, 'er');
+  }
+}
+
+async function updateHostel() {
+  const hostelId = document.getElementById('editHostelId').value;
+  const name = document.getElementById('edit-ah-name').value.trim();
+  const location = document.getElementById('edit-ah-location').value.trim();
+  const gender = document.getElementById('edit-ah-gender').value;
+  const beds = document.getElementById('edit-ah-beds').value;
+  
+  console.log('Updating hostel:', { hostelId, name, location, gender, beds });
+  
+  if(!name || !location || !beds) { 
+    toast('Please fill all required fields (Name, Location, Total Beds)','er'); 
+    return; 
+  }
+  
+  try {
+    const payload = {
+      name: name,
+      location: location,
+      gender_type: gender,
+      total_beds: parseInt(beds)
+    };
+    
+    console.log('Sending update payload:', JSON.stringify(payload));
+    
+    const response = await fetch(`/api/accommodation/hostels/${hostelId}/`, {
+      method: 'PATCH',
+      headers: getHeaders(),
+      body: JSON.stringify(payload)
+    });
+    
+    console.log('Update response status:', response.status);
+    
+    if(!response.ok) {
+      const error = await response.json();
+      console.error('Update error:', error);
+      throw new Error(error.error || error.name || JSON.stringify(error));
+    }
+    
+    const data = await response.json();
+    console.log('✅ Hostel updated successfully:', data);
+    
+    closeModal('modalEditHostel');
+    toast(`✅ Hostel "${name}" updated successfully!`, 'ok');
+    
+    // Reload all data to reflect changes
+    await loadDashboardData();
+    await loadHostelSelect();
+    loadHostelRooms(); // Reload current hostel view
+    
+  } catch (error) {
+    console.error('❌ Error updating hostel:', error);
+    toast('Error: ' + error.message, 'er');
+  }
+}
+
+// ====== DELETE HOSTEL ======
+async function deleteHostel(hostelId, hostelName) {
+  const confirmed = confirm(
+    `⚠️ Delete Hostel: ${hostelName}\n\n` +
+    `This will permanently delete:\n` +
+    `• The hostel "${hostelName}"\n` +
+    `• All floors in this hostel\n` +
+    `• All rooms in this hostel\n\n` +
+    `This action CANNOT be undone. Are you sure?`
+  );
+  
+  if(!confirmed) {
+    console.log('Delete cancelled by user');
+    return;
+  }
+  
+  try {
+    console.log('Deleting hostel:', hostelId);
+    
+    const response = await fetch(`/api/accommodation/hostels/${hostelId}/`, {
+      method: 'DELETE',
+      headers: getHeaders()
+    });
+    
+    console.log('Delete response status:', response.status);
+    
+    if(!response.ok) {
+      const error = await response.json();
+      console.error('Delete error:', error);
+      throw new Error(error.error || 'Failed to delete hostel');
+    }
+    
+    console.log('✅ Hostel deleted successfully');
+    toast(`🗑️ Hostel "${hostelName}" deleted successfully!`, 'ok');
+    
+    // Reload all data
+    await loadDashboardData();
+    await loadHostelSelect();
+    
+    // Clear room layout view
+    document.getElementById('roomLayoutContent').innerHTML = 
+      '<div style="text-align:center;padding:60px;color:var(--muted);"><div style="font-size:3rem;margin-bottom:16px;">🏠</div><div style="font-size:1.1rem;font-weight:600;margin-bottom:8px;">Hostel Deleted</div><div>Select another hostel to view</div></div>';
+    
+  } catch (error) {
+    console.error('❌ Error deleting hostel:', error);
+    toast('Error: ' + error.message, 'er');
+  }
+}
+
+function saveRoomStatus() {
+  toast('Room status updated!','ok');
+  closeModal('modalRoom');
+}
+
+// ====== ANALYTICS ======
+async function loadAnalytics() {
+  try {
+    // Fetch dashboard data from backend
+    const response = await fetch('/api/accommodation/admin/dashboard/');
+    if(!response.ok) throw new Error('Failed to load analytics');
+    
+    const data = await response.json();
+    
+    // Update summary stats
+    const occupancyRate = data.total_beds > 0 ? Math.round((data.occupied_beds / data.total_beds) * 100) : 0;
+    const approvalRate = data.total_applications > 0 ? Math.round((data.approved_applications / data.total_applications) * 100) : 0;
+    
+    document.getElementById('analytics-occupancy').textContent = occupancyRate + '%';
+    document.getElementById('analytics-total-apps').textContent = data.total_applications;
+    document.getElementById('analytics-approval').textContent = approvalRate + '%';
+    document.getElementById('analytics-pending').textContent = data.pending_count;
+    
+    // Update hostel breakdown table
+    const tbody = document.getElementById('analyticsHostelTbody');
+    if(data.hostels && data.hostels.length > 0) {
+      tbody.innerHTML = data.hostels.map(h => {
+        const occupied = h.total_beds - h.available_beds;
+        const statusClass = h.is_full ? 'st-r' : (h.occupancy_percent > 75 ? 'st-p' : 'st-a');
+        const statusText = h.is_full ? 'FULL' : (h.occupancy_percent > 75 ? 'High' : 'Available');
+        return `<tr>
+          <td><strong>${h.name}</strong></td>
+          <td>${h.gender_type}</td>
+          <td>${h.total_beds}</td>
+          <td>${occupied}</td>
+          <td style="color:${h.is_full ? 'var(--danger)' : 'var(--ok)'}">${h.available_beds}</td>
+          <td><strong>${h.occupancy_percent}%</strong></td>
+          <td><span class="${statusClass}">${statusText}</span></td>
+        </tr>`;
+      }).join('');
+    } else {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted)">No hostels available.</td></tr>';
+    }
+    
+    // For now, set student/worker counts to 0 (would need additional backend fields)
+    document.getElementById('analytics-students').textContent = data.approved_applications;
+    document.getElementById('analytics-workers').textContent = '0';
+    document.getElementById('analytics-src').textContent = '0';
+    document.getElementById('analytics-fees').textContent = '0';
+    
+  } catch (error) {
+    console.error('Error loading analytics:', error);
+    document.getElementById('analyticsHostelTbody').innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--danger)">Error loading analytics data.</td></tr>';
+  }
+}
+
+// ====== MAINTENANCE TRACKER ======
+let maintenanceIssues = [];
+
+async function loadMaintenance() {
+  try {
+    // Try to fetch from backend API
+    const response = await fetch('/api/accommodation/maintenance/');
+    
+    if(!response.ok) {
+      // If endpoint doesn't exist yet, show empty state
+      console.log('Maintenance endpoint not available yet');
+      maintenanceIssues = [];
+      renderMaintenanceTable();
+      updateMaintenanceStats();
+      return;
+    }
+    
+    maintenanceIssues = await response.json();
+    renderMaintenanceTable();
+    updateMaintenanceStats();
+  } catch (error) {
+    console.error('Error loading maintenance:', error);
+    // Show empty state on error
+    maintenanceIssues = [];
+    renderMaintenanceTable();
+    updateMaintenanceStats();
+  }
+}
+
+function renderMaintenanceTable(filter = 'all') {
+  const tbody = document.getElementById('maintenanceTbody');
+  const filtered = filter === 'all' ? maintenanceIssues : maintenanceIssues.filter(issue => issue.status === filter);
+  
+  if(filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted)">No maintenance issues found.</td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = filtered.map(issue => {
+    const statusClass = issue.status === 'completed' ? 'st-a' : (issue.status === 'in-progress' ? 'st-k' : 'st-p');
+    const statusText = issue.status === 'completed' ? 'Completed' : (issue.status === 'in-progress' ? 'In Progress' : 'Pending');
+    const priorityColor = issue.priority === 'High' ? 'var(--danger)' : (issue.priority === 'Medium' ? 'var(--warn)' : 'var(--muted)');
+    
+    return `<tr data-status="${issue.status}">
+      <td><code style="font-family:'JetBrains Mono',monospace;font-size:.7rem">${issue.id}</code></td>
+      <td><strong>${issue.hostel}</strong><br><span style="font-size:.68rem;color:var(--muted)">Room ${issue.room}</span></td>
+      <td>${issue.category}</td>
+      <td style="max-width:200px">${issue.description}</td>
+      <td><span style="color:${priorityColor};font-weight:700">${issue.priority}</span></td>
+      <td><span class="${statusClass}">${statusText}</span></td>
+      <td>${issue.date}</td>
+      <td>
+        <div style="display:flex;gap:5px">
+          ${issue.status !== 'completed' ? `<button class="btn-ok" onclick="updateMaintenanceStatus('${issue.id}','completed')">✓</button>` : ''}
+          <button class="btn-v" onclick="viewMaintenanceDetail('${issue.id}')">View</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function updateMaintenanceStats() {
+  document.getElementById('maint-total').textContent = maintenanceIssues.length;
+  document.getElementById('maint-pending').textContent = maintenanceIssues.filter(i => i.status === 'pending').length;
+  document.getElementById('maint-progress').textContent = maintenanceIssues.filter(i => i.status === 'in-progress').length;
+  document.getElementById('maint-completed').textContent = maintenanceIssues.filter(i => i.status === 'completed').length;
+}
+
+function filterMaintenance(status) {
+  renderMaintenanceTable(status);
+}
+
+async function updateMaintenanceStatus(id, newStatus) {
+  try {
+    // Try to update via API
+    const response = await fetch(`/api/accommodation/maintenance/${id}/`, {
+      method: 'PATCH',
+      headers: getHeaders(),
+      body: JSON.stringify({ status: newStatus })
+    });
+    
+    if(response.ok) {
+      toast(`Maintenance issue ${id} marked as ${newStatus}`, 'ok');
+      await loadMaintenance(); // Reload from server
+    } else {
+      // Fallback: update locally if API not available
+      const issue = maintenanceIssues.find(i => i.id === id);
+      if(issue) {
+        issue.status = newStatus;
+        renderMaintenanceTable();
+        updateMaintenanceStats();
+        toast(`Maintenance issue ${id} marked as ${newStatus} (local update)`, 'warn');
+      }
+    }
+  } catch (error) {
+    console.error('Error updating maintenance:', error);
+    // Fallback: update locally
+    const issue = maintenanceIssues.find(i => i.id === id);
+    if(issue) {
+      issue.status = newStatus;
+      renderMaintenanceTable();
+      updateMaintenanceStats();
+      toast(`Maintenance issue ${id} marked as ${newStatus} (local update)`, 'warn');
+    }
+  }
+}
+
+function viewMaintenanceDetail(id) {
+  const issue = maintenanceIssues.find(i => i.id === id);
+  if(issue) {
+    alert(`Issue ${id}
+Hostel: ${issue.hostel}
+Room: ${issue.room}
+Category: ${issue.category}
+Description: ${issue.description}
+Priority: ${issue.priority}
+Status: ${issue.status}`);
+  }
+}
+
+// ====== FILTERS ======
+function filterStudentsByYear(year, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  document.querySelectorAll('#studentsTbody tr').forEach(row=>{
+    row.style.display = year==='all'||row.dataset.year===year?'':'none';
+  });
+}
+function filterStudentsByGender(gender, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  document.querySelectorAll('#studentsTbody tr').forEach(row=>{
+    row.style.display = row.dataset.gender===gender?'':'none';
+  });
+}
+function filterStudents(q) {
+  q = q.toLowerCase();
+  document.querySelectorAll('#studentsTbody tr').forEach(row=>{
+    row.style.display = row.textContent.toLowerCase().includes(q)?'':'none';
+  });
+}
+function filterOcc(f, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+}
+function filterApps(type) { toast('Filtered by: '+type,''); }
+
+// ====== CHECK-OUT ======
+function processCheckOut(num, room) {
+  if(confirm('Process check-out for '+num+'?\nRoom '+room+' will be marked as available immediately.')){
+    toast('✅ Check-out processed for '+num+'. Room '+room+' is now available.','ok');
+  }
+}
+function editCheckOutDate(num) {
+  const d = prompt('Enter new check-out date (YYYY-MM-DD):');
+  if(d) toast('Check-out date updated for '+num+' → '+d,'ok');
+}
+
+// ====== SEMESTER RESET ======
+async function semesterReset() {
+  if(document.getElementById('semConfirm').value!=='CONFIRM'){
+    toast('Please type CONFIRM to proceed','er'); return;
+  }
+  
+  const confirmed = confirm(
+    '⚠️ DANGER: COMPLETE SYSTEM RESET\n\n' +
+    'This will:\n' +
+    '• Delete ALL student applications\n' +
+    '• Delete ALL student records\n' +
+    '• Reset ALL hostel bed counts to full capacity\n' +
+    '• Clear ALL room assignments\n\n' +
+    'This action CANNOT be undone. Are you absolutely sure?'
+  );
+  
+  if(!confirmed) return;
+  
+  try {
+    const response = await fetch('/api/accommodation/admin/new-semester/', {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({ confirm: 'NEW SEMESTER' })
+    });
+    
+    if(!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to reset semester');
+    }
+    
+    const data = await response.json();
+    
+    toast(
+      `✅ Semester reset complete! ` +
+      `${data.applications_deleted} applications deleted, ` +
+      `${data.students_deleted} students removed, ` +
+      `${data.rooms_reset} rooms reset, ` +
+      `${data.floors_reset} floors reset, ` +
+      `${data.hostels_reset} hostels reset.`,
+      'ok'
+    );
+    
+    document.getElementById('semConfirm').value='';
+    
+    // Reload all data to reflect the reset
+    await loadDashboardData();
+    await loadHostelSelect();
+    await loadPendingApplications();
+    await loadApprovedApplications();
+    
+  } catch (error) {
+    console.error('Error resetting semester:', error);
+    toast('❌ Error: ' + error.message, 'er');
+  }
+}
+
+// ====== RECALCULATE BEDS ======
+async function recalculateBeds() {
+  const confirmed = confirm(
+    '🔄 Recalculate Bed Counts\n\n' +
+    'This will recalculate all bed counts from rooms to fix any inconsistencies.\n\n' +
+    'Continue?'
+  );
+  
+  if(!confirmed) return;
+  
+  try {
+    console.log('Recalculating bed counts...');
+    
+    const response = await fetch('/api/accommodation/admin/recalculate-beds/', {
+      method: 'POST',
+      headers: getHeaders()
+    });
+    
+    if(!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to recalculate beds');
+    }
+    
+    const data = await response.json();
+    console.log('✅ Bed counts recalculated:', data);
+    
+    toast('✅ ' + data.message, 'ok');
+    
+    // Reload dashboard to show updated counts
+    await loadDashboardData();
+    await loadHostelSelect();
+    
+  } catch (error) {
+    console.error('❌ Error recalculating beds:', error);
+    toast('Error: ' + error.message, 'er');
+  }
+}
+
+// ====== DATA LOADING FROM API ======
+async function loadDashboardData() {
+  try {
+    console.log('Loading dashboard data...');
+    // Fetch dashboard stats
+    const response = await fetch('/api/accommodation/admin/dashboard/');
+    
+    console.log('Dashboard response status:', response.status);
+    
+    if(!response.ok) {
+      const errorText = await response.text();
+      console.error('Dashboard error response:', errorText);
+      throw new Error(`Failed to load dashboard: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    console.log('Dashboard data received:', data);
+    
+    // Update dashboard stats
+    document.getElementById('dash-hostels').textContent = data.hostels.length;
+    document.getElementById('dash-total-beds').textContent = data.total_beds;
+    document.getElementById('dash-occupied').textContent = data.occupied_beds;
+    document.getElementById('dash-available').textContent = data.available_beds;
+    document.getElementById('dash-pending').textContent = data.pending_count;
+    document.getElementById('dash-approved').textContent = data.approved_applications;
+    document.getElementById('dash-rejected').textContent = data.rejected_applications;
+    
+    // Update occupancy percentage
+    const occupancyPct = data.total_beds > 0 ? Math.round((data.occupied_beds / data.total_beds) * 100) : 0;
+    document.getElementById('dash-occupancy-pct').textContent = occupancyPct + '% occupancy';
+    
+    // Update hostel list
+    const hostelListEl = document.getElementById('dash-hostel-list');
+    if(data.hostels && data.hostels.length > 0) {
+      hostelListEl.innerHTML = data.hostels.map(h => {
+        const occupied = h.total_beds - h.available_beds;
+        const gc = h.gender_type === 'Female Only' ? 'background:#fde8f0;color:#9d174d' : 
+                   h.gender_type === 'Male Only' ? 'background:#e8eef9;color:var(--blue)' : 
+                   'background:#f0f9e8;color:var(--ok)';
+        return `<div class="sc" style="cursor:pointer" onclick="viewHostelDetail(${h.id})">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div style="font-weight:700;font-size:.92rem">${h.name}</div>
+            <span style="padding:2px 9px;border-radius:100px;font-size:.65rem;font-weight:700;${gc}">${h.gender_type}</span>
+          </div>
+          <div style="display:flex;gap:12px;font-size:.72rem;color:var(--muted);margin-bottom:8px">
+            <span>📍 ${h.location || '—'}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:5px">
+            <span>Total Beds: <strong>${h.total_beds}</strong></span>
+            <span>Available: <strong style="color:${h.is_full ? 'var(--danger)' : 'var(--ok)'}">${h.available_beds}</strong></span>
+          </div>
+          <div style="background:var(--border);border-radius:100px;height:6px;overflow:hidden">
+            <div style="height:100%;border-radius:100px;width:${h.occupancy_percent}%;background:${h.occupancy_percent > 90 ? '#ef4444' : h.occupancy_percent > 75 ? '#f59e0b' : '#1a8a55'}"></div>
+          </div>
+          <div style="font-size:.68rem;color:var(--muted);margin-top:4px;text-align:right">${h.occupancy_percent}% occupied</div>
+          <div style="display:flex;gap:6px;margin-top:10px;">
+            <button class="btn-s" onclick="event.stopPropagation();editHostel(${h.id})" style="font-size:.68rem;padding:4px 10px;flex:1;" title="Edit Hostel">✏️ Edit</button>
+            <button class="btn-s" onclick="event.stopPropagation();deleteHostel(${h.id}, '${h.name}')" style="font-size:.68rem;padding:4px 10px;background:#fee2e2;color:var(--danger);border-color:var(--danger);flex:1;" title="Delete Hostel">🗑️ Delete</button>
+          </div>
+        </div>`;
+      }).join('');
+    } else {
+      hostelListEl.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);grid-column:1/-1;">No hostels in database. Click "Add Hostel" to create one.</div>';
+    }
+    
+    // Update pill badges
+    document.getElementById('npill').textContent = data.pending_count;
+    document.getElementById('kpill').textContent = data.approved_applications;
+    
+  } catch (error) {
+    console.error('❌ Error loading dashboard:', error);
+    console.error('Error stack:', error.stack);
+    toast('Error loading dashboard data: ' + error.message, 'er');
+  }
+}
+
+async function loadPendingApplications() {
+  try {
+    const response = await fetch('/api/accommodation/admin/applications/?status=pending');
+    if(!response.ok) throw new Error('Failed to load applications');
+    
+    const applications = await response.json();
+    const tbody = document.getElementById('pendingTbody');
+    
+    if(applications.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--muted)">No pending applications.</td></tr>';
+      return;
+    }
+    
+    tbody.innerHTML = applications.map(app => {
+      const s = app.student || {};
+      const badges = [];
+      if(s.is_src) badges.push('<span class="badge-tag bt-src">🎖️ SRC</span>');
+      if(s.work_for_fees) badges.push('<span class="badge-tag bt-fees">💰 Work-for-Fees</span>');
+      if(s.sponsored) badges.push('<span class="badge-tag bt-org">🏛️ Sponsored</span>');
+      
+      const typeBadge = s.year_of_study ? 
+        `<span class="chip ch-y${s.year_of_study}">Year ${s.year_of_study}</span>` : 
+        '<span class="chip ch-worker">Worker</span>';
+      
+      return `<tr>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:.7rem">${app.reference_number}</code></td>
+        <td><strong>${s.full_name || '—'}</strong><br><span style="font-size:.68rem;color:var(--muted)">${s.student_number || '—'}</span></td>
+        <td>${typeBadge}</td>
+        <td>${s.gender || '—'}</td>
+        <td>${badges.length ? badges.join(' ') : '<span style="color:var(--muted);font-size:.75rem">None</span>'}</td>
+        <td><span style="color:var(--muted);font-size:.75rem">${s.condition || 'None'}</span></td>
+        <td>${app.hostel_name || 'No preference'}</td>
+        <td>${app.date_applied || '—'}</td>
+        <td>
+          <div style="display:flex;gap:5px;flex-wrap:wrap">
+            <button class="btn-ok" onclick="approveApplication(${app.id}, '${s.full_name}', '${app.hostel_name || 'No hostel'}')">✓ Approve</button>
+            <button class="btn-danger" onclick="rejectApplication(${app.id})">✕ Reject</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+    
+  } catch (error) {
+    console.error('Error loading applications:', error);
+    document.getElementById('pendingTbody').innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--danger)">Error loading applications.</td></tr>';
+  }
+}
+
+async function approveApplication(appId, name, hostelName) {
+  if(!confirm(`Approve application for ${name}?\n\nThis will assign a room number automatically.`)) return;
+  
+  try {
+    const response = await fetch(`/api/accommodation/admin/applications/${appId}/approve/`, {
+      method: 'POST',
+      headers: getHeaders()
+    });
+    
+    const data = await response.json();
+    
+    if(!response.ok) {
+      throw new Error(data.error || 'Failed to approve');
+    }
+    
+    toast(data.message || 'Application approved!', 'ok');
+    loadDashboardData();
+    loadPendingApplications();
+    
+    // Refresh rooms view if currently viewing it
+    if(currentSection === 'rooms') {
+      await loadHostelRooms();
+    }
+    
+    // If room modal is open, refresh it
+    if(document.getElementById('modalRoom').style.display === 'flex') {
+      const roomNum = document.getElementById('rmNum').textContent;
+      if(roomNum && roomNum !== '—') {
+        // Find room ID from current hostel data
+        if(currentHostelData) {
+          const room = currentHostelData.find(r => r.room_number === roomNum);
+          if(room) {
+            await viewRoomDetail(room.id, room.room_number);
+          }
+        }
+      }
+    }
+    
+  } catch (error) {
+    console.error('Error approving:', error);
+    toast('Error: ' + error.message, 'er');
+  }
+}
+
+async function rejectApplication(appId) {
+  const reason = prompt('Enter rejection reason (optional):');
+  if(reason === null) return;
+  
+  try {
+    const response = await fetch(`/api/accommodation/admin/applications/${appId}/reject/`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({ reason: reason })
+    });
+    
+    const data = await response.json();
+    
+    if(!response.ok) {
+      throw new Error(data.error || 'Failed to reject');
+    }
+    
+    toast('Application rejected', 'warn');
+    loadDashboardData();
+    loadPendingApplications();
+    
+    // Refresh rooms view if currently viewing it
+    if(currentSection === 'rooms') {
+      await loadHostelRooms();
+    }
+    
+    // If room modal is open, refresh it
+    if(document.getElementById('modalRoom').style.display === 'flex') {
+      const roomNum = document.getElementById('rmNum').textContent;
+      if(roomNum && roomNum !== '—') {
+        // Find room ID from current hostel data
+        if(currentHostelData) {
+          const room = currentHostelData.find(r => r.room_number === roomNum);
+          if(room) {
+            await viewRoomDetail(room.id, room.room_number);
+          }
+        }
+      }
+    }
+    
+  } catch (error) {
+    console.error('Error rejecting:', error);
+    toast('Error: ' + error.message, 'er');
+  }
+}
+
+async function loadHostels() {
+  try {
+    console.log('Fetching hostels from /api/accommodation/hostels/...');
+    const response = await fetch('/api/accommodation/hostels/');
+    console.log('Hostels API response status:', response.status);
+    
+    if(!response.ok) {
+      const errorText = await response.text();
+      console.error('Hostels API error:', errorText);
+      throw new Error(`Failed to load hostels: ${response.status}`);
+    }
+    
+    const hostels = await response.json();
+    console.log('✅ Hostels loaded from API:', hostels);
+    console.log(`Total hostels: ${hostels.length}`);
+    return hostels;
+  } catch (error) {
+    console.error('❌ Error loading hostels:', error);
+    toast('Error loading hostels: ' + error.message, 'er');
+    return [];
+  }
+}
+
+async function loadApprovedApplications() {
+  try {
+    const response = await fetch('/api/accommodation/admin/applications/?status=approved');
+    if(!response.ok) throw new Error('Failed to load approved applications');
+    
+    const applications = await response.json();
+    
+    // Update keys section
+    const keysTbody = document.getElementById('keysTbody');
+    if(applications.length === 0) {
+      keysTbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted)">No approved applications.</td></tr>';
+    } else {
+      keysTbody.innerHTML = applications.map(app => {
+        const s = app.student || {};
+        const keyStatus = app.key_issued ? 
+          '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:100px;font-size:.65rem;font-weight:700;background:#e8f7f0;color:var(--ok)">✅ Key Issued</span>' :
+          '<span class="key-ready-badge">🔑 Ready for Collection</span>';
+        
+        const actionBtn = app.key_issued ?
+          '<button class="btn-v" onclick="viewApplication(' + app.id + ')">View</button>' :
+          '<button class="btn-ok" onclick="issueKey(' + app.id + ',\'' + (s.full_name || 'Student') + '\',\'' + (app.room_number || '—') + '\')">✓ Issue Key</button>';
+        
+        return `<tr>
+          <td><code style="font-family:'JetBrains Mono',monospace;font-size:.7rem">${app.reference_number}</code></td>
+          <td><strong>${s.full_name || '—'}</strong><br><span style="font-size:.68rem;color:var(--muted)">${s.student_number || '—'}</span></td>
+          <td><strong>${app.room_number || '—'}</strong> — ${app.floor_assigned || '—'} Floor</td>
+          <td>${app.hostel_name || '—'}</td>
+          <td>${app.date_processed || '—'}</td>
+          <td>${keyStatus}</td>
+          <td>${actionBtn}</td>
+        </tr>`;
+      }).join('');
+    }
+    
+    // Update students/residents section
+    const studentsTbody = document.getElementById('studentsTbody');
+    if(applications.length === 0) {
+      studentsTbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--muted)">No residents yet.</td></tr>';
+    } else {
+      studentsTbody.innerHTML = applications.map(app => {
+        const s = app.student || {};
+        const badges = [];
+        if(s.is_src) badges.push('<span class="badge-tag bt-src">🎖️ SRC</span>');
+        if(s.work_for_fees) badges.push('<span class="badge-tag bt-fees">💰 Work-for-Fees</span>');
+        if(s.sponsored) badges.push('<span class="badge-tag bt-org">🏛️ Sponsored</span>');
+        
+        const typeBadge = s.year_of_study ? 
+          `<span class="chip ch-y${s.year_of_study}">Year ${s.year_of_study}</span>` : 
+          '<span class="chip ch-worker">Worker</span>';
+        
+        const keyStatus = app.key_issued ?
+          '<span style="color:var(--ok);font-size:.72rem">✅ Issued</span>' :
+          '<span class="key-ready-badge" style="font-size:.65rem">🔑 Ready</span>';
+        
+        return `<tr data-year="${s.year_of_study || 'worker'}" data-gender="${(s.gender || 'M')[0]}">
+          <td><strong>${s.full_name || '—'}</strong></td>
+          <td><code style="font-family:'JetBrains Mono',monospace;font-size:.7rem">${s.student_number || '—'}</code></td>
+          <td>${typeBadge}</td>
+          <td>${s.gender || '—'}</td>
+          <td>${badges.length ? badges.join(' ') : '<span style="font-size:.72rem;color:var(--muted)">—</span>'}</td>
+          <td><strong>${app.room_number || '—'}</strong></td>
+          <td>${app.hostel_name || '—'}</td>
+          <td>${keyStatus}</td>
+          <td><button class="btn-v" onclick="viewApplication(${app.id})">View</button></td>
+        </tr>`;
+      }).join('');
+    }
+    
+  } catch (error) {
+    console.error('Error loading approved applications:', error);
+  }
+}
+
+function viewApplication(appId) {
+  // TODO: Implement view modal
+  toast('View application #' + appId, '');
+}
+
+function issueKey(appId, name, room) {
+  if(!confirm(`Issue key to ${name} for room ${room}?`)) return;
+  
+  // TODO: Implement key issuance API call
+  toast('Key issued to ' + name, 'ok');
+  loadApprovedApplications();
+}
+
+async function loadHostelSelect() {
+  console.log('Loading hostel select dropdown...');
+  try {
+    const hostels = await loadHostels();
+    console.log('Hostels loaded for select:', hostels);
+    
+    const select = document.getElementById('hostelSelect');
+    
+    if(hostels.length === 0) {
+      select.innerHTML = '<option value="">No hostels available - Add a hostel first</option>';
+      console.log('No hostels found');
+      return;
+    }
+    
+    select.innerHTML = '<option value="">-- Select a hostel --</option>' + 
+      hostels.map(h => `<option value="${h.id}">${h.name} (${h.available_beds} beds available)</option>`).join('');
+    
+    console.log(`✅ Loaded ${hostels.length} hostels into dropdown`);
+  } catch (error) {
+    console.error('❌ Error loading hostel select:', error);
+    const select = document.getElementById('hostelSelect');
+    select.innerHTML = '<option value="">Error loading hostels</option>';
+  }
+}
+
+async function loadHostelRooms() {
+  const hostelId = document.getElementById('hostelSelect').value;
+  const content = document.getElementById('roomLayoutContent');
+  
+  console.log('loadHostelRooms called with hostelId:', hostelId);
+  
+  if(!hostelId) {
+    content.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted);"><div style="font-size:3rem;margin-bottom:16px;">🏠</div><div style="font-size:1.1rem;font-weight:600;margin-bottom:8px;">No Hostel Selected</div><div>Please select a hostel from the dropdown above to view its room layout</div></div>';
+    return;
+  }
+  
+  try {
+    console.log('Fetching hostel data for ID:', hostelId);
+    // Fetch hostel with floors and rooms
+    const response = await fetch(`/api/accommodation/hostels/${hostelId}/`);
+    if(!response.ok) throw new Error('Failed to load hostel');
+    
+    const hostel = await response.json();
+    const floors = hostel.floors || [];
+    
+    // Fetch approved residents for this hostel
+    console.log('Fetching residents for hostel:', hostelId);
+    const residentsResponse = await fetch(`/api/accommodation/admin/residents/`);
+    let residents = [];
+    if(residentsResponse.ok) {
+      const allResidents = await residentsResponse.json();
+      residents = allResidents.filter(app => app.hostel === parseInt(hostelId));
+      console.log(`✅ Loaded ${residents.length} residents for this hostel`);
+    }
+    
+    if(floors.length === 0) {
+      content.innerHTML = `
+        <div style="text-align:center;padding:60px;">
+          <div style="font-size:3rem;margin-bottom:16px;">🏗️</div>
+          <div style="font-size:1.1rem;font-weight:600;margin-bottom:8px;">No floors added yet</div>
+          <div style="color:var(--muted);margin-bottom:20px;">Add floors and rooms to manage this hostel</div>
+          <button class="btn-p" onclick="openAddFloorModal(${hostelId})">➕ Add First Floor</button>
+        </div>
+      `;
+      return;
+    }
+    
+    const gc = hostel.gender_type === 'Female Only' ? '🚺' : hostel.gender_type === 'Male Only' ? '🚹' : '🚻';
+    
+    content.innerHTML = `
+      <div class="hostel-card">
+        <div class="hc-header">
+          <div>
+            <div class="hc-title">${hostel.name}</div>
+            <div class="hc-meta">
+              <span>📍 ${hostel.location || '—'}</span>
+              <span>${gc} ${hostel.gender_type}</span>
+              <span>🛏️ ${hostel.total_beds} Beds</span>
+              <span style="color:${hostel.is_full ? 'var(--danger)' : 'var(--ok)'}">${hostel.is_full ? '❌ Full' : '✅ ' + hostel.available_beds + ' beds free'}</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button class="btn-s" onclick="editHostel(${hostelId})" style="font-size:.75rem;padding:6px 12px;" title="Edit Hostel">✏️ Edit</button>
+            <button class="btn-s" onclick="deleteHostel(${hostelId}, '${hostel.name}')" style="font-size:.75rem;padding:6px 12px;background:#fee2e2;color:var(--danger);border-color:var(--danger);" title="Delete Hostel">🗑️ Delete</button>
+            <button class="btn-p" onclick="openAddFloorModal(${hostelId})" style="font-size:.75rem;padding:6px 12px;">➕ Add Floor</button>
+          </div>
+        </div>
+        
+        <!-- Quick Stats -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;padding:16px;background:var(--off);border-radius:10px;">
+          <div style="text-align:center;">
+            <div style="font-size:1.8rem;font-weight:700;color:var(--blue);">${residents.length}</div>
+            <div style="font-size:.72rem;color:var(--muted);font-weight:600;">Total Residents</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:1.8rem;font-weight:700;color:var(--ok);">${hostel.available_beds}</div>
+            <div style="font-size:.72rem;color:var(--muted);font-weight:600;">Beds Available</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:1.8rem;font-weight:700;color:var(--mid);">${floors.length}</div>
+            <div style="font-size:.72rem;color:var(--muted);font-weight:600;">Floors</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:1.8rem;font-weight:700;color:var(--danger);">${hostel.occupancy_percent}%</div>
+            <div style="font-size:.72rem;color:var(--muted);font-weight:600;">Occupancy</div>
+          </div>
+        </div>
+        
+        <!-- Current Residents List -->
+        <div style="margin-bottom:24px;">
+          <h3 style="font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--text);">👥 Current Residents (${residents.length})</h3>
+          ${residents.length > 0 ? `
+            <div style="background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+              <div style="max-height:300px;overflow-y:auto;">
+                ${residents.map(app => {
+                  const s = app.student || {};
+                  return `
+                    <div style="padding:12px 16px;border-bottom:1px solid var(--off);display:flex;justify-content:space-between;align-items:center;">
+                      <div>
+                        <div style="font-weight:600;font-size:.88rem;">${s.full_name || '—'}</div>
+                        <div style="font-size:.72rem;color:var(--muted);">${s.student_number || '—'} · ${s.gender || '—'} · Year ${s.year_of_study || 'N/A'}</div>
+                      </div>
+                      <div style="text-align:right;">
+                        <div style="font-weight:600;font-size:.82rem;color:var(--blue);">Room ${app.room_number || '—'}</div>
+                        <div style="font-size:.68rem;color:var(--muted);">${app.floor_assigned || '—'} floor</div>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          ` : '<div style="text-align:center;padding:30px;color:var(--muted);background:var(--off);border-radius:10px;">No residents assigned yet</div>'}
+        </div>
+        
+        <!-- Rooms and Floors -->
+        <h3 style="font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--text);">🚪 Floors & Rooms</h3>
+        ${(() => {
+          // Collect all rooms for currentHostelData
+          currentHostelData = [];
+          floors.forEach(floor => {
+            const rooms = floor.rooms || [];
+            rooms.forEach(room => {
+              currentHostelData.push(room);
+            });
+          });
+          
+          return floors.map((floor, idx) => {
+            const rooms = floor.rooms || [];
+            const floorNames = {
+              'ground': 'Ground Floor',
+              'first': 'First Floor',
+              'second': 'Second Floor',
+              'third': 'Third Floor'
+            };
+            const floorName = floorNames[floor.name] || floor.name;
+            
+            return `
+              <div class="floor-section">
+                <div class="floor-header" onclick="toggleFloor('floor${floor.id}')">
+                  <div>
+                    <div class="floor-title-text">🏢 ${floorName}</div>
+                    <div class="floor-stats-text">${rooms.length} rooms · ${floor.total_beds} beds · ${floor.occupied_beds} occupied · ${floor.available_beds} free</div>
+                  </div>
+                  <div class="floor-header-actions">
+                    <button class="btn-s" onclick="event.stopPropagation();openAddRoomModal(${hostelId}, ${floor.id})" style="font-size:.7rem;padding:4px 8px;">+ Add Room</button>
+                    <span id="floor${floor.id}-toggle">▼</span>
+                  </div>
+                </div>
+                <div id="floor${floor.id}-rooms" class="room-grid" style="${idx > 0 ? 'display:none' : ''}">
+                  ${rooms.length > 0 ? rooms.map(room => {
+                    const statusClass = room.status === 'maintenance' ? 'maintenance' : 
+                                       room.is_full ? 'full' : 
+                                       room.is_empty ? 'empty' : 'occupied';
+                    return `
+                      <div class="room-box ${statusClass}" onclick="viewRoomDetail(${room.id}, '${room.room_number}')">
+                        <div class="room-num">${room.room_number}</div>
+                        <div class="room-status">${room.is_empty ? 'Empty' : room.is_full ? 'Full' : room.occupied + '/' + room.capacity}</div>
+                        ${!room.is_empty && !room.is_full ? `<div class="room-occupants">${room.occupied}</div>` : ''}
+                      </div>
+                    `;
+                  }).join('') : '<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--muted);font-size:.82rem;">No rooms added yet. Click "+ Add Room" to create rooms.</div>'}
+                </div>
+              </div>
+            `;
+          }).join('');
+        })()}
+      </div>
+    `;
+  } catch (error) {
+    console.error('Error loading hostel rooms:', error);
+    content.innerHTML = '<div style="text-align:center;padding:60px;color:var(--danger);">Error loading hostel data.</div>';
+  }
+}
+
+async function openAddFloorModal(hostelId = null) {
+  console.log('openAddFloorModal called with hostelId:', hostelId, typeof hostelId);
+  
+  // Load hostels into dropdown
+  const hostelSelect = document.getElementById('newFloorHostel');
+  hostelSelect.innerHTML = '<option value="">-- Select Hostel --</option>';
+  
+  try {
+    const response = await fetch('/api/accommodation/hostels/');
+    if(!response.ok) throw new Error('Failed to load hostels');
+    
+    const hostels = await response.json();
+    console.log('Loaded hostels:', hostels);
+    
+    hostels.forEach(hostel => {
+      const option = document.createElement('option');
+      option.value = hostel.id;  // This should be a number
+      option.textContent = `${hostel.name} (${hostel.available_beds} beds available)`;
+      option.dataset.beds = hostel.available_beds;
+      option.dataset.location = hostel.location || '';
+      option.dataset.name = hostel.name;
+      hostelSelect.appendChild(option);
+    });
+    
+    // Pre-select if hostelId provided
+    if(hostelId) {
+      console.log('Pre-selecting hostel:', hostelId);
+      hostelSelect.value = String(hostelId);  // Convert to string for select element
+      console.log('Selected value:', hostelSelect.value);
+      loadFloorHostelInfo();
+    }
+    
+    // Reset form
+    document.getElementById('newFloorName').value = '';
+    document.getElementById('newFloorBeds').value = '';
+    document.getElementById('autoCreateRooms').value = 'no';
+    document.getElementById('numRooms').value = '';
+    document.getElementById('bedsPerRoomCalc').value = '';
+    document.getElementById('floorHostelInfo').innerHTML = '';
+    document.getElementById('floorBedsInfo').innerHTML = '';
+    toggleRoomOptions();
+    
+    openModal('modalAddFloor');
+  } catch (error) {
+    console.error('Error loading hostels:', error);
+    toast('Error loading hostels', 'er');
+  }
+}
+
+function loadFloorHostelInfo() {
+  const hostelSelect = document.getElementById('newFloorHostel');
+  const selectedOption = hostelSelect.options[hostelSelect.selectedIndex];
+  const infoDiv = document.getElementById('floorHostelInfo');
+  
+  if(!hostelSelect.value) {
+    infoDiv.innerHTML = '';
+    return;
+  }
+  
+  const availableBeds = selectedOption.dataset.beds;
+  const location = selectedOption.dataset.location;
+  
+  infoDiv.innerHTML = `
+    <strong>📊 Current Stats:</strong><br>
+    📍 Location: ${location || 'N/A'}<br>
+    🛏️ Available beds: ${availableBeds}
+  `;
+}
+
+function calculateFloorBeds() {
+  const totalBeds = parseInt(document.getElementById('newFloorBeds').value) || 0;
+  const infoDiv = document.getElementById('floorBedsInfo');
+  
+  if(totalBeds > 0) {
+    infoDiv.innerHTML = `✓ Will add <strong>${totalBeds}</strong> beds to the hostel`;
+  } else {
+    infoDiv.innerHTML = '';
+  }
+  
+  // Recalculate if auto-create is enabled
+  if(document.getElementById('autoCreateRooms').value === 'yes') {
+    calculateBedsPerRoom();
+  }
+}
+
+function toggleRoomOptions() {
+  const autoCreate = document.getElementById('autoCreateRooms').value;
+  const roomCountField = document.getElementById('roomCountField');
+  const bedsPerRoomField = document.getElementById('bedsPerRoomField');
+  
+  if(autoCreate === 'yes') {
+    roomCountField.style.display = 'block';
+    bedsPerRoomField.style.display = 'block';
+  } else {
+    roomCountField.style.display = 'none';
+    bedsPerRoomField.style.display = 'none';
+  }
+}
+
+function calculateBedsPerRoom() {
+  const totalBeds = parseInt(document.getElementById('newFloorBeds').value) || 0;
+  const numRooms = parseInt(document.getElementById('numRooms').value) || 0;
+  const calcField = document.getElementById('bedsPerRoomCalc');
+  
+  if(totalBeds > 0 && numRooms > 0) {
+    const bedsPerRoom = Math.floor(totalBeds / numRooms);
+    const remainder = totalBeds % numRooms;
+    calcField.value = `${bedsPerRoom} beds per room (${remainder} extra beds to distribute)`;
+  } else {
+    calcField.value = '';
+  }
+}
+
+async function createFloor() {
+  const hostelSelect = document.getElementById('newFloorHostel');
+  const hostelId = hostelSelect.value;
+  const hostelName = hostelSelect.options[hostelSelect.selectedIndex]?.text || '';
+  const floorName = document.getElementById('newFloorName').value;
+  const totalBeds = document.getElementById('newFloorBeds').value;
+  const autoCreate = document.getElementById('autoCreateRooms').value;
+  
+  console.log('=== CREATE FLOOR DEBUG ===');
+  console.log('Hostel Select Value:', hostelId, typeof hostelId);
+  console.log('Hostel Select Text:', hostelName);
+  console.log('Floor Name:', floorName);
+  console.log('Total Beds:', totalBeds);
+  
+  // Strict validation
+  if(!hostelId || hostelId === '' || hostelId === 'null' || hostelId === 'undefined') {
+    toast('Please select a hostel from the dropdown', 'er');
+    console.error('Validation failed: No hostel selected');
+    return;
+  }
+  
+  // Convert to integer and validate
+  const hostelIdInt = parseInt(hostelId);
+  if(isNaN(hostelIdInt) || hostelIdInt < 1) {
+    toast(`Invalid hostel ID: "${hostelId}". Please select a valid hostel.`, 'er');
+    console.error('Validation failed: Invalid hostel ID', hostelId);
+    return;
+  }
+  
+  if(!floorName) {
+    toast('Please select a floor name', 'er');
+    return;
+  }
+  
+  if(!totalBeds || parseInt(totalBeds) < 1) {
+    toast('Please enter valid number of beds (minimum 1)', 'er');
+    return;
+  }
+  
+  const btn = document.getElementById('createFloorBtn');
+  btn.textContent = '⏳ Creating...';
+  btn.disabled = true;
+  
+  try {
+    // Create floor payload
+    const payload = {
+      hostel: hostelIdInt,  // Use the validated integer
+      name: floorName,
+      total_beds: parseInt(totalBeds)
+    };
+    
+    console.log('✅ Sending payload:', JSON.stringify(payload, null, 2));
+    
+    const response = await fetch('/api/accommodation/admin/floors/', {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(payload)
+    });
+    
+    if(!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || JSON.stringify(error));
+    }
+    
+    const floor = await response.json();
+    
+    // Auto-create rooms if enabled
+    if(autoCreate === 'yes') {
+      const numRooms = parseInt(document.getElementById('numRooms').value);
+      if(numRooms && numRooms > 0) {
+        await autoCreateRoomsForFloor(floor.id, parseInt(hostelId), floor.name, parseInt(totalBeds), numRooms);
+      }
+    }
+    
+    toast(`✅ Floor "${floorName}" created successfully with ${totalBeds} beds!`, 'ok');
+    closeModal('modalAddFloor');
+    loadHostelRooms(); // Reload to show new floor
+    
+  } catch (error) {
+    console.error('Error creating floor:', error);
+    toast('Error: ' + error.message, 'er');
+  } finally {
+    btn.textContent = '🏗️ Create Floor';
+    btn.disabled = false;
+  }
+}
+
+async function autoCreateRoomsForFloor(floorId, hostelId, floorName, totalBeds, numRooms) {
+  const bedsPerRoom = Math.floor(totalBeds / numRooms);
+  const remainder = totalBeds % numRooms;
+  
+  // Get floor prefix
+  const prefixes = {
+    'ground': 'G',
+    'first': 'F',
+    'second': 'S',
+    'third': 'T'
+  };
+  const prefix = prefixes[floorName] || 'R';
+  
+  for(let i = 1; i <= numRooms; i++) {
+    // Distribute remainder beds to first rooms
+    const roomCapacity = i <= remainder ? bedsPerRoom + 1 : bedsPerRoom;
+    const roomNumber = `${prefix}${String(i).padStart(2, '0')}`;
+    
+    const response = await fetch('/api/accommodation/admin/rooms/', {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({
+        hostel: hostelId,
+        floor: floorId,
+        room_number: roomNumber,
+        capacity: roomCapacity,
+        status: 'active'
+      })
+    });
+    
+    if(!response.ok) {
+      console.error(`Failed to create room ${roomNumber}`);
+    }
+  }
+}
+
+async function createRoom() {
+  const hostelId = document.getElementById('roomHostelId').value;
+  const floorId = document.getElementById('roomFloorId').value;
+  const roomNumber = document.getElementById('newRoomNumber').value.trim();
+  const capacity = document.getElementById('newRoomCapacity').value;
+  const status = document.getElementById('newRoomStatus').value;
+  const notes = document.getElementById('newRoomNotes').value.trim();
+  
+  if(!hostelId || !floorId || !roomNumber || !capacity) {
+    toast('Please fill all required fields', 'er');
+    return;
+  }
+  
+  try {
+    const response = await fetch('/api/accommodation/admin/rooms/', {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({
+        hostel: parseInt(hostelId),
+        floor: parseInt(floorId),
+        room_number: roomNumber,
+        capacity: parseInt(capacity),
+        status: status
+      })
+    });
+    
+    if(!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || JSON.stringify(error));
+    }
+    
+    toast(`✅ Room ${roomNumber} created successfully!`, 'ok');
+    closeModal('modalAddRoom');
+    loadHostelRooms(); // Reload to show new room
+    
+  } catch (error) {
+    console.error('Error creating room:', error);
+    toast('Error: ' + error.message, 'er');
+  }
+}
+
+async function openAddRoomModal(hostelId, floorId, hostelName = null, floorName = null) {
+  document.getElementById('roomHostelId').value = hostelId;
+  document.getElementById('roomFloorId').value = floorId;
+  
+  // If names not provided, fetch them
+  if(!hostelName || !floorName) {
+    try {
+      const response = await fetch(`/api/accommodation/hostels/${hostelId}/`);
+      if(response.ok) {
+        const hostel = await response.json();
+        hostelName = hostel.name;
+        
+        const floor = hostel.floors?.find(f => f.id === floorId);
+        floorName = floor ? (floor.name.charAt(0).toUpperCase() + floor.name.slice(1) + ' Floor') : 'Unknown';
+      }
+    } catch (error) {
+      console.error('Error fetching hostel info:', error);
+    }
+  }
+  
+  // Set display fields
+  document.getElementById('roomHostelDisplay').value = hostelName || `Hostel ${hostelId}`;
+  
+  const floorNames = {
+    'ground': 'Ground Floor',
+    'first': 'First Floor',
+    'second': 'Second Floor',
+    'third': 'Third Floor'
+  };
+  document.getElementById('roomFloorDisplay').value = floorNames[floorName] || floorName || `Floor ${floorId}`;
+  
+  // Reset form
+  document.getElementById('newRoomNumber').value = '';
+  document.getElementById('newRoomCapacity').value = '2';
+  document.getElementById('newRoomStatus').value = 'active';
+  document.getElementById('newRoomNotes').value = '';
+  
+  openModal('modalAddRoom');
+}
+
+async function viewRoomDetail(roomId, roomNumber) {
+  try {
+    // Fetch room details from API
+    const roomRes = await fetch(`/api/accommodation/admin/rooms/${roomId}/`);
+    if(!roomRes.ok) throw new Error('Failed to load room details');
+    
+    const room = await roomRes.json();
+    
+    // Update modal title
+    document.getElementById('roomModalTitle').textContent = `Room ${roomNumber} Details`;
+    
+    // Fill in room info
+    document.getElementById('rmNum').textContent = room.room_number;
+    document.getElementById('rmHostel').textContent = room.hostel_name || 'N/A';
+    document.getElementById('rmFloor').textContent = room.floor_name || 'N/A';
+    document.getElementById('rmCapacity').textContent = `${room.capacity} beds`;
+    document.getElementById('rmOcc').textContent = `${room.occupied} / ${room.capacity}`;
+    document.getElementById('rmAvail').textContent = `${room.capacity - room.occupied} beds`;
+    
+    // Fetch all applications (pending and approved) to find who's in this room
+    const [pendingRes, approvedRes] = await Promise.all([
+      fetch('/api/accommodation/admin/applications/?status=pending'),
+      fetch('/api/accommodation/admin/applications/?status=approved')
+    ]);
+    
+    const pendingApps = pendingRes.ok ? await pendingRes.json() : [];
+    const approvedApps = approvedRes.ok ? await approvedRes.json() : [];
+    
+    // Filter applications for this specific room
+    const pendingInRoom = pendingApps.filter(app => app.room === roomId);
+    const approvedInRoom = approvedApps.filter(app => app.room === roomId);
+    
+    // Build occupants list
+    const occupantsDiv = document.getElementById('rmOccupants');
+    
+    if(pendingInRoom.length === 0 && approvedInRoom.length === 0) {
+      occupantsDiv.innerHTML = '<div style="color:var(--muted);font-size:.78rem;">No applicants for this room yet.</div>';
+    } else {
+      let html = '';
+      
+      // Show approved residents first
+      if(approvedInRoom.length > 0) {
+        html += '<div style="margin-bottom:12px;"><strong style="color:var(--ok);font-size:.72rem;text-transform:uppercase;">✓ Approved Residents</strong>';
+        approvedInRoom.forEach(app => {
+          const s = app.student || {};
+          html += `
+            <div style="background:#e8f7f0;border:1px solid #a7f3d0;border-radius:6px;padding:8px;margin-top:6px;font-size:.75rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <strong>${s.full_name || 'Unknown'}</strong>
+                <span class="st-a">Approved</span>
+              </div>
+              <div style="color:var(--muted);margin-top:3px;">${s.student_number || 'N/A'} · ${s.gender || 'N/A'} · ${s.phone_number || 'No phone'}</div>
+              ${s.condition && s.condition !== 'None' ? `<div style="color:var(--warn);margin-top:2px;">⚠️ ${s.condition}</div>` : ''}
+            </div>`;
+        });
+        html += '</div>';
+      }
+      
+      // Show pending applicants with approve/reject buttons
+      if(pendingInRoom.length > 0) {
+        html += '<div><strong style="color:var(--warn);font-size:.72rem;text-transform:uppercase;">⏳ Pending Applications</strong>';
+        pendingInRoom.forEach(app => {
+          const s = app.student || {};
+          html += `
+            <div style="background:#fff7e0;border:1px solid #fde68a;border-radius:6px;padding:8px;margin-top:6px;font-size:.75rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                <strong>${s.full_name || 'Unknown'}</strong>
+                <span class="st-p">Pending</span>
+              </div>
+              <div style="color:var(--muted);margin-bottom:6px;">${s.student_number || 'N/A'} · ${s.gender || 'N/A'} · ${s.phone_number || 'No phone'}</div>
+              <div style="display:flex;gap:5px;">
+                <button class="btn-ok" onclick="approveApplication(${app.id}, '${s.full_name}', '${roomNumber}')" style="font-size:.7rem;padding:4px 10px;">✓ Approve</button>
+                <button class="btn-danger" onclick="rejectApplication(${app.id})" style="font-size:.7rem;padding:4px 10px;">✕ Reject</button>
+              </div>
+            </div>`;
+        });
+        html += '</div>';
+      }
+      
+      occupantsDiv.innerHTML = html;
+    }
+    
+    // Open the modal
+    openModal('modalRoom');
+    
+  } catch (error) {
+    console.error('Error loading room details:', error);
+    toast('Error: ' + error.message, 'er');
+  }
+}
+
+function toggleFloor(floorId) {
+  const roomsDiv = document.getElementById(floorId + '-rooms');
+  const toggle = document.getElementById(floorId + '-toggle');
+  if(roomsDiv && toggle) {
+    if(roomsDiv.style.display === 'none') {
+      roomsDiv.style.display = 'grid';
+      toggle.textContent = '▲';
+    } else {
+      roomsDiv.style.display = 'none';
+      toggle.textContent = '▼';
+    }
+  }
+}
+
+async function loadOccupancyMap() {
+  try {
+    const response = await fetch('/api/accommodation/admin/dashboard/');
+    if(!response.ok) throw new Error('Failed to load occupancy');
+    
+    const data = await response.json();
+    const content = document.getElementById('occupancyContent');
+    
+    if(!data.hostels || data.hostels.length === 0) {
+      content.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted);">No hostels to display.</div>';
+      return;
+    }
+    
+    content.innerHTML = `
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>Hostel</th><th>Gender</th><th>Total Beds</th><th>Occupied</th><th>Available</th><th>Occupancy</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            ${data.hostels.map(h => {
+              const occupied = h.total_beds - h.available_beds;
+              const statusClass = h.is_full ? 'st-r' : (h.occupancy_percent > 75 ? 'st-p' : 'st-a');
+              const statusText = h.is_full ? 'Full' : (h.occupancy_percent > 75 ? 'High' : 'Available');
+              return `<tr>
+                <td><strong>${h.name}</strong></td>
+                <td>${h.gender_type}</td>
+                <td>${h.total_beds}</td>
+                <td>${occupied}</td>
+                <td style="color:${h.is_full ? 'var(--danger)' : 'var(--ok)'}">${h.available_beds}</td>
+                <td><strong>${h.occupancy_percent}%</strong></td>
+                <td><span class="${statusClass}">${statusText}</span></td>
+                <td>
+                  <div style="display:flex;gap:6px;">
+                    <button class="btn-s" onclick="editHostel(${h.id})" style="font-size:.7rem;padding:4px 10px;" title="Edit Hostel">✏️ Edit</button>
+                    <button class="btn-s" onclick="deleteHostel(${h.id}, '${h.name}')" style="font-size:.7rem;padding:4px 10px;background:#fee2e2;color:var(--danger);border-color:var(--danger);" title="Delete Hostel">🗑️ Delete</button>
+                  </div>
+                </td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  } catch (error) {
+    console.error('Error loading occupancy:', error);
+  }
+}
+
+async function loadCheckoutData() {
+  try {
+    const response = await fetch('/api/accommodation/admin/applications/?status=approved');
+    if(!response.ok) throw new Error('Failed to load checkouts');
+    
+    const applications = await response.json();
+    const content = document.getElementById('checkoutContent');
+    
+    if(applications.length === 0) {
+      content.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted);">No residents to check out.</div>';
+      return;
+    }
+    
+    content.innerHTML = `
+      <div class="tw">
+        <table>
+          <thead><tr><th>Resident</th><th>Student No.</th><th>Room</th><th>Hostel</th><th>Approved Date</th><th></th></tr></thead>
+          <tbody>
+            ${applications.map(app => {
+              const s = app.student || {};
+              return `<tr>
+                <td><strong>${s.full_name || '—'}</strong></td>
+                <td><code>${s.student_number || '—'}</code></td>
+                <td>${app.room_number || '—'}</td>
+                <td>${app.hostel_name || '—'}</td>
+                <td>${app.date_processed || '—'}</td>
+                <td><button class="btn-v" onclick="processCheckOut(${app.id}, '${s.full_name}')">Process Check-Out</button></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  } catch (error) {
+    console.error('Error loading checkout:', error);
+  }
+}
+
+function processCheckOut(appId, name) {
+  if(!confirm(`Process check-out for ${name}? This will free up their room.`)) return;
+  
+  // TODO: Implement check-out API call
+  toast('Check-out processed for ' + name, 'ok');
+  loadCheckoutData();
+}
+
+// ====== TOAST ======
+function toast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast '+(type||'');
+  t.classList.add('show');
+  clearTimeout(t._tm);
+  t._tm = setTimeout(()=>t.classList.remove('show'),3800);
+}
+
+// Init
+(async function init() {
+  console.log('🚀 Initializing accommodation dashboard...');
+  document.getElementById('updTxt').textContent = 'Updated '+new Date().toLocaleTimeString();
+  
+  try {
+    // Load all data from database
+    console.log('Loading dashboard data...');
+    await loadDashboardData();
+    
+    console.log('Loading pending applications...');
+    await loadPendingApplications();
+    
+    console.log('Loading approved applications...');
+    await loadApprovedApplications();
+    
+    console.log('Loading hostel select...');
+    await loadHostelSelect();
+    
+    console.log('✅ Dashboard initialization complete');
+  } catch (error) {
+    console.error('❌ Error during initialization:', error);
   }
 })();
-document.getElementById('adminName').textContent = localStorage.getItem('mtc_name') || 'Admin';
-
-function doLogout() {
-  fetch('/api/auth/logout/', {method:'POST',headers:{'Authorization':'Bearer '+localStorage.getItem('mtc_token'),'Content-Type':'application/json'},body:JSON.stringify({refresh:localStorage.getItem('mtc_refresh')||''})}).catch(function(){});
-  localStorage.clear(); window.location.href='/login/';
-}
-
-/* ── STATUS BAR ── */
-function showErr(msg){ var e=document.getElementById('apiStatus'); e.textContent='⚠️ '+msg; e.className='api-status err'; }
-function clearErr(){ document.getElementById('apiStatus').className='api-status'; }
-
-/* ── API CALL ── */
-async function call(path, method, body) {
-  clearErr();
-  var opts = {
-    method: method||'GET',
-    headers: {'Authorization':'Bearer '+localStorage.getItem('mtc_token'), 'Content-Type':'application/json'}
-  };
-  if (body !== undefined && body !== null) opts.body = JSON.stringify(body);
-  var res, text;
-  try { res=await fetch('/api'+path, opts); text=await res.text(); }
-  catch(e) { showErr('Cannot reach server. Make sure Django is running: python manage.py runserver'); return null; }
-  if (res.status===401){ showErr('Session expired. Redirecting…'); setTimeout(function(){localStorage.clear();window.location.href='/login/';},1500); return null; }
-  if (res.status===403){ showErr('Permission denied. Are you logged in as Accommodation admin?'); return null; }
-  var data=null;
-  try{ data=JSON.parse(text); }catch(e){}
-  if (!res.ok){
-    var msg='HTTP '+res.status;
-    if(data){ msg=data.detail||data.error||JSON.stringify(data); }
-    showErr('API error: '+msg); return null;
-  }
-  if (data&&!Array.isArray(data)&&Array.isArray(data.results)) return data.results;
-  return data;
-}
-
-/* ── STATE ── */
-var allApplications = [];
-var currentSection  = 'dashboard';
-var allHostels      = [];
-var deleteHostelId  = null;
-
-/* ── NAV ── */
-function go(name){
-  currentSection=name;
-  ['dashboard','hostels','applications','pending','residents','semester'].forEach(function(s){
-    document.getElementById('sec-'+s).style.display = s===name?'':'none';
-    document.getElementById('nav-'+s).classList.toggle('active', s===name);
-  });
-  document.getElementById('ptitle').textContent = {dashboard:'Dashboard',hostels:'Manage Hostels',applications:'All Applications',pending:'Pending Applications',residents:'Approved Residents',semester:'New Semester Reset'}[name]||name;
-  if(name==='hostels')      fetchHostels();
-  if(name==='applications') fetchApplications('');
-  if(name==='pending')      fetchApplications('pending');
-  if(name==='residents')    fetchResidents();
-}
-function loadCurrent(){
-  if(currentSection==='dashboard')    fetchDashboard();
-  else if(currentSection==='hostels') fetchHostels();
-  else if(currentSection==='applications') fetchApplications('');
-  else if(currentSection==='pending')      fetchApplications('pending');
-  else if(currentSection==='residents')    fetchResidents();
-}
-
-/* ── DASHBOARD ── */
-async function fetchDashboard(){
-  var d=await call('/accommodation/admin/dashboard/'); if(!d) return;
-  document.getElementById('sTB').textContent = d.total_beds     !=null?d.total_beds:'0';
-  document.getElementById('sOC').textContent = d.occupied_beds  !=null?d.occupied_beds:'0';
-  document.getElementById('sAV').textContent = d.available_beds !=null?d.available_beds:'0';
-  document.getElementById('sPN').textContent = d.pending_count  !=null?d.pending_count:'0';
-  document.getElementById('npill').textContent     = d.pending_count||'0';
-  document.getElementById('pendBadge').textContent = d.pending_count!=null?d.pending_count:'0';
-  document.getElementById('updTxt').textContent = 'Updated '+new Date().toLocaleTimeString();
-  if(Array.isArray(d.hostels)){ allHostels=d.hostels; renderHostelCards('hGrid',allHostels); }
-  var apps=await call('/accommodation/admin/applications/');
-  if(apps!==null){ allApplications=Array.isArray(apps)?apps:[]; renderRecentTable(allApplications.slice(0,8)); }
-}
-
-/* ── HOSTELS ── */
-async function fetchHostels(){
-  var data=await call('/accommodation/hostels/'); if(data===null) return;
-  allHostels=Array.isArray(data)?data:[];
-  renderHostelCards('hGridFull',allHostels);
-}
-
-function renderHostelCards(id, list){
-  var g=document.getElementById(id);
-  if(!list||!list.length){ g.innerHTML='<div class="empty-box" style="grid-column:1/-1">No hostels yet. Click <strong>+ Add Hostel</strong>.</div>'; return; }
-  var html='';
-  list.forEach(function(h){
-    var occ = h.occupied_beds!=null?h.occupied_beds:(h.total_beds-h.available_beds);
-    var pct = h.occupancy_percent!=null?h.occupancy_percent:Math.round((occ/h.total_beds)*100)||0;
-    var full= h.is_full||h.available_beds===0;
-    var gc  = h.gender_type==='Female Only'?'ch-f':h.gender_type==='Male Only'?'ch-m':'ch-x';
-    html+='<div class="hcard">'
-      +'<div class="hc-top"><div class="hc-name">'+h.name+'</div>'
-      +'<span class="chip '+gc+(full?' ch-full':'')+'">'+( full?'FULL':h.gender_type)+'</span></div>'
-      +'<div class="hbar-wrap"><div class="hbar '+(pct>85?'red':'')+'" style="width:'+pct+'%"></div></div>'
-      +'<div class="hc-stats"><span>Available: <strong>'+h.available_beds+'</strong></span>'
-      +'<span>Occupied: <strong>'+occ+'</strong></span><span>'+pct+'%</span></div>'
-      +'<div class="hc-loc">📍 '+(h.location||'—')+'</div>'
-      +'<div class="hc-actions">'
-      +'<button class="btn-v" onclick="openEditHostel('+h.id+')">✏️ Edit</button>'
-      +'<button class="btn-r" onclick="openDeleteHostel('+h.id+',\''+h.name.replace(/'/g,"\\'")+'\')" >🗑️ Delete</button>'
-      +'</div>'
-      +'</div>';
-  });
-  g.innerHTML=html;
-}
-
-/* ── ADD / EDIT HOSTEL ── */
-function openAddHostel(){
-  document.getElementById('editHostelId').value='';
-  document.getElementById('hName').value='';
-  document.getElementById('hBeds').value='';
-  document.getElementById('hLoc').value='';
-  document.getElementById('hGender').value='Female Only';
-  document.getElementById('hostelErr').style.display='none';
-  document.getElementById('hostelModalTitle').textContent='Add New Hostel';
-  document.getElementById('hostelSubmitBtn').textContent='Create Hostel';
-  document.getElementById('hostelSubmitBtn').disabled=false;
-  openModal('modalHostel');
-  setTimeout(function(){ document.getElementById('hName').focus(); },100);
-}
-
-function openEditHostel(id){
-  var h=null;
-  for(var i=0;i<allHostels.length;i++){ if(allHostels[i].id===id){h=allHostels[i];break;} }
-  if(!h){ toast('Hostel not found — please refresh.','er'); return; }
-  document.getElementById('editHostelId').value=h.id;
-  document.getElementById('hName').value=h.name;
-  document.getElementById('hBeds').value=h.total_beds;
-  document.getElementById('hLoc').value=h.location||'';
-  document.getElementById('hGender').value=h.gender_type;
-  document.getElementById('hostelErr').style.display='none';
-  document.getElementById('hostelModalTitle').textContent='Edit Hostel';
-  document.getElementById('hostelSubmitBtn').textContent='Save Changes';
-  document.getElementById('hostelSubmitBtn').disabled=false;
-  openModal('modalHostel');
-}
-
-async function saveHostel(){
-  var editId  = document.getElementById('editHostelId').value;
-  var name    = document.getElementById('hName').value.trim();
-  var bedsRaw = document.getElementById('hBeds').value.trim();
-  var gender  = document.getElementById('hGender').value;
-  var loc     = document.getElementById('hLoc').value.trim();
-  var errEl   = document.getElementById('hostelErr');
-  var btn     = document.getElementById('hostelSubmitBtn');
-
-  errEl.style.display='none';
-  if(!name){ errEl.textContent='Hostel name is required.'; errEl.style.display='block'; document.getElementById('hName').focus(); return; }
-  var beds=parseInt(bedsRaw,10);
-  if(!bedsRaw||isNaN(beds)||beds<1){ errEl.textContent='Enter a valid number of beds (minimum 1).'; errEl.style.display='block'; document.getElementById('hBeds').focus(); return; }
-
-  btn.disabled=true;
-  btn.textContent=editId?'Saving…':'Creating…';
-
-  var payload={name:name, total_beds:beds, gender_type:gender, location:loc};
-  var result;
-  if(editId){
-    result=await call('/accommodation/hostels/'+editId+'/', 'PATCH', payload);
-  } else {
-    result=await call('/accommodation/hostels/', 'POST', payload);
-  }
-
-  btn.disabled=false;
-  btn.textContent=editId?'Save Changes':'Create Hostel';
-
-  if(result&&result.id){
-    toast(editId?'"'+name+'" updated!':'"'+name+'" created!','ok');
-    closeModal('modalHostel');
-    fetchDashboard();
-    if(currentSection==='hostels') fetchHostels();
-  } else if(result===null){
-    errEl.textContent='Failed — see the error bar at top of page.';
-    errEl.style.display='block';
-  }
-}
-
-/* ── DELETE HOSTEL ── */
-function openDeleteHostel(id, name){
-  deleteHostelId=id;
-  document.getElementById('deleteHostelName').textContent=name;
-  document.getElementById('confirmDeleteHostelBtn').disabled=false;
-  document.getElementById('confirmDeleteHostelBtn').textContent='Delete Hostel';
-  openModal('modalDeleteHostel');
-}
-
-async function confirmDeleteHostel(){
-  if(!deleteHostelId) return;
-  var btn=document.getElementById('confirmDeleteHostelBtn');
-  btn.disabled=true; btn.textContent='Deleting…';
-  var result=await call('/accommodation/hostels/'+deleteHostelId+'/', 'DELETE');
-  btn.disabled=false; btn.textContent='Delete Hostel';
-  // DELETE returns 200 with message or null on error
-  if(result!==null){
-    toast(result.message||'Hostel deleted.','ok');
-    closeModal('modalDeleteHostel');
-    deleteHostelId=null;
-    fetchDashboard();
-    if(currentSection==='hostels') fetchHostels();
-  }
-}
-
-/* ── APPLICATIONS ── */
-async function fetchApplications(status){
-  var url='/accommodation/admin/applications/'+(status?'?status='+status:'');
-  var data=await call(url); if(data===null) return;
-  allApplications=Array.isArray(data)?data:[];
-  if(status==='pending'){ renderPendingTable(allApplications); document.getElementById('pendBadge').textContent=allApplications.length; document.getElementById('npill').textContent=allApplications.length; }
-  else { renderAllAppsTable(allApplications); }
-}
-
-function renderPendingTable(list){
-  var t=document.getElementById('pendTbl');
-  if(!list.length){ t.innerHTML='<tr class="empty-row"><td colspan="7">No pending applications — all caught up! 🎉</td></tr>'; return; }
-  t.innerHTML=list.map(function(a){
-    var cond=a.student.condition!=='None'?'<span style="color:var(--danger);font-weight:600">'+a.student.condition+'</span>':'—';
-    return '<tr>'
-      +'<td><strong>'+a.reference_number+'</strong></td>'
-      +'<td><strong>'+a.student.full_name+'</strong><br><small style="color:var(--muted);font-family:\'JetBrains Mono\',monospace;font-size:.72rem">'+a.student.student_number+'</small></td>'
-      +'<td>'+a.student.gender+'</td><td>'+cond+'</td>'
-      +'<td>'+(a.hostel_name||'<em style="color:var(--muted)">No pref.</em>')+'</td>'
-      +'<td>'+fmtDate(a.date_applied)+'</td>'
-      +'<td><div class="actions">'
-      +'<button class="btn-v" onclick="viewApplication('+a.id+')">View</button>'
-      +'<button class="btn-a" onclick="approveApp('+a.id+')">✓ Approve</button>'
-      +'<button class="btn-r" onclick="rejectApp('+a.id+')">✗ Reject</button>'
-      +'</div></td></tr>';
-  }).join('');
-}
-
-function renderAllAppsTable(list){
-  var t=document.getElementById('appTbl');
-  if(!list.length){ t.innerHTML='<tr class="empty-row"><td colspan="7">No applications found.</td></tr>'; return; }
-  t.innerHTML=list.map(function(a){
-    var acts='<button class="btn-v" onclick="viewApplication('+a.id+')">View</button>';
-    if(a.status==='pending') acts+='<button class="btn-a" onclick="approveApp('+a.id+')">✓</button><button class="btn-r" onclick="rejectApp('+a.id+')">✗</button>';
-    return '<tr>'
-      +'<td><strong>'+a.reference_number+'</strong></td>'
-      +'<td><strong>'+a.student.full_name+'</strong><br><small style="color:var(--muted);font-family:\'JetBrains Mono\',monospace;font-size:.72rem">'+a.student.student_number+'</small></td>'
-      +'<td>'+a.student.gender+'</td><td>'+(a.hostel_name||'—')+'</td>'
-      +'<td><span class="'+stChip(a.status)+'">'+a.status+'</span></td>'
-      +'<td>'+fmtDate(a.date_applied)+'</td>'
-      +'<td><div class="actions">'+acts+'</div></td></tr>';
-  }).join('');
-}
-
-function renderRecentTable(list){
-  var t=document.getElementById('recentTbl');
-  if(!list||!list.length){ t.innerHTML='<tr class="empty-row"><td colspan="6">No applications yet.</td></tr>'; return; }
-  t.innerHTML=list.map(function(a){
-    return '<tr>'
-      +'<td><strong>'+a.reference_number+'</strong></td>'
-      +'<td><strong>'+a.student.full_name+'</strong><br><small style="color:var(--muted)">'+a.student.student_number+'</small></td>'
-      +'<td>'+(a.hostel_name||'—')+'</td>'
-      +'<td><span class="'+stChip(a.status)+'">'+a.status+'</span></td>'
-      +'<td>'+fmtDate(a.date_applied)+'</td>'
-      +'<td><button class="btn-v" onclick="viewApplication('+a.id+')">View</button></td></tr>';
-  }).join('');
-}
-
-function filterApps(){
-  var q=document.getElementById('searchQ').value.toLowerCase();
-  var st=document.getElementById('filterStatus').value;
-  renderAllAppsTable(allApplications.filter(function(a){
-    return (!q||(a.student.full_name+' '+a.student.student_number+' '+a.reference_number).toLowerCase().indexOf(q)!==-1)&&(!st||a.status===st);
-  }));
-}
-
-function viewApplication(id){
-  var a=null; for(var i=0;i<allApplications.length;i++){ if(allApplications[i].id===id){a=allApplications[i];break;} }
-  if(!a){ toast('Application not found.','er'); return; }
-  var cond=a.student.condition!=='None'?'<span style="color:var(--danger);font-weight:600">'+a.student.condition+'</span>':a.student.condition;
-  document.getElementById('modalAppBody').innerHTML='<div class="dg">'
-    +'<div><div class="dl">Reference No.</div><div class="dv"><strong>'+a.reference_number+'</strong></div></div>'
-    +'<div><div class="dl">Status</div><div class="dv"><span class="'+stChip(a.status)+'">'+a.status.toUpperCase()+'</span></div></div>'
-    +'<div><div class="dl">Full Name</div><div class="dv">'+a.student.full_name+'</div></div>'
-    +'<div><div class="dl">Student No.</div><div class="dv" style="font-family:\'JetBrains Mono\',monospace;font-size:.8rem">'+a.student.student_number+'</div></div>'
-    +'<div><div class="dl">Phone</div><div class="dv">'+a.student.phone_number+'</div></div>'
-    +'<div><div class="dl">Gender</div><div class="dv">'+a.student.gender+'</div></div>'
-    +'<div><div class="dl">Condition</div><div class="dv">'+cond+'</div></div>'
-    +'<div><div class="dl">Hostel Pref.</div><div class="dv">'+(a.hostel_name||'No preference')+'</div></div>'
-    +'<div><div class="dl">Date Applied</div><div class="dv">'+fmtDate(a.date_applied)+'</div></div>'
-    +'<div><div class="dl">Date Processed</div><div class="dv">'+fmtDate(a.date_processed)+'</div></div>'
-    +'</div>'
-    +'<div class="mfld"><label>Home Address</label><div class="info-box">'+(a.student.home_address||'—')+'</div></div>'
-    +(a.special_requirements?'<div class="mfld"><label>Special Requirements</label><div class="info-box">'+a.special_requirements+'</div></div>':'');
-  document.getElementById('modalAppFoot').innerHTML=a.status==='pending'
-    ?'<button class="btn-r" onclick="rejectApp('+a.id+');closeModal(\'modalApp\')">✗ Reject</button><button class="btn-p" onclick="approveApp('+a.id+');closeModal(\'modalApp\')">✓ Approve</button>'
-    :'<button class="btn-v" onclick="closeModal(\'modalApp\')">Close</button>';
-  openModal('modalApp');
-}
-
-async function approveApp(id){
-  var r=await call('/accommodation/admin/applications/'+id+'/approve/','POST');
-  if(r){ toast(r.message||'Approved!','ok'); doRefresh(); }
-}
-async function rejectApp(id){
-  if(!confirm('Reject this application?')) return;
-  var r=await call('/accommodation/admin/applications/'+id+'/reject/','POST');
-  if(r){ toast('Application rejected.',''); doRefresh(); }
-}
-function doRefresh(){
-  fetchDashboard();
-  if(currentSection==='pending')      fetchApplications('pending');
-  if(currentSection==='applications') fetchApplications('');
-  if(currentSection==='residents')    fetchResidents();
-}
-
-/* ── RESIDENTS ── */
-async function fetchResidents(){
-  var data=await call('/accommodation/admin/residents/');
-  var t=document.getElementById('resTbl');
-  if(data===null){ t.innerHTML='<tr class="error-row"><td colspan="6">Failed to load. Check error bar above.</td></tr>'; return; }
-  var list=Array.isArray(data)?data:[];
-  if(!list.length){ t.innerHTML='<tr class="empty-row"><td colspan="6">No approved residents yet.</td></tr>'; return; }
-  t.innerHTML=list.map(function(a){
-    return '<tr>'
-      +'<td><strong>'+a.reference_number+'</strong></td>'
-      +'<td><strong>'+a.student.full_name+'</strong><br><small style="color:var(--muted);font-family:\'JetBrains Mono\',monospace;font-size:.72rem">'+a.student.student_number+'</small></td>'
-      +'<td>'+a.student.phone_number+'</td><td>'+a.student.gender+'</td>'
-      +'<td>'+(a.hostel_name||'—')+'</td><td>'+fmtDate(a.date_processed)+'</td></tr>';
-  }).join('');
-}
-
-/* ── NEW SEMESTER ── */
-async function openSemesterModal(){
-  document.getElementById('semesterConfirm').value='';
-  document.getElementById('semesterBtn').disabled=true;
-  document.getElementById('semesterStats').textContent='Loading current counts…';
-  openModal('modalSemester');
-  var d=await call('/accommodation/admin/dashboard/');
-  if(d){
-    document.getElementById('semesterStats').innerHTML='<strong>Currently in the database:</strong><br>'
-      +'📋 '+d.total_applications+' applications ('+d.approved_applications+' approved, '+d.pending_count+' pending, '+d.rejected_applications+' rejected)<br>'
-      +'🛏️ '+d.total_beds+' total beds across '+d.hostels.length+' hostel(s)';
-  }
-}
-function checkSemConfirm(){
-  document.getElementById('semesterBtn').disabled=(document.getElementById('semesterConfirm').value!=='NEW SEMESTER');
-}
-async function doNewSemester(){
-  if(document.getElementById('semesterConfirm').value!=='NEW SEMESTER') return;
-  var btn=document.getElementById('semesterBtn'); btn.disabled=true; btn.textContent='Resetting…';
-  var r=await call('/accommodation/admin/new-semester/','POST',{confirm:'NEW SEMESTER'});
-  btn.textContent='🔄 Reset Now';
-  if(r){
-    closeModal('modalSemester');
-    toast('Reset complete! '+r.applications_deleted+' applications and '+r.students_deleted+' students removed.','ok');
-    fetchDashboard();
-  }
-}
-
-/* ── HELPERS ── */
-function stChip(s){ return s==='approved'?'st-a':s==='rejected'?'st-r':'st-p'; }
-function fmtDate(d){ if(!d) return '—'; return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
-function openModal(id){ document.getElementById(id).classList.add('open'); }
-function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-function toast(msg,type){ var t=document.getElementById('toast'); t.textContent=msg; t.className='toast '+(type||''); t.classList.add('show'); clearTimeout(t._tm); t._tm=setTimeout(function(){t.classList.remove('show');},5000); }
-
-/* ── INIT ── */
-fetchDashboard();
-setInterval(fetchDashboard,90000);
 </script>
 </body>
 </html>

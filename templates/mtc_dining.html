@@ -87,6 +87,11 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:#f8faff;}
 }
 
 /* RESPONSIVE */
+@media(max-width:1024px){
+  .sb{width:220px;}
+  .main{margin-left:220px;}
+  .stats{grid-template-columns:repeat(auto-fit,minmax(160px,1fr));}
+}
 @media(max-width:768px){
   .sb{width:100%;height:auto;position:relative;flex-direction:row;flex-wrap:wrap;padding:8px;}
   .sb-head{width:100%;padding:10px 12px;}
@@ -95,14 +100,25 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:#f8faff;}
   .sb-foot{width:100%;}
   .main{margin-left:0;}
   .topbar{padding:10px 16px;}
+  .page-title{font-size:1.05rem;}
   .content{padding:16px;}
   .stats{grid-template-columns:repeat(2,1fr);gap:10px;}
   .sc{padding:12px 14px;}
   .sc-val{font-size:1.5rem;}
+  .scan-panel{padding:18px;}
+  .sp-top{flex-direction:column;gap:10px;align-items:flex-start;}
+  .meal-btns{width:100%;}
+  .mb{flex:1;text-align:center;}
   .scan-row{flex-direction:column;}
   .btn-sc{width:100%;}
+  .rb-info{grid-template-columns:1fr;}
+  .sec-hd{flex-direction:column;gap:8px;align-items:flex-start;}
+  .ts{flex-direction:column;}
+  .ts input,.ts select{width:100%;}
   table{font-size:.74rem;}
   th,td{padding:7px 8px;}
+  .rpt-filter{flex-direction:column;gap:8px;}
+  .rpt-filter input,.rpt-filter select{width:100%;}
 }
 @media(max-width:480px){
   .sb{padding:6px;}
@@ -117,8 +133,19 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:#f8faff;}
   .sc{padding:11px 12px;}
   .sc-val{font-size:1.35rem;}
   .sc-lbl{font-size:.62rem;}
+  .scan-panel{padding:14px;}
+  .sp-title{font-size:1rem;}
+  .si{padding:12px 14px;font-size:.9rem;}
+  .btn-sc{padding:12px 16px;font-size:.84rem;}
+  .rb{padding:12px 14px;}
+  .rb-msg{font-size:.88rem;}
+  .rb-det{font-size:.74rem;}
+  .sec-title{font-size:.95rem;}
   table{display:block;overflow-x:auto;}
   th,td{padding:6px 7px;font-size:.7rem;}
+  .chip{font-size:.62rem;padding:2px 6px;}
+  .btn-print{padding:8px 14px;font-size:.76rem;}
+  .meal-tick{width:22px;height:22px;font-size:.75rem;line-height:22px;}
 }
 </style>
 </head>
@@ -205,8 +232,9 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:#f8faff;}
         <table><thead><tr><th>Student No.</th><th>Full Name</th><th>Gender</th><th>Hostel</th><th>Barcode ID</th></tr></thead>
         <tbody id="elTbl"><tr class="er"><td colspan="5">Loading…</td></tr></tbody></table>
       </div>
-    </div>
+    </div><!-- end sec-eligible -->
 
+    <!-- ═══════════════════════════ PRINT REPORT ═══════════════════════════ -->
     <div id="sec-report" style="display:none">
       <div class="sec-hd">
         <div class="sec-title">Meal Attendance Report</div>
@@ -228,6 +256,7 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:#f8faff;}
       </div>
 
       <div id="printArea">
+        <!-- Print header (only visible when printing) -->
         <div id="rptHeader" style="display:none;margin-bottom:18px;border-bottom:2px solid #0d2b6b;padding-bottom:12px;">
           <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:#0d2b6b;">Mutare Teachers College</div>
           <div style="font-size:.85rem;color:#555;margin-top:2px;">Dining Hall — Meal Attendance Report</div>
@@ -237,7 +266,11 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:#f8faff;}
             <span id="rptPrintHostel"></span>
           </div>
         </div>
+
+        <!-- Summary bar -->
         <div id="rptSummary" style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;"></div>
+
+        <!-- Main grouped table -->
         <div class="tw" id="rptTableWrap">
           <table id="rptTable">
             <thead>
@@ -257,8 +290,9 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:#f8faff;}
           </table>
         </div>
       </div>
-    </div>
+    </div><!-- end sec-report -->
 
+    <!-- ═══════════════════════════ NEW TERM RESET ══════════════════════════ -->
     <div id="sec-term" style="display:none">
       <div class="sec-hd"><div class="sec-title">New Term Reset</div></div>
       <div style="max-width:520px;margin:0 auto;padding:24px 0">
@@ -279,10 +313,10 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:#f8faff;}
           🔄 Reset Meal Records Now
         </button>
       </div>
-    </div>
+    </div><!-- end sec-term -->
 
-  </div>
-</div>
+  </div><!-- end .content -->
+</div><!-- end .main -->
 
 <script>
 const T = () => localStorage.getItem('mtc_token');
@@ -338,9 +372,6 @@ async function doScan(){
 }
 
 function showResult({ok,status,data:d}){
-  // Hardware double-scan — silently do nothing, show no message
-  if(d.access==='ok' && d.double_scan) return;
-
   const rb=document.getElementById('rBox');
   let cls,ico,msg,det,info='';
   if(d.access==='granted'){
@@ -422,13 +453,31 @@ function updateClock(){
   document.getElementById('mealPeriod').textContent=h>=7&&h<10?'☀️ Breakfast (07–09)':h>=12&&h<15?'🌤️ Lunch (12–14)':h>=18&&h<21?'🌙 Supper (18–20)':'Outside meal hours';
 }
 
-const SCAN_SPEED_MS = 50;
+/*
+ * GLOBAL BARCODE SCANNER INTERCEPT
+ * ──────────────────────────────────────────────────────────────────
+ * USB barcode scanners (like Winson WAI-6510) work as HID keyboards:
+ * they type all characters very fast (< 50ms between each key) then
+ * send Enter.  Normal typing is much slower (> 50ms between keys).
+ *
+ * This code:
+ *   1. Intercepts ALL keystrokes at the document level
+ *   2. If keys come faster than SCAN_SPEED_MS → it's a scanner
+ *   3. Routes scanner characters into the scan input field
+ *   4. On Enter → triggers the scan automatically
+ *   5. If the scan input already has focus → normal keyboard events
+ *      still work (manual typing also submits on Enter)
+ *   6. Shows a live "Scanner Ready" / "Scanner Active" indicator
+ * ──────────────────────────────────────────────────────────────────
+ */
+const SCAN_SPEED_MS = 50;   // keystrokes faster than this = scanner
 let   scanBuffer    = '';
 let   lastKeyTime   = 0;
 let   scannerActive = false;
 let   scannerTimer  = null;
 
 function getScanInput() {
+  // Returns the currently visible scan input field
   return document.getElementById('gInput') || document.getElementById('sInput');
 }
 
@@ -451,37 +500,53 @@ function setScannerStatus(active) {
 document.addEventListener('keydown', function(e) {
   var scanInput = getScanInput();
   if (!scanInput) return;
+
+  // If the event target is an input/select/textarea that is NOT the scan input,
+  // don't intercept — let the user type in other fields normally
   var tag = document.activeElement ? document.activeElement.tagName : '';
   if ((tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') &&
       document.activeElement !== scanInput) {
     return;
   }
+
   var now  = Date.now();
   var gap  = now - lastKeyTime;
   lastKeyTime = now;
+
+  // Ignore modifier-only keys
   if (e.key === 'Shift' || e.key === 'Control' || e.key === 'Alt' || e.key === 'Meta') return;
+
   var isScanner = gap < SCAN_SPEED_MS;
+
   if (e.key === 'Enter') {
+    // Enter from scanner OR from manual typing in the input field
     if (scanInput.value.trim()) {
       e.preventDefault();
       setScannerStatus(false);
       scanBuffer = '';
+      // Trigger the scan
       if (typeof doScan === 'function') doScan();
     }
     return;
   }
+
   if (isScanner || scanInput === document.activeElement) {
+    // Route to scan input
     if (document.activeElement !== scanInput) {
+      // Scanner fired while another element had focus — take focus away silently
       e.preventDefault();
       scanInput.focus();
+      // Append char manually since we prevented default
       if (e.key.length === 1) {
         scanInput.value += e.key;
       }
     }
+    // Show active indicator
     setScannerStatus(true);
     clearTimeout(scannerTimer);
     scannerTimer = setTimeout(function() { setScannerStatus(false); }, 1500);
   } else {
+    // Printable character typed outside the input — redirect to scan input
     if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
       e.preventDefault();
       scanInput.focus();
@@ -493,6 +558,7 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
+// Keep scan input focused when clicking non-interactive areas
 document.addEventListener('click', function(e) {
   var scanInput = getScanInput();
   if (!scanInput) return;
@@ -508,16 +574,25 @@ setInterval(loadDash,30000);
 setInterval(updateClock,1000);
 updateClock();
 
+/*
+ * DEFINITIVE BARCODE SCANNER FIX
+ * The input field gets focus on load. If anything else steals focus,
+ * we return it within 10ms. The scanner just types fast — we ensure
+ * it always has somewhere to type.
+ */
+
 var SCAN_INPUT_ID = 'sInput';
 
 function getScanEl() {
   return document.getElementById(SCAN_INPUT_ID);
 }
 
+// ── Keep scan input focused at all times ──────────────────────────
 function reclaimFocus() {
   var el = getScanEl();
   if (!el) return;
   var active = document.activeElement;
+  // Only reclaim if nothing interactive has focus
   if (!active || (active !== el &&
       active.tagName !== 'INPUT' &&
       active.tagName !== 'SELECT' &&
@@ -528,6 +603,7 @@ function reclaimFocus() {
   }
 }
 
+// Reclaim focus whenever the user clicks background / table rows / panels
 document.addEventListener('click', function(e) {
   var t = e.target;
   if (t.tagName !== 'INPUT' && t.tagName !== 'BUTTON' &&
@@ -536,13 +612,21 @@ document.addEventListener('click', function(e) {
   }
 });
 
+// Reclaim focus if blur fires on our input (something else stole it)
+document.addEventListener('focusin', function(e) {
+  // do nothing — the user intentionally focused something else
+});
+
+// Give focus immediately and keep polling every 200ms as a safety net
 setTimeout(function() { reclaimFocus(); }, 100);
 setInterval(reclaimFocus, 200);
 
+// ── Handle Enter key (scanner sends Enter after the barcode) ──────
 document.addEventListener('keydown', function(e) {
   if (e.key !== 'Enter') return;
   var scanEl = getScanEl();
   if (!scanEl) return;
+  // If enter pressed anywhere (not inside another explicit input), trigger scan
   var active = document.activeElement;
   if (!active || active === scanEl ||
       (active.tagName !== 'INPUT' && active.tagName !== 'TEXTAREA')) {
@@ -553,6 +637,7 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
+// ── Scanner status dot ────────────────────────────────────────────
 var _lastInput = '';
 var _dotTimer  = null;
 function updateDot(active) {
@@ -572,6 +657,7 @@ function updateDot(active) {
   }
 }
 
+// Watch for characters appearing in the input field
 setInterval(function() {
   var el = getScanEl();
   if (!el) return;
@@ -585,8 +671,7 @@ setInterval(function() {
       updateDot(false);
     }
   }
-}, 50);
-
+}, 50);// ── NEW TERM RESET ────────────────────────────────────────
 async function loadTermStats() {
   document.getElementById('termConfirm').value = '';
   document.getElementById('termBtn').disabled = true;
@@ -623,7 +708,8 @@ async function doNewTerm() {
   }
 }
 
-let reportData = [];
+// ── PRINT REPORT ──────────────────────────────────────────
+let reportData = [];   // full dataset for the current report
 
 function initReport() {
   document.getElementById('rptDate').value = tod();
@@ -634,18 +720,28 @@ async function loadReport() {
   const date   = document.getElementById('rptDate').value || tod();
   const hostel = document.getElementById('rptHostel').value;
   const filter = document.getElementById('rptFilter').value;
+
+  // Fetch all meal records for the date
   let url = `/dining/register/?date=${date}`;
   if (hostel) url += `&hostel=${encodeURIComponent(hostel)}`;
   const records = await api(url);
   const list    = Array.isArray(records) ? records : (records?.results || []);
+
+  // Also fetch eligible students so we can show students with zero meals
   const eligData = await api('/dining/eligible/');
   const eligible = eligData?.students || [];
+
+  // Populate hostel dropdown from eligible list (once)
   const hostels = [...new Set(eligible.map(s => s.hostel).filter(Boolean))].sort();
   const sel = document.getElementById('rptHostel');
   if (sel.options.length <= 1) {
     hostels.forEach(h => { const o=document.createElement('option'); o.value=h; o.textContent=h; sel.appendChild(o); });
   }
+
+  // Build a map: student_number → { info, breakfast, lunch, supper }
   const map = {};
+
+  // Seed from eligible list
   eligible.forEach(s => {
     map[s.student_number] = {
       student_number: s.student_number,
@@ -658,6 +754,8 @@ async function loadReport() {
       supper: null,
     };
   });
+
+  // Fill in scan records
   list.forEach(r => {
     const key = r.student_number || r.scanned_barcode;
     if (!map[key]) {
@@ -673,19 +771,27 @@ async function loadReport() {
       };
     }
     const meal = r.meal_type;
-    const status = r.scan_status;
+    const status = r.scan_status; // served / denied / duplicate
     if (meal === 'Breakfast') map[key].breakfast = status;
     else if (meal === 'Lunch')  map[key].lunch    = status;
     else if (meal === 'Supper') map[key].supper   = status;
   });
+
+  // Convert to array; filter by hostel if selected
   let rows = Object.values(map);
   if (hostel) rows = rows.filter(r => r.hostel === hostel);
+
+  // Apply view filter
   if (filter === 'any')  rows = rows.filter(r => r.breakfast||r.lunch||r.supper);
   if (filter === 'all3') rows = rows.filter(r => r.breakfast==='served'&&r.lunch==='served'&&r.supper==='served');
   if (filter === 'none') rows = rows.filter(r => !r.breakfast&&!r.lunch&&!r.supper);
+
   rows.sort((a,b) => (a.full_name||'').localeCompare(b.full_name||''));
   reportData = rows;
+
+  // Summary
   const served  = (meal) => rows.filter(r=>r[meal]==='served').length;
+  const denied  = (meal) => rows.filter(r=>r[meal]==='denied').length;
   const totalAny = rows.filter(r=>r.breakfast||r.lunch||r.supper).length;
   document.getElementById('rptSummary').innerHTML = `
     <div style="background:#fff;border:1px solid var(--border);border-radius:9px;padding:11px 16px;font-size:.8rem">
@@ -703,6 +809,8 @@ async function loadReport() {
     <div style="background:#f0f4ff;border:1px solid var(--border);border-radius:9px;padding:11px 16px;font-size:.8rem">
       👥 Had any meal: <strong>${totalAny}</strong>
     </div>`;
+
+  // Render table
   const tick = (status) => {
     if (status === 'served')    return '<span class="meal-tick tick-y">✓</span>';
     if (status === 'denied')    return '<span class="meal-tick" style="background:#fff0f0;color:var(--danger)">✗</span>';
@@ -710,6 +818,7 @@ async function loadReport() {
     return '<span class="meal-tick tick-n">—</span>';
   };
   const total = r => [r.breakfast, r.lunch, r.supper].filter(v=>v==='served').length;
+
   document.getElementById('rptTbl').innerHTML = rows.length
     ? rows.map((r,i) => `<tr style="${i%2===0?'':'background:#fafbff'}">
         <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.student_number}</td>
@@ -738,6 +847,7 @@ function printReport() {
   window.print();
   document.getElementById('rptHeader').style.display = 'none';
 }
+
 </script>
 </body>
 </html>
